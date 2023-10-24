@@ -1,0 +1,35 @@
+{
+  "name": "bfb-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "vite --port 3000 --open",
+    "dev": "vite --port 3000 --open",
+    "build": "vite build",
+    "serve": "vite preview",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^14.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "jsdom": "^22.1.0",
+    "vite": "^4.4.7",
+    "vitest": "^0.33.0"
+  },
+  "description": "<h1 align=\"center\">   Vite Template React </h1>",
+  "main": "vite.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tylersiskar/bfb-app.git"
+  },
+  "author": "Tyler Siskar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tylersiskar/bfb-app/issues"
+  },
+  "homepage": "https://github.com/tylersiskar/bfb-app#readme"
+}
