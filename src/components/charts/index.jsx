@@ -32,6 +32,8 @@ let playerURL = "https://api.sleeper.app/v1/players/nfl";
 let leagueURL = "https://api.sleeper.app/v1/league/934894009888088064/rosters";
 let statsUrl = "https://api.sleeper.app/v1/stats/nfl/regular/2023";
 const ScatterPlot = (props) => {
+  const [leagueState, setLeague] = useState();
+  // active rosters...
   const [rosters, setRosters] = useState([]);
   const [datasets, setDatasets] = useState([]);
   const [stats, setStats] = useState(statsObj);
@@ -75,9 +77,9 @@ const ScatterPlot = (props) => {
 
       league[teamName] = teamPlayers;
     });
-
+    setLeague(league);
     setTeamOptions(Object.keys(league));
-
+    console.log(activeTeam, "?");
     if (activeTeam !== "all") setRosters({ [activeTeam]: league[activeTeam] });
     else setRosters(league);
   };
@@ -87,7 +89,7 @@ const ScatterPlot = (props) => {
       Object.keys(rosters).map((teamName, i) => {
         return {
           label: teamName,
-          data: rosters[teamName].map((player) => ({
+          data: leagueState[teamName].map((player) => ({
             x: player.x,
             y: player.y,
             label: player.name,
@@ -116,65 +118,78 @@ const ScatterPlot = (props) => {
   };
 
   return (
-    <div style={{ backgroundColor: "white", width: 1200, padding: 12 }}>
-      <Button onClick={fetchStats}>FETCH LATEST STATS</Button>
-      <Button
-        onClick={(e) => setPosition(e.target.id)}
-        id="WR"
-        active={position === "WR"}
-      >
-        WR
-      </Button>
-      <Button
-        onClick={(e) => setPosition(e.target.id)}
-        id="RB"
-        active={position === "RB"}
-      >
-        RB
-      </Button>
-      <Button
-        onClick={(e) => setPosition(e.target.id)}
-        id="QB"
-        active={position === "QB"}
-      >
-        QB
-      </Button>
-      <Button
-        onClick={(e) => setPosition(e.target.id)}
-        id="TE"
-        active={position === "TE"}
-      >
-        TE
-      </Button>
-      <select
-        id="teams"
-        onChange={(e) => {
-          if (e.target.value === "all") {
-          } else {
-            setDatasets([
-              {
-                label: e.target.value,
-                data: rosters[e.target.value].map((player) => ({
-                  x: player.x,
-                  y: player.y,
-                  label: player.name,
-                })),
-                backgroundColor:
-                  colors[Object.keys(rosters).indexOf(e.target.value)],
-                pointRadius: 5,
-              },
-            ]);
-          }
-          setActiveTeam(e.target.value);
-        }}
-        value={activeTeam}
-      >
-        <option value={"all"}>{"All"}</option>
+    <div
+      style={{
+        backgroundColor: "white",
+        width: "100%",
+        paddingTop: 12,
+        maxWidth: 1200,
+        margin: "auto",
+      }}
+    >
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        <Button onClick={fetchStats}>FETCH LATEST STATS</Button>
+        <Button
+          onClick={(e) => setPosition(e.target.id)}
+          id="WR"
+          active={position === "WR"}
+        >
+          WR
+        </Button>
+        <Button
+          onClick={(e) => setPosition(e.target.id)}
+          id="RB"
+          active={position === "RB"}
+        >
+          RB
+        </Button>
+        <Button
+          onClick={(e) => setPosition(e.target.id)}
+          id="QB"
+          active={position === "QB"}
+        >
+          QB
+        </Button>
+        <Button
+          onClick={(e) => setPosition(e.target.id)}
+          id="TE"
+          active={position === "TE"}
+        >
+          TE
+        </Button>
+        <div style={{ display: "flex", flexDirection: "column", width: 150 }}>
+          <label>Select Team</label>
+          <select
+            id="teams"
+            onChange={(e) => {
+              if (e.target.value === "all") {
+              } else {
+                setDatasets([
+                  {
+                    label: e.target.value,
+                    data: leagueState[e.target.value].map((player) => ({
+                      x: player.x,
+                      y: player.y,
+                      label: player.name,
+                    })),
+                    backgroundColor:
+                      colors[Object.keys(rosters).indexOf(e.target.value)],
+                    pointRadius: 5,
+                  },
+                ]);
+              }
+              setActiveTeam(e.target.value);
+            }}
+            value={activeTeam}
+          >
+            <option value={"all"}>{"All"}</option>
 
-        {teamOptions.map((r) => (
-          <option value={r}>{r}</option>
-        ))}
-      </select>
+            {teamOptions.map((r) => (
+              <option value={r}>{r}</option>
+            ))}
+          </select>
+        </div>
+      </div>
       <Scatter
         data={data}
         options={{
@@ -190,6 +205,16 @@ const ScatterPlot = (props) => {
             y: {
               reverse: true,
               beginAtZero: true,
+              title: {
+                display: true,
+                text: "Rank",
+              },
+            },
+            x: {
+              title: {
+                display: true,
+                text: "PPG",
+              },
             },
           },
         }}
