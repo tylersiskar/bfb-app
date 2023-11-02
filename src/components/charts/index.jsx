@@ -124,40 +124,70 @@ const ScatterPlot = (props) => {
         width: "100%",
         paddingTop: 12,
         maxWidth: 1200,
+        maxHeight: window.innerWidth > 767 ? "100%" : "100vh",
         margin: "auto",
       }}
     >
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-        <Button onClick={fetchStats}>FETCH LATEST STATS</Button>
-        <Button
-          onClick={(e) => setPosition(e.target.id)}
-          id="WR"
-          active={position === "WR"}
-        >
-          WR
+      <div
+        style={{
+          padding: 12,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          maxWidth: 500,
+          margin: "auto",
+        }}
+      >
+        <Button onClick={fetchStats} style={{ marginBottom: 8 }}>
+          FETCH LATEST
         </Button>
-        <Button
-          onClick={(e) => setPosition(e.target.id)}
-          id="RB"
-          active={position === "RB"}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr 1fr",
+            gap: 4,
+            width: "100%",
+            marginBottom: 8,
+          }}
         >
-          RB
-        </Button>
-        <Button
-          onClick={(e) => setPosition(e.target.id)}
-          id="QB"
-          active={position === "QB"}
+          <Button
+            onClick={(e) => setPosition(e.target.id)}
+            id="QB"
+            active={position === "QB"}
+          >
+            QB
+          </Button>
+          <Button
+            onClick={(e) => setPosition(e.target.id)}
+            id="RB"
+            active={position === "RB"}
+          >
+            RB
+          </Button>
+          <Button
+            onClick={(e) => setPosition(e.target.id)}
+            id="WR"
+            active={position === "WR"}
+          >
+            WR
+          </Button>
+          <Button
+            onClick={(e) => setPosition(e.target.id)}
+            id="TE"
+            active={position === "TE"}
+          >
+            TE
+          </Button>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: 150,
+            alignItems: "center",
+          }}
         >
-          QB
-        </Button>
-        <Button
-          onClick={(e) => setPosition(e.target.id)}
-          id="TE"
-          active={position === "TE"}
-        >
-          TE
-        </Button>
-        <div style={{ display: "flex", flexDirection: "column", width: 150 }}>
           <label>Select Team</label>
           <select
             id="teams"
@@ -193,6 +223,7 @@ const ScatterPlot = (props) => {
       <Scatter
         data={data}
         options={{
+          maintainAspectRatio: window.innerWidth > 767,
           plugins: {
             tooltip: {
               callbacks: {

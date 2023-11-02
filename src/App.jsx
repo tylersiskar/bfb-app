@@ -6,7 +6,7 @@ const App = () => {
   return (
     <div className="app">
       <div className="header">
-        <h1>Bad Franchise Builders</h1>
+        <h1 style={{ fontSize: 24 }}>Bad Franchise Builders</h1>
       </div>
       <div className="body">
         {/* <div className="sidenav">
@@ -23,7 +23,7 @@ const App = () => {
             <p>Dynasty Rankings</p>
           </div>
         </div> */}
-        <div style={{ paddingTop: 64, width: "100%" }}>
+        <div style={{ paddingTop: 24, width: "100%" }}>
           <Scatter />
         </div>
       </div>

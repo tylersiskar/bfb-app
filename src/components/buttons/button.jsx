@@ -2,14 +2,14 @@ const Button = (props) => {
   return (
     <button
       style={{
-        backgroundColor: "#1f2126",
+        backgroundColor: props.active ? "#35a7ff" : "#1f2126",
         borderRadius: 4,
-        minWidth: 100,
         height: 36,
         padding: 8,
-        margin: 4,
+        width: "100%",
         border: "none",
-        color: props.active ? "#35a7ff" : "white",
+        color: props.active ? "#1f2126" : "white",
+        ...props.style,
       }}
       onClick={props.onClick}
       id={props.id}
