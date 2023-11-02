@@ -1,43 +1,32 @@
-import { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.scss";
+import Scatter from "./components/charts";
 
 const App = () => {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>Vite + React</h1>
-        <p>
-          <button onClick={() => setCount(count => count + 1)}>
-            count is {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://react.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+    <div className="app">
+      <div className="header">
+        <h1>Bad Franchise Builders</h1>
+      </div>
+      <div className="body">
+        <div className="sidenav">
+          <div className="list-item">
+            <p>Eventually stuff will be over here.</p>
+          </div>
+          <div className="list-item">
+            <p>Just play with the graph for now...</p>
+          </div>
+          {/* <div className="list-item">
+            <p>Transactions</p>
+          </div>
+          <div className="list-item">
+            <p>Dynasty Rankings</p>
+          </div> */}
+        </div>
+        <div style={{ padding: 32, width: 1200 }}>
+          <Scatter />
+        </div>
+      </div>
     </div>
   );
 };
