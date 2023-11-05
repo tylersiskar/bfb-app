@@ -9,6 +9,7 @@ const Button = (props) => {
         width: "100%",
         border: "none",
         color: props.active ? "#1f2126" : "white",
+        cursor: "pointer",
         ...props.style,
       }}
       onClick={props.onClick}

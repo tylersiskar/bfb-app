@@ -12,6 +12,9 @@ import {
 } from "chart.js";
 import { Scatter } from "react-chartjs-2";
 import Button from "../buttons/button";
+import Icon from "@mdi/react";
+import { mdiLoading } from "@mdi/js";
+
 let colors = [
   "#bb17bd",
   "#5bce7a",
@@ -40,8 +43,10 @@ const ScatterPlot = (props) => {
   const [position, setPosition] = useState();
   const [activeTeam, setActiveTeam] = useState("all");
   const [teamOptions, setTeamOptions] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchStats = async () => {
+    setIsFetching(true);
     let response = await fetch(statsUrl);
     let statsObj = await response.json();
     setStats(statsObj);
@@ -77,9 +82,9 @@ const ScatterPlot = (props) => {
 
       league[teamName] = teamPlayers;
     });
+    setIsFetching(false);
     setLeague(league);
     setTeamOptions(Object.keys(league));
-    console.log(activeTeam, "?");
     if (activeTeam !== "all") setRosters({ [activeTeam]: league[activeTeam] });
     else setRosters(league);
   };
@@ -103,20 +108,15 @@ const ScatterPlot = (props) => {
 
   useEffect(() => {
     fetchPlayers(position);
-  }, [position, activeTeam]);
-
-  //   useEffect(() => {
-  //       setRosters()
-  //   })
+  }, [position, activeTeam, stats]);
 
   useEffect(() => {
-    fetchPlayers();
+    fetchStats();
   }, []);
 
   let data = {
     datasets,
   };
-
   return (
     <div
       style={{
@@ -139,9 +139,33 @@ const ScatterPlot = (props) => {
           margin: "auto",
         }}
       >
-        <Button onClick={fetchStats} style={{ marginBottom: 8 }}>
-          FETCH LATEST
-        </Button>
+        {/* <Button onClick={fetchStats} style={{ marginBottom: 8 }}>
+          {isFetching ? (
+            <Icon
+              path={mdiLoading}
+              title="Stats Fetching"
+              size={1}
+              horizontal
+              vertical
+              color="white"
+              spin
+            />
+          ) : (
+            "GET LATEST STATS"
+          )}
+        </Button> */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <h2 style={{ margin: 0 }}>Rank vs PPG by Team</h2>
+          <h4 style={{ color: "rgb(118 118 118)", margin: "12px 0" }}>
+            Filter by Position and Team below
+          </h4>
+        </div>
         <div
           style={{
             display: "grid",
@@ -188,7 +212,7 @@ const ScatterPlot = (props) => {
             alignItems: "center",
           }}
         >
-          <label>Select Team</label>
+          <label style={{ marginBottom: 4 }}>Select Team</label>
           <select
             id="teams"
             onChange={(e) => {
@@ -228,7 +252,11 @@ const ScatterPlot = (props) => {
             tooltip: {
               callbacks: {
                 label: (context) =>
-                  context.dataset.label + " " + context.raw.label,
+                  `${context.dataset.label} ${
+                    context.raw.label
+                  }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
+                    context.raw.y
+                  }`,
               },
             },
           },
