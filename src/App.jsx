@@ -1,34 +1,23 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Body from "./components/layout/body";
+import Header from "./components/layout/header";
 import "./App.scss";
-import Scatter from "./components/charts";
+import SideNavigation from "./components/layout/sidenav";
 
-const App = () => {
+function App({ children }) {
+  const [openMenu, setOpenMenu] = useState(false);
   return (
-    <div className="app">
-      <div className="header">
-        <h1 style={{ fontSize: 24 }}>Bad Franchise Builders</h1>
-      </div>
-      <div className="body">
-        {/* <div className="sidenav">
-          <div className="list-item">
-            <p>Eventually stuff will be over here.</p>
-          </div>
-          <div className="list-item">
-            <p>Just play with the graph for now...</p>
-          </div>
-          <div className="list-item">
-            <p>Transactions</p>
-          </div>
-          <div className="list-item">
-            <p>Dynasty Rankings</p>
-          </div>
-        </div> */}
-        <div style={{ paddingTop: 24, width: "100%" }}>
-          <Scatter />
+    <div>
+      <Header onMenuClick={setOpenMenu} />
+      <Body>
+        <div className="flex w-100">
+          <Outlet />
+          {openMenu && <SideNavigation />}
         </div>
-      </div>
+      </Body>
     </div>
   );
-};
+}
 
 export default App;

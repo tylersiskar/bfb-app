@@ -119,9 +119,8 @@ const ScatterPlot = (props) => {
   };
   return (
     <div
+      className="w-100"
       style={{
-        backgroundColor: "white",
-        width: "100%",
         paddingTop: 12,
         maxWidth: 1200,
         maxHeight: window.innerWidth > 767 ? "100%" : "100vh",
@@ -129,40 +128,16 @@ const ScatterPlot = (props) => {
       }}
     >
       <div
+        className="flex flex-column align-center justify-center"
         style={{
           padding: 12,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
           maxWidth: 500,
           margin: "auto",
         }}
       >
-        {/* <Button onClick={fetchStats} style={{ marginBottom: 8 }}>
-          {isFetching ? (
-            <Icon
-              path={mdiLoading}
-              title="Stats Fetching"
-              size={1}
-              horizontal
-              vertical
-              color="white"
-              spin
-            />
-          ) : (
-            "GET LATEST STATS"
-          )}
-        </Button> */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
+        <div className="flex flex-column align-center">
           <h2 style={{ margin: 0 }}>Rank vs PPG by Team</h2>
-          <h4 style={{ color: "rgb(118 118 118)", margin: "12px 0" }}>
+          <h4 className="subtitle" style={{ margin: "12px 0" }}>
             Filter by Position and Team below
           </h4>
         </div>
@@ -205,11 +180,9 @@ const ScatterPlot = (props) => {
           </Button>
         </div>
         <div
+          className="flex flex-column align-center"
           style={{
-            display: "flex",
-            flexDirection: "column",
             width: 150,
-            alignItems: "center",
           }}
         >
           <label style={{ marginBottom: 4 }}>Select Team</label>
