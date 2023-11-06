@@ -64,16 +64,20 @@ const ScatterPlot = (props) => {
 
     leagueObject.forEach((team) => {
       let teamName = users[team.owner_id];
-      let teamPlayers = team.players.map((player) => ({
-        name: players[player].full_name,
-        position: players[player].position,
-        pts: stats[player].pts_half_ppr,
-        gp: stats[player].gms_active,
-        ppg: stats[player].pts_half_ppr / stats[player].gms_active,
-        x: stats[player].pts_half_ppr / stats[player].gms_active,
-        rank: stats[player].pos_rank_half_ppr,
-        y: stats[player].pos_rank_half_ppr,
-      }));
+      let teamPlayers = team.players.map((player) => {
+        if (players[player].full_name === "Justin Jefferson")
+          console.log(stats[player], players[player].full_name);
+        return {
+          name: players[player].full_name,
+          position: players[player].position,
+          pts: stats[player].pts_half_ppr,
+          gp: stats[player].gp,
+          ppg: stats[player].pts_half_ppr / stats[player].gp,
+          x: stats[player].pts_half_ppr / stats[player].gp,
+          rank: stats[player].pos_rank_half_ppr,
+          y: stats[player].pos_rank_half_ppr,
+        };
+      });
       if (pos) {
         teamPlayers = teamPlayers.filter((item) => {
           return item.position === pos;
@@ -94,11 +98,13 @@ const ScatterPlot = (props) => {
       Object.keys(rosters).map((teamName, i) => {
         return {
           label: teamName,
-          data: leagueState[teamName].map((player) => ({
-            x: player.x,
-            y: player.y,
-            label: player.name,
-          })),
+          data: leagueState[teamName].map((player) => {
+            return {
+              x: player.x,
+              y: player.y,
+              label: player.name,
+            };
+          }),
           backgroundColor: colors[i],
           pointRadius: 5,
         };
@@ -117,6 +123,7 @@ const ScatterPlot = (props) => {
   let data = {
     datasets,
   };
+
   return (
     <div
       className="w-100"
@@ -241,6 +248,7 @@ const ScatterPlot = (props) => {
                 display: true,
                 text: "Rank",
               },
+              max: 120,
             },
             x: {
               title: {
