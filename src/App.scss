@@ -36,7 +36,11 @@ h1 {
   color: $lime;
   margin: 0;
 }
-
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 16px;
+  }
+}
 h3 {
   color: $blue;
   margin: 0;

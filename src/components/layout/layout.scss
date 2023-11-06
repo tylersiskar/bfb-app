@@ -4,7 +4,7 @@ $light: rgb(206, 206, 206);
 $dark: #1f2126;
 $darker: #16181d;
 $lime: #54d846;
-$purple: #7209b7;
+$purple: #b039ff;
 $yellow: #ffe74c;
 
 .app {
@@ -82,6 +82,13 @@ $yellow: #ffe74c;
   font-size: 20px;
   letter-spacing: 0.4px;
   margin: 0;
+  transition: all 0.35s ease;
+}
+
+.list-item:hover {
+  p {
+    color: $purple;
+  }
 }
 .list-item {
   position: relative;

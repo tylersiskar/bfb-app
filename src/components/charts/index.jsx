@@ -65,8 +65,6 @@ const ScatterPlot = (props) => {
     leagueObject.forEach((team) => {
       let teamName = users[team.owner_id];
       let teamPlayers = team.players.map((player) => {
-        if (players[player].full_name === "Justin Jefferson")
-          console.log(stats[player], players[player].full_name);
         return {
           name: players[player].full_name,
           position: players[player].position,
@@ -158,28 +156,36 @@ const ScatterPlot = (props) => {
           }}
         >
           <Button
-            onClick={(e) => setPosition(e.target.id)}
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
             id="QB"
             active={position === "QB"}
           >
             QB
           </Button>
           <Button
-            onClick={(e) => setPosition(e.target.id)}
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
             id="RB"
             active={position === "RB"}
           >
             RB
           </Button>
           <Button
-            onClick={(e) => setPosition(e.target.id)}
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
             id="WR"
             active={position === "WR"}
           >
             WR
           </Button>
           <Button
-            onClick={(e) => setPosition(e.target.id)}
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
             id="TE"
             active={position === "TE"}
           >
