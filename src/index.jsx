@@ -16,6 +16,10 @@ const router = createBrowserRouter([
         element: <TeamsPage />,
       },
       {
+        path: "teams",
+        element: <TeamsPage />,
+      },
+      {
         path: "drafts",
         element: <DraftsPage />,
       },
