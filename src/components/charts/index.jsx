@@ -25,7 +25,7 @@ let colors = [
   "#cf9a4f",
   "#2c708c",
   "#a3c592",
-  "#cf5112",
+  "cyan",
 ];
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
