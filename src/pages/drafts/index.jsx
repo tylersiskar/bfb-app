@@ -69,6 +69,31 @@ const DraftsPage = (props) => {
     // [ { label: round (key), data: [{x: draft_slot, y: ppg (in active year), label: PlayerName, backgroundColor: colors[i]}]}]
   }, [data, stats]);
 
+  const _exportToCSV = () => {
+    let csvData = [["Year", "Round", "Draft Slot", "Player", "PPG"]];
+    dataset.forEach((row) => {
+      row.data.forEach((round) => {
+        csvData.push([
+          year,
+          row.label,
+          round.x,
+          round.label,
+          round.y.toFixed(2),
+        ]);
+      });
+    });
+
+    let csvContent =
+      "data:text/csv;charset=utf-8," +
+      csvData.map((e) => e.join(",")).join("\n");
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "draft_data.csv");
+    document.body.appendChild(link); // Required for FF
+
+    link.click();
+  };
   return (
     <Content>
       <div
@@ -97,7 +122,7 @@ const DraftsPage = (props) => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              gridTemplateColumns: "1fr 1fr 2fr",
               gap: 4,
               width: "100%",
               marginBottom: 8,
@@ -121,8 +146,10 @@ const DraftsPage = (props) => {
             >
               2023
             </Button>
+            <Button onClick={_exportToCSV}>Export {year} Data</Button>
           </div>
         </div>
+
         <Scatter
           data={{ datasets: dataset }}
           options={{
