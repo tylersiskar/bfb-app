@@ -12,8 +12,6 @@ import {
 } from "chart.js";
 import { Scatter } from "react-chartjs-2";
 import Button from "../buttons/button";
-import Icon from "@mdi/react";
-import { mdiLoading } from "@mdi/js";
 
 let colors = [
   "#bb17bd",
@@ -121,7 +119,6 @@ const ScatterPlot = (props) => {
   let data = {
     datasets,
   };
-
   return (
     <div
       className="w-100"

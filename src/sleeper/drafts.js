@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
 import { draftUrl, allDraftsUrl } from "./constants";
 
-const useAllDrafts = () => {
+const useDraft = (year) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  let drafts = {
+    2023: "934894009888088065",
+    2022: "812458201160237056",
+  };
 
   useEffect(() => {
+    let url = year
+      ? draftUrl.replace("<draft_id>", drafts[year])
+      : allDraftsUrl;
     async function fetchData() {
       try {
-        const response = await fetch(allDraftsUrl); // Use the URL and parameters to fetch data
+        const response = await fetch(url); // Use the URL and parameters to fetch data
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -23,7 +30,7 @@ const useAllDrafts = () => {
     }
 
     fetchData();
-  }, []);
+  }, [year]);
 
   return { data, loading, error };
 };
@@ -46,4 +53,4 @@ const fetchSingleDraft = async (draftId) => {
   }
 };
 
-export { fetchSingleDraft, useAllDrafts };
+export { fetchSingleDraft, useDraft };
