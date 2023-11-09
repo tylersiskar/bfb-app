@@ -1,4 +1,58 @@
+$blue: #35a7ff;
+$red: #a63446;
+$light: rgb(206, 206, 206);
+$dark: #1f2126;
+$darker: #16181d;
+$lime: #54d846;
+$purple: #b039ff;
+$yellow: #ffe74c;
+
 .menu {
   background-color: transparent;
   border: none;
+}
+
+.primary {
+  background-color: $dark;
+  border: 2px solid $dark;
+  color: white;
+  border-radius: 4px;
+  height: 36px;
+  padding: 8px;
+  width: 100%;
+  cursor: pointer;
+}
+.secondary {
+  background-color: white;
+  border: 2px solid $blue;
+  color: $blue;
+  border-radius: 4px;
+  height: 36px;
+  padding: 8px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.primary-active {
+  background-color: $blue;
+  border: 2px solid $blue;
+  color: $dark;
+  border-radius: 4px;
+  height: 36px;
+  padding: 8px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.secondary-active {
+  background-color: $blue;
+  border: 2px solid $blue;
+  color: $dark;
+  border-radius: 4px;
+  height: 36px;
+  padding: 8px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
 }

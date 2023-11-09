@@ -15,7 +15,7 @@ import playersObj from "../../components/charts/players.json";
 const colors = [
   "red",
   "orange",
-  "yellow",
+  "gold",
   "green",
   "blue",
   "indigo",
@@ -24,6 +24,14 @@ const colors = [
 ];
 let statsUrl = "https://api.sleeper.app/v1/stats/nfl/regular/<year>";
 const DraftsPage = (props) => {
+  const [positions, setPositions] = useState([
+    "QB",
+    "RB",
+    "WR",
+    "TE",
+    "K",
+    "DEF",
+  ]);
   const [year, setYear] = useState("2022");
   const { data, loading, error } = useDraft(year);
   const [dataset, setDataset] = useState([]);
@@ -46,7 +54,7 @@ const DraftsPage = (props) => {
     fetchStats();
   }, [year]);
 
-  useEffect(() => {
+  const _setDataset = () => {
     let arr = groupBy(data, "round");
     setDataset(
       Object.keys(arr)
@@ -56,18 +64,25 @@ const DraftsPage = (props) => {
             label: `Round ${round}`,
             backgroundColor: colors[i],
             pointRadius: 5,
-            data: arr[round].map((obj) => {
-              return {
-                x: obj.draft_slot,
-                y: _calculatePPG(obj.player_id),
-                label: playersObj[obj.player_id].full_name ?? "DEF",
-              };
-            }),
+            pointHoverRadius: 8,
+            data: arr[round].reduce((newArray, obj) => {
+              if (positions.includes(playersObj[obj.player_id].position)) {
+                newArray.push({
+                  x: obj.draft_slot,
+                  y: _calculatePPG(obj.player_id),
+                  label: playersObj[obj.player_id].full_name ?? "DEF",
+                  position: playersObj[obj.player_id].position,
+                });
+              }
+              return newArray;
+            }, []),
           };
         })
     );
-    // [ { label: round (key), data: [{x: draft_slot, y: ppg (in active year), label: PlayerName, backgroundColor: colors[i]}]}]
-  }, [data, stats]);
+  };
+  useEffect(() => {
+    _setDataset();
+  }, [data, stats, positions]);
 
   const _exportToCSV = () => {
     let csvData = [["Year", "Round", "Draft Slot", "Player", "PPG"]];
@@ -116,7 +131,7 @@ const DraftsPage = (props) => {
           <div className="flex flex-column align-center">
             <h2 style={{ margin: 0 }}>PPG vs Draft Slot By Round</h2>
             <h4 className="subtitle" style={{ margin: "12px 0" }}>
-              Filtering by Team / Position coming soon...
+              Filtering by Team coming soon...
             </h4>
           </div>
           <div
@@ -148,6 +163,36 @@ const DraftsPage = (props) => {
             </Button>
             <Button onClick={_exportToCSV}>Export {year} Data</Button>
           </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+              gap: 4,
+              width: "100%",
+              marginBottom: 8,
+            }}
+          >
+            {["QB", "RB", "WR", "TE", "K", "DEF"].map((pos) => {
+              return (
+                <Button
+                  onClick={() => {
+                    let newPositions = positions.includes(pos)
+                      ? [...positions.filter((item) => item !== pos)]
+                      : [...positions, pos];
+
+                    setPositions(newPositions);
+                  }}
+                  id={pos}
+                  key={pos}
+                  active={positions.includes(pos)}
+                  secondary
+                >
+                  {pos}
+                </Button>
+              );
+            })}
+          </div>
         </div>
 
         <Scatter
@@ -169,16 +214,35 @@ const DraftsPage = (props) => {
             scales: {
               y: {
                 beginAtZero: true,
+                border: {
+                  width: 2,
+                  color: "black",
+                },
                 title: {
                   display: true,
                   text: "PPG",
                 },
+                grid: {
+                  display: false,
+                },
                 max: 25,
               },
               x: {
+                min: 0,
+                max: 13,
+                border: {
+                  width: 2,
+                  color: "black",
+                },
+                ticks: {
+                  stepSize: 1,
+                },
                 title: {
                   display: true,
                   text: "Draft Slot",
+                },
+                grid: {
+                  display: false,
                 },
               },
             },

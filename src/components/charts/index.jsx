@@ -12,6 +12,8 @@ import {
 } from "chart.js";
 import { Scatter } from "react-chartjs-2";
 import Button from "../buttons/button";
+import Icon from "@mdi/react";
+import { mdiShield } from "@mdi/js";
 
 let colors = [
   "#bb17bd",
@@ -103,6 +105,7 @@ const ScatterPlot = (props) => {
           }),
           backgroundColor: colors[i],
           pointRadius: 5,
+          pointHoverRadius: 8,
         };
       })
     );
@@ -222,7 +225,9 @@ const ScatterPlot = (props) => {
             <option value={"all"}>{"All"}</option>
 
             {teamOptions.map((r) => (
-              <option value={r}>{r}</option>
+              <option value={r} key={r}>
+                {r}
+              </option>
             ))}
           </select>
         </div>
@@ -251,12 +256,26 @@ const ScatterPlot = (props) => {
                 display: true,
                 text: "Rank",
               },
-              max: 120,
+              ticks: {
+                stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
+              },
+              border: {
+                width: 2,
+                color: "black",
+              },
+              max: position !== "TE" && position !== "QB" ? 125 : 50,
             },
             x: {
               title: {
                 display: true,
                 text: "PPG",
+              },
+              border: {
+                width: 2,
+                color: "black",
+              },
+              gridLines: {
+                display: false,
               },
             },
           },
