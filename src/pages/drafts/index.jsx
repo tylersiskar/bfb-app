@@ -3,9 +3,10 @@ import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import Content from "../../components/layout/content";
 import { useDraft } from "../../sleeper/drafts";
-import { groupBy } from "lodash";
+import { groupBy, find } from "lodash";
 import statsObj from "../../components/charts/stats.json";
 import playersObj from "../../components/charts/players.json";
+import usersObj from "../../components/charts/users.json";
 /**
  *
  * @param {*} props
@@ -22,6 +23,7 @@ const colors = [
   "purple",
   "pink",
 ];
+let leagueURL = "https://api.sleeper.app/v1/league/934894009888088064/rosters";
 let statsUrl = "https://api.sleeper.app/v1/stats/nfl/regular/<year>";
 const DraftsPage = (props) => {
   const [positions, setPositions] = useState([
@@ -36,6 +38,8 @@ const DraftsPage = (props) => {
   const { data, loading, error } = useDraft(year);
   const [dataset, setDataset] = useState([]);
   const [stats, setStats] = useState(statsObj);
+  const [league, setLeague] = useState([]);
+  const [variable, setVariable] = useState("draft_slot");
 
   const fetchStats = async () => {
     let response = await fetch(statsUrl.replace("<year>", year));
@@ -47,8 +51,15 @@ const DraftsPage = (props) => {
     return stats[id].pts_half_ppr / stats[id].gp;
   };
 
+  const fetchLeague = async () => {
+    let response = await fetch(leagueURL);
+    let leagueObject = await response.json();
+    setLeague(leagueObject);
+  };
+
   useEffect(() => {
     fetchStats();
+    fetchLeague();
   }, []);
   useEffect(() => {
     fetchStats();
@@ -68,7 +79,7 @@ const DraftsPage = (props) => {
             data: arr[round].reduce((newArray, obj) => {
               if (positions.includes(playersObj[obj.player_id].position)) {
                 newArray.push({
-                  x: obj.draft_slot,
+                  x: obj[variable],
                   y: _calculatePPG(obj.player_id),
                   label: playersObj[obj.player_id].full_name ?? "DEF",
                   position: playersObj[obj.player_id].position,
@@ -82,7 +93,7 @@ const DraftsPage = (props) => {
   };
   useEffect(() => {
     _setDataset();
-  }, [data, stats, positions]);
+  }, [data, stats, positions, variable]);
 
   const _exportToCSV = () => {
     let csvData = [["Year", "Round", "Draft Slot", "Player", "PPG"]];
@@ -109,6 +120,17 @@ const DraftsPage = (props) => {
 
     link.click();
   };
+
+  const _getTeamName = (value) => {
+    if (variable === "draft_slot") return value;
+    else {
+      let roster = find(league, { roster_id: value });
+      if (!!roster) {
+        return find(usersObj, { user_id: roster.owner_id }).display_name;
+      }
+      return value;
+    }
+  };
   return (
     <Content>
       <div
@@ -129,10 +151,40 @@ const DraftsPage = (props) => {
           }}
         >
           <div className="flex flex-column align-center">
-            <h2 style={{ margin: 0 }}>PPG vs Draft Slot By Round</h2>
-            <h4 className="subtitle" style={{ margin: "12px 0" }}>
-              Filtering by Team coming soon...
-            </h4>
+            <h2 style={{ marginBottom: 12 }}>
+              PPG vs {variable === "draft_slot" ? "Draft Slot" : "Team"} By
+              Round
+            </h2>
+          </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 4,
+              width: "100%",
+              marginBottom: 8,
+            }}
+          >
+            <Button
+              onClick={(e) =>
+                setVariable(variable === e.target.id ? null : e.target.id)
+              }
+              id="draft_slot"
+              active={variable === "draft_slot"}
+              secondary
+            >
+              Draft Slot
+            </Button>
+            <Button
+              onClick={(e) =>
+                setVariable(year === e.target.id ? null : e.target.id)
+              }
+              id="roster_id"
+              active={variable === "roster_id"}
+              secondary
+            >
+              Team
+            </Button>
           </div>
           <div
             style={{
@@ -205,9 +257,9 @@ const DraftsPage = (props) => {
                   label: (context) =>
                     `${context.dataset.label} ${
                       context.raw.label
-                    }\n PPG: ${context.raw.y.toFixed(2)}\n Slot: ${
-                      context.raw.x
-                    }`,
+                    }\n PPG: ${context.raw.y.toFixed(2)}\n ${
+                      variable === "draft_slot" ? "Slot" : "Team"
+                    }: ${_getTeamName(context.raw.x)}`,
                 },
               },
             },
@@ -235,14 +287,17 @@ const DraftsPage = (props) => {
                   color: "black",
                 },
                 ticks: {
+                  callback: (value) => {
+                    return _getTeamName(value);
+                  },
                   stepSize: 1,
                 },
                 title: {
                   display: true,
-                  text: "Draft Slot",
+                  text: variable === "draft_slot" ? "Draft Slot" : "Team",
                 },
                 grid: {
-                  display: false,
+                  display: true,
                 },
               },
             },
