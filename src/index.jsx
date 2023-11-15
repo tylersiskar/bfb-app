@@ -5,6 +5,7 @@ import "./index.css";
 import App from "./App";
 import DraftsPage from "./pages/drafts";
 import TeamsPage from "./pages/teams";
+import TrendsPage from "./pages/trends";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "drafts",
         element: <DraftsPage />,
+      },
+      {
+        path: "trends",
+        element: <TrendsPage />,
       },
     ],
   },

@@ -46,6 +46,7 @@ $yellow: #ffe74c;
 }
 
 .sidenav {
+  z-index: 999;
   width: 330px;
   display: flex;
   flex-direction: column;

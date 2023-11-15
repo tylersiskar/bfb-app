@@ -10,6 +10,9 @@ const SideNavigation = (props) => {
       <Link className="list-item" to="/drafts">
         <p>Drafts</p>
       </Link>
+      <Link className="list-item" to="/trends">
+        <p>Trends</p>
+      </Link>
     </div>
   );
 };

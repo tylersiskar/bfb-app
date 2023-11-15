@@ -104,8 +104,8 @@ const ScatterPlot = (props) => {
             };
           }),
           backgroundColor: colors[i],
-          pointRadius: 5,
-          pointHoverRadius: 8,
+          pointRadius: 8,
+          pointHoverRadius: 12,
         };
       })
     );
@@ -214,7 +214,7 @@ const ScatterPlot = (props) => {
                     })),
                     backgroundColor:
                       colors[Object.keys(rosters).indexOf(e.target.value)],
-                    pointRadius: 5,
+                    pointRadius: 8,
                   },
                 ]);
               }

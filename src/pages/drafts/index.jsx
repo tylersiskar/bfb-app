@@ -63,8 +63,8 @@ const DraftsPage = (props) => {
           return {
             label: `Round ${round}`,
             backgroundColor: colors[i],
-            pointRadius: 5,
-            pointHoverRadius: 8,
+            pointRadius: 8,
+            pointHoverRadius: 12,
             data: arr[round].reduce((newArray, obj) => {
               if (positions.includes(playersObj[obj.player_id].position)) {
                 newArray.push({
