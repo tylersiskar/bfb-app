@@ -4,9 +4,9 @@ import Button from "../../components/buttons/button";
 import Content from "../../components/layout/content";
 import { useDraft } from "../../sleeper/drafts";
 import { groupBy, find } from "lodash";
-import statsObj from "../../components/charts/stats.json";
-import playersObj from "../../components/charts/players.json";
-import usersObj from "../../components/charts/users.json";
+import statsObj from "../../sleeper/stats.json";
+import playersObj from "../../sleeper/players.json";
+import usersObj from "../../sleeper/users.json";
 /**
  *
  * @param {*} props

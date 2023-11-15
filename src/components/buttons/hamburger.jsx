@@ -10,7 +10,7 @@ const HamburgerMenu = (props) => {
     setOpen(!open);
   };
   return (
-    <button className="menu" onClick={_onClick}>
+    <button className="menu" style={{ cursor: "pointer" }} onClick={_onClick}>
       {open ? (
         <Icon path={mdiClose} title="Menu" size={1} color="white" />
       ) : (

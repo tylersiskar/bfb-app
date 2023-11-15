@@ -8,10 +8,11 @@ import {
   Legend,
   CategoryScale,
 } from "chart.js";
-import usersObj from "../../components/charts/users.json";
+import { Line } from "react-chartjs-2";
+import usersObj from "../../sleeper/users.json";
 import { find } from "lodash";
-import PairedCoordinateGraph from "../../components/charts/PairedCoordinate";
 import RangeSlider from "../../components/inputs/RangeSlider";
+import { Content } from "../../components/layout";
 
 ChartJS.register(
   LinearScale,
@@ -97,40 +98,84 @@ const TrendsPage = () => {
     getNflState();
   }, []);
 
+  const options = {
+    maintainAspectRatio: window.innerWidth > 767,
+    plugins: {
+      legend: {
+        display: false, // Set to false to hide the legend
+      },
+      tooltip: {
+        callbacks: {
+          label: (context) =>
+            `${context.raw.label}\n PPG: ${context.raw.y.toFixed(2)}`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        type: "category", // Specify that the x-axis is a category axis
+        title: {
+          display: true,
+          text: "Team",
+        },
+        border: {
+          width: 2,
+          color: "black",
+        },
+        gridLines: {
+          display: false,
+        },
+      },
+      y: {
+        type: "linear",
+        position: "left",
+        reverse: false,
+        beginAtZero: false,
+        title: {
+          display: true,
+          text: "PPG",
+        },
+        min: 50,
+      },
+    },
+  };
+
   return (
-    <div
-      className="w-100"
-      style={{
-        paddingTop: 12,
-        maxWidth: 1200,
-        maxHeight: window.innerWidth > 767 ? "100%" : "100vh",
-        margin: "auto",
-      }}
-    >
+    <Content>
       <div
-        className="flex flex-column align-center justify-center"
+        className="w-100"
         style={{
-          padding: 12,
-          maxWidth: 500,
+          paddingTop: 12,
+          maxWidth: 1200,
+          maxHeight: window.innerWidth > 767 ? "100%" : "100vh",
           margin: "auto",
         }}
       >
-        <h2 style={{ margin: 0 }}>Team PPG Trending Data</h2>
-        <h4 className="subtitle" style={{ margin: "12px 0" }}>
-          Select Range to compare to Season Average
-        </h4>
-        <p className="subtitle" style={{ margin: 0 }}>
-          <small>Triangle represents Trending Average</small>
-        </p>
-        <div style={{ padding: "12px 0", width: "100%" }}>
-          <RangeSlider
-            onRangeUpdate={(arr) => setActiveWeeks(arr)}
-            initialActiveWeek={activeWeeks[2]}
-          />
+        <div
+          className="flex flex-column align-center justify-center"
+          style={{
+            padding: 12,
+            maxWidth: 500,
+            margin: "auto",
+          }}
+        >
+          <h2 style={{ margin: 0 }}>Team PPG Trending Data</h2>
+          <h4 className="subtitle" style={{ margin: "12px 0" }}>
+            Select Range to compare to Season Average
+          </h4>
+          <p className="subtitle" style={{ margin: 0 }}>
+            <small>Triangle represents Trending Average</small>
+          </p>
+          <div style={{ padding: "12px 0", width: "100%" }}>
+            <RangeSlider
+              onRangeUpdate={(arr) => setActiveWeeks(arr)}
+              initialActiveWeek={activeWeeks[2]}
+            />
+          </div>
         </div>
+        <Line data={{ datasets: dataset }} options={options} />
       </div>
-      <PairedCoordinateGraph data={{ datasets: dataset }} />
-    </div>
+    </Content>
   );
 };
 
