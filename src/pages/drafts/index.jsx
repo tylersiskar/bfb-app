@@ -152,8 +152,8 @@ const DraftsPage = (props) => {
         >
           <div className="flex flex-column align-center">
             <h2 style={{ marginBottom: 12 }}>
-              PPG vs {variable === "draft_slot" ? "Draft Slot" : "Team"} By
-              Round
+              {year} PPG vs {variable === "draft_slot" ? "Draft Slot" : "Team"}{" "}
+              By Round
             </h2>
           </div>
           <div
