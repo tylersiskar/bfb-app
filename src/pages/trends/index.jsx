@@ -30,6 +30,7 @@ const matchupsUrl =
 const nflStateUrl = "https://api.sleeper.app/v1/state/nfl";
 
 const TrendsPage = () => {
+  const [nflWeek, setNflWeek] = useState(1);
   const [dataset, setDataset] = useState([]);
   const [activeWeeks, setActiveWeeks] = useState([]);
   const [trendingData, setTrendingData] = useState({});
@@ -71,7 +72,10 @@ const TrendsPage = () => {
     let response = await fetch(nflStateUrl);
     let nflState = await response.json();
     let activeWeek = nflState.week;
-    setActiveWeeks([activeWeek - 3, activeWeek - 2, activeWeek - 1]);
+    setNflWeek(activeWeek);
+    if (activeWeek > 3) {
+      setActiveWeeks([activeWeek - 3, activeWeek - 2, activeWeek - 1]);
+    }
   };
 
   const getMatchupData = async () => {
@@ -84,8 +88,8 @@ const TrendsPage = () => {
           dataObj[matchupData.roster_id] += matchupData.points;
         else dataObj[matchupData.roster_id] = matchupData.points;
       });
-      setTrendingData(dataObj);
     });
+    setTrendingData(dataObj);
   };
 
   useEffect(() => {
@@ -139,42 +143,40 @@ const TrendsPage = () => {
       },
     },
   };
-
+  if (nflWeek < 4)
+    return (
+      <Content dark>
+        <h3 style={{ margin: 16 }}>
+          Trending Data is not available until Week 4, please check back then!
+        </h3>
+      </Content>
+    );
   return (
     <Content>
       <div
-        className="w-100"
+        className="flex flex-column align-center justify-center"
         style={{
-          paddingTop: 12,
-          maxWidth: 1200,
-          maxHeight: window.innerWidth > 767 ? "100%" : "100vh",
+          padding: 12,
+          maxWidth: 500,
           margin: "auto",
         }}
       >
-        <div
-          className="flex flex-column align-center justify-center"
-          style={{
-            padding: 12,
-            maxWidth: 500,
-            margin: "auto",
-          }}
-        >
-          <h2 style={{ margin: 0 }}>Team PPG Trending Data</h2>
-          <h4 className="subtitle" style={{ margin: "12px 0" }}>
-            Select Range to compare to Season Average
-          </h4>
-          <p className="subtitle" style={{ margin: 0 }}>
-            <small>Triangle represents Trending Average</small>
-          </p>
-          <div style={{ padding: "12px 0", width: "100%" }}>
-            <RangeSlider
-              onRangeUpdate={(arr) => setActiveWeeks(arr)}
-              initialActiveWeek={activeWeeks[2]}
-            />
-          </div>
+        <h2 style={{ margin: 0 }}>Team PPG Trending Data</h2>
+        <h4 className="subtitle" style={{ margin: "12px 0" }}>
+          Select Range to compare to Season Average
+        </h4>
+        <p className="subtitle" style={{ margin: 0 }}>
+          <small>Triangle represents Trending Average</small>
+        </p>
+        <div style={{ padding: "12px 0", width: "100%" }}>
+          <RangeSlider
+            onRangeUpdate={(arr) => setActiveWeeks(arr)}
+            activeWeek={nflWeek}
+            range={activeWeeks}
+          />
         </div>
-        <Line data={{ datasets: dataset }} options={options} />
       </div>
+      <Line data={{ datasets: dataset }} options={options} />
     </Content>
   );
 };

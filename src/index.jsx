@@ -6,6 +6,7 @@ import App from "./App";
 import DraftsPage from "./pages/drafts";
 import TeamsPage from "./pages/teams";
 import TrendsPage from "./pages/trends";
+import HomePage from "./pages/home";
 
 const router = createBrowserRouter([
   {

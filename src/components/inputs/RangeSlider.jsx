@@ -2,17 +2,16 @@ import React, { useState } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 
-const RangeSlider = ({ rangeProp, onRangeUpdate, initalActiveWeek = 11 }) => {
-  const [range, setRange] = useState([
-    initalActiveWeek - 3,
-    initalActiveWeek - 1,
-  ]);
+const RangeSlider = ({ range, onRangeUpdate, activeWeek }) => {
   const min = 1;
-  const max = initalActiveWeek;
+  const max = activeWeek;
   const step = 1;
+  let marks = {};
+  for (let i = activeWeek; i > 0; i--) {
+    marks[i] = i.toString();
+  }
 
   const handleChange = (arr) => {
-    setRange(arr);
     const [start, end] = arr;
     if (start >= end) {
       throw new Error("Invalid range: start must be less than end.");
@@ -23,17 +22,13 @@ const RangeSlider = ({ rangeProp, onRangeUpdate, initalActiveWeek = 11 }) => {
     );
     onRangeUpdate(expandedRange);
   };
-  let marks = {};
-  for (let i = initalActiveWeek; i > 0; i--) {
-    marks[i] = i.toString();
-  }
   return (
     <Slider
       range
       min={min}
       max={max}
       step={step}
-      value={range}
+      value={[range[0], range[range.length - 1]]}
       onChange={handleChange}
       marks={marks}
     />

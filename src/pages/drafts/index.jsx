@@ -134,176 +134,162 @@ const DraftsPage = (props) => {
   return (
     <Content>
       <div
-        className="w-100"
+        className="flex flex-column align-center justify-center"
         style={{
-          paddingTop: 12,
-          maxWidth: 1200,
-          maxHeight: window.innerWidth > 767 ? "100%" : "100vh",
+          padding: 12,
+          maxWidth: 500,
           margin: "auto",
         }}
       >
+        <div className="flex flex-column align-center">
+          <h2 style={{ marginBottom: 12, textAlign: "center" }}>
+            {year} PPG vs {variable === "draft_slot" ? "Draft Slot" : "Team"} By
+            Round
+          </h2>
+        </div>
         <div
-          className="flex flex-column align-center justify-center"
           style={{
-            padding: 12,
-            maxWidth: 500,
-            margin: "auto",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 4,
+            width: "100%",
+            marginBottom: 8,
           }}
         >
-          <div className="flex flex-column align-center">
-            <h2 style={{ marginBottom: 12 }}>
-              {year} PPG vs {variable === "draft_slot" ? "Draft Slot" : "Team"}{" "}
-              By Round
-            </h2>
-          </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 4,
-              width: "100%",
-              marginBottom: 8,
-            }}
+          <Button
+            onClick={(e) =>
+              setVariable(variable === e.target.id ? null : e.target.id)
+            }
+            id="draft_slot"
+            active={variable === "draft_slot"}
+            secondary
           >
-            <Button
-              onClick={(e) =>
-                setVariable(variable === e.target.id ? null : e.target.id)
-              }
-              id="draft_slot"
-              active={variable === "draft_slot"}
-              secondary
-            >
-              Draft Slot
-            </Button>
-            <Button
-              onClick={(e) =>
-                setVariable(year === e.target.id ? null : e.target.id)
-              }
-              id="roster_id"
-              active={variable === "roster_id"}
-              secondary
-            >
-              Team
-            </Button>
-          </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 2fr",
-              gap: 4,
-              width: "100%",
-              marginBottom: 8,
-            }}
+            Draft Slot
+          </Button>
+          <Button
+            onClick={(e) =>
+              setVariable(year === e.target.id ? null : e.target.id)
+            }
+            id="roster_id"
+            active={variable === "roster_id"}
+            secondary
           >
-            <Button
-              onClick={(e) =>
-                setYear(year === e.target.id ? null : e.target.id)
-              }
-              id="2022"
-              active={year === "2022"}
-            >
-              2022
-            </Button>
-            <Button
-              onClick={(e) =>
-                setYear(year === e.target.id ? null : e.target.id)
-              }
-              id="2023"
-              active={year === "2023"}
-            >
-              2023
-            </Button>
-            <Button onClick={_exportToCSV}>Export {year} Data</Button>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
-              gap: 4,
-              width: "100%",
-              marginBottom: 8,
-            }}
+            Team
+          </Button>
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 2fr",
+            gap: 4,
+            width: "100%",
+            marginBottom: 8,
+          }}
+        >
+          <Button
+            onClick={(e) => setYear(year === e.target.id ? null : e.target.id)}
+            id="2022"
+            active={year === "2022"}
           >
-            {["QB", "RB", "WR", "TE", "K", "DEF"].map((pos) => {
-              return (
-                <Button
-                  onClick={() => {
-                    let newPositions = positions.includes(pos)
-                      ? [...positions.filter((item) => item !== pos)]
-                      : [...positions, pos];
-
-                    setPositions(newPositions);
-                  }}
-                  id={pos}
-                  key={pos}
-                  active={positions.includes(pos)}
-                  secondary
-                >
-                  {pos}
-                </Button>
-              );
-            })}
-          </div>
+            2022
+          </Button>
+          <Button
+            onClick={(e) => setYear(year === e.target.id ? null : e.target.id)}
+            id="2023"
+            active={year === "2023"}
+          >
+            2023
+          </Button>
+          <Button onClick={_exportToCSV}>Export {year} Data</Button>
         </div>
 
-        <Scatter
-          data={{ datasets: dataset }}
-          options={{
-            maintainAspectRatio: window.innerWidth > 767,
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (context) =>
-                    `${context.dataset.label} ${
-                      context.raw.label
-                    }\n PPG: ${context.raw.y.toFixed(2)}\n ${
-                      variable === "draft_slot" ? "Slot" : "Team"
-                    }: ${_getTeamName(context.raw.x)}`,
-                },
-              },
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                title: {
-                  display: true,
-                  text: "PPG",
-                },
-                grid: {
-                  display: false,
-                },
-                max: 25,
-              },
-              x: {
-                min: 0,
-                max: 13,
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                ticks: {
-                  callback: (value) => {
-                    return _getTeamName(value);
-                  },
-                  stepSize: 1,
-                },
-                title: {
-                  display: true,
-                  text: variable === "draft_slot" ? "Draft Slot" : "Team",
-                },
-                grid: {
-                  display: true,
-                },
-              },
-            },
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+            gap: 4,
+            width: "100%",
+            marginBottom: 8,
           }}
-        />
+        >
+          {["QB", "RB", "WR", "TE", "K", "DEF"].map((pos) => {
+            return (
+              <Button
+                onClick={() => {
+                  let newPositions = positions.includes(pos)
+                    ? [...positions.filter((item) => item !== pos)]
+                    : [...positions, pos];
+
+                  setPositions(newPositions);
+                }}
+                id={pos}
+                key={pos}
+                active={positions.includes(pos)}
+                secondary
+              >
+                {pos}
+              </Button>
+            );
+          })}
+        </div>
       </div>
+
+      <Scatter
+        data={{ datasets: dataset }}
+        options={{
+          maintainAspectRatio: window.innerWidth > 767,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context) =>
+                  `${context.dataset.label} ${
+                    context.raw.label
+                  }\n PPG: ${context.raw.y.toFixed(2)}\n ${
+                    variable === "draft_slot" ? "Slot" : "Team"
+                  }: ${_getTeamName(context.raw.x)}`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              border: {
+                width: 2,
+                color: "black",
+              },
+              title: {
+                display: true,
+                text: "PPG",
+              },
+              grid: {
+                display: false,
+              },
+              max: 25,
+            },
+            x: {
+              min: 0,
+              max: 13,
+              border: {
+                width: 2,
+                color: "black",
+              },
+              ticks: {
+                callback: (value) => {
+                  return _getTeamName(value);
+                },
+                stepSize: 1,
+              },
+              title: {
+                display: true,
+                text: variable === "draft_slot" ? "Draft Slot" : "Team",
+              },
+              grid: {
+                display: true,
+              },
+            },
+          },
+        }}
+      />
     </Content>
   );
 };

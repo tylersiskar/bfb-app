@@ -15,3 +15,6 @@ const Header = ({ onMenuClick }) => {
 };
 
 export default Header;
+/*
+      <a style={{ textDecoration: "none" }} href="/"></a> wrap in this when home page is done
+*/

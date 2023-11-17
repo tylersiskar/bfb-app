@@ -29,7 +29,6 @@ let colors = [
 ];
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
-let playerURL = "https://api.sleeper.app/v1/players/nfl";
 let leagueURL = "https://api.sleeper.app/v1/league/934894009888088064/rosters";
 let statsUrl = "https://api.sleeper.app/v1/stats/nfl/regular/2023";
 const TeamsPage = (props) => {
@@ -122,164 +121,159 @@ const TeamsPage = (props) => {
   return (
     <Content>
       <div
-        className="w-100"
+        className="flex flex-column align-center justify-center"
         style={{
-          paddingTop: 12,
-          maxWidth: 1200,
-          maxHeight: window.innerWidth > 767 ? "100%" : "100vh",
+          padding: 12,
+          maxWidth: 500,
           margin: "auto",
         }}
       >
+        <div className="flex flex-column align-center">
+          <h2 style={{ margin: 0 }}>Rank vs PPG by Team</h2>
+          <h4 className="subtitle" style={{ margin: "12px 0" }}>
+            Filter by Position and Team below
+          </h4>
+        </div>
         <div
-          className="flex flex-column align-center justify-center"
           style={{
-            padding: 12,
-            maxWidth: 500,
-            margin: "auto",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr 1fr",
+            gap: 4,
+            width: "100%",
+            marginBottom: 8,
           }}
         >
-          <div className="flex flex-column align-center">
-            <h2 style={{ margin: 0 }}>Rank vs PPG by Team</h2>
-            <h4 className="subtitle" style={{ margin: "12px 0" }}>
-              Filter by Position and Team below
-            </h4>
-          </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr",
-              gap: 4,
-              width: "100%",
-              marginBottom: 8,
-            }}
+          <Button
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
+            id="QB"
+            active={position === "QB"}
           >
-            <Button
-              onClick={(e) =>
-                setPosition(position === e.target.id ? null : e.target.id)
-              }
-              id="QB"
-              active={position === "QB"}
-            >
-              QB
-            </Button>
-            <Button
-              onClick={(e) =>
-                setPosition(position === e.target.id ? null : e.target.id)
-              }
-              id="RB"
-              active={position === "RB"}
-            >
-              RB
-            </Button>
-            <Button
-              onClick={(e) =>
-                setPosition(position === e.target.id ? null : e.target.id)
-              }
-              id="WR"
-              active={position === "WR"}
-            >
-              WR
-            </Button>
-            <Button
-              onClick={(e) =>
-                setPosition(position === e.target.id ? null : e.target.id)
-              }
-              id="TE"
-              active={position === "TE"}
-            >
-              TE
-            </Button>
-          </div>
-          <div
-            className="flex flex-column align-center"
-            style={{
-              width: 150,
-            }}
+            QB
+          </Button>
+          <Button
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
+            id="RB"
+            active={position === "RB"}
           >
-            <label style={{ marginBottom: 4 }}>Select Team</label>
-            <select
-              id="teams"
-              onChange={(e) => {
-                if (e.target.value === "all") {
-                } else {
-                  setDatasets([
-                    {
-                      label: e.target.value,
-                      data: leagueState[e.target.value].map((player) => ({
-                        x: player.x,
-                        y: player.y,
-                        label: player.name,
-                      })),
-                      backgroundColor:
-                        colors[Object.keys(rosters).indexOf(e.target.value)],
-                      pointRadius: 8,
-                    },
-                  ]);
-                }
-                setActiveTeam(e.target.value);
-              }}
-              value={activeTeam}
-            >
-              <option value={"all"}>{"All"}</option>
-
-              {teamOptions.map((r) => (
-                <option value={r} key={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </div>
+            RB
+          </Button>
+          <Button
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
+            id="WR"
+            active={position === "WR"}
+          >
+            WR
+          </Button>
+          <Button
+            onClick={(e) =>
+              setPosition(position === e.target.id ? null : e.target.id)
+            }
+            id="TE"
+            active={position === "TE"}
+          >
+            TE
+          </Button>
         </div>
-        <Scatter
-          data={data}
-          options={{
-            maintainAspectRatio: window.innerWidth > 767,
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (context) =>
-                    `${context.dataset.label} ${
-                      context.raw.label
-                    }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
-                      context.raw.y
-                    }`,
-                },
-              },
-            },
-            scales: {
-              y: {
-                reverse: true,
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: "Rank",
-                },
-                ticks: {
-                  stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
-                },
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                max: position !== "TE" && position !== "QB" ? 125 : 50,
-              },
-              x: {
-                title: {
-                  display: true,
-                  text: "PPG",
-                },
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                gridLines: {
-                  display: false,
-                },
-              },
-            },
+        <div
+          className="flex flex-column align-center"
+          style={{
+            width: 150,
           }}
-        />
+        >
+          <label style={{ marginBottom: 4 }}>Select Team</label>
+          <select
+            id="teams"
+            onChange={(e) => {
+              if (e.target.value === "all") {
+              } else {
+                setDatasets([
+                  {
+                    label: e.target.value,
+                    data: leagueState[e.target.value].map((player) => ({
+                      x: player.x,
+                      y: player.y,
+                      label: player.name,
+                    })),
+                    backgroundColor:
+                      colors[Object.keys(rosters).indexOf(e.target.value)],
+                    pointRadius: 8,
+                  },
+                ]);
+              }
+              setActiveTeam(e.target.value);
+            }}
+            value={activeTeam}
+          >
+            <option value={"all"}>{"All"}</option>
+
+            {teamOptions.map((r) => (
+              <option value={r} key={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+      <Scatter
+        data={data}
+        options={{
+          maintainAspectRatio: window.innerWidth > 767,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context) =>
+                  `${context.dataset.label} ${
+                    context.raw.label
+                  }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
+                    context.raw.y
+                  }`,
+              },
+            },
+          },
+          scales: {
+            y: {
+              reverse: true,
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: "Rank",
+              },
+              ticks: {
+                stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
+              },
+              border: {
+                width: 2,
+                color: "black",
+              },
+              max:
+                position === "TE" || position === "QB"
+                  ? 50
+                  : position === "RB"
+                  ? 100
+                  : 125,
+            },
+            x: {
+              title: {
+                display: true,
+                text: "PPG",
+              },
+              border: {
+                width: 2,
+                color: "black",
+              },
+              gridLines: {
+                display: false,
+              },
+            },
+          },
+        }}
+      />
     </Content>
   );
 };

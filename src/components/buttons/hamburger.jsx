@@ -11,11 +11,12 @@ const HamburgerMenu = (props) => {
   };
   return (
     <button className="menu" style={{ cursor: "pointer" }} onClick={_onClick}>
-      {open ? (
-        <Icon path={mdiClose} title="Menu" size={1} color="white" />
-      ) : (
-        <Icon path={mdiMenu} title="Menu" size={1} color="white" />
-      )}
+      <Icon
+        path={open ? mdiClose : mdiMenu}
+        title="Menu"
+        size={1}
+        color="white"
+      />
     </button>
   );
 };

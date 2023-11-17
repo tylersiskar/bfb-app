@@ -1,12 +1,13 @@
-const Content = ({ children, dark }) => {
+import "./layout.scss";
+const Content = ({ children, dark, home }) => {
   return (
     <div
-      className={
-        dark ? "bg-dark w-100 flex align-center justify-center" : "w-100"
-      }
+      className={dark ? "bg-dark w-100" : "w-100"}
       style={{ padding: 4, boxSizing: "border-box" }}
     >
-      {children}
+      <div className={home ? "w-100 subcontent h-100" : "w-100 subcontent"}>
+        {children}
+      </div>
     </div>
   );
 };

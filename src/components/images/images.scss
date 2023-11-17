@@ -1,0 +1,8 @@
+$light: rgb(206, 206, 206);
+
+.avatar {
+  height: 48px;
+  width: 48px;
+  box-shadow: 0 0 8px $light;
+  border-radius: 50%;
+}
