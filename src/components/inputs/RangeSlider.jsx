@@ -22,6 +22,7 @@ const RangeSlider = ({ range, onRangeUpdate, activeWeek }) => {
     );
     onRangeUpdate(expandedRange);
   };
+
   return (
     <Slider
       range

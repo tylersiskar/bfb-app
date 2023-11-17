@@ -33,13 +33,13 @@ const TrendsPage = () => {
   const [nflWeek, setNflWeek] = useState(1);
   const [dataset, setDataset] = useState([]);
   const [activeWeeks, setActiveWeeks] = useState([]);
-  const [trendingData, setTrendingData] = useState({});
 
-  const fetchRosters = async () => {
+  const _setChartData = async (trendingData, activeWeeksArr) => {
     let response = await fetch(rostersUrl);
     let rostersObj = await response.json();
     let data = rostersObj.map((roster) => {
-      let trendingAverage = trendingData[roster.roster_id] / activeWeeks.length;
+      let trendingAverage =
+        trendingData[roster.roster_id] / activeWeeksArr.length;
       let seasonAverage =
         roster.settings.fpts / (roster.settings.wins + roster.settings.losses);
       return {
@@ -75,29 +75,40 @@ const TrendsPage = () => {
     setNflWeek(activeWeek);
     if (activeWeek > 3) {
       setActiveWeeks([activeWeek - 3, activeWeek - 2, activeWeek - 1]);
+      getMatchupData([activeWeek - 3, activeWeek - 2, activeWeek - 1]);
     }
   };
 
-  const getMatchupData = async () => {
+  const getMatchupData = async (activeWeeksArr) => {
     let dataObj = {};
-    activeWeeks.forEach(async (week) => {
-      let response = await fetch(`${matchupsUrl}/${week}`);
-      let allMatchupData = await response.json();
+
+    async function fetchDataForWeek(week) {
+      const response = await fetch(`${matchupsUrl}/${week}`);
+      const allMatchupData = await response.json();
+
       allMatchupData.forEach((matchupData) => {
-        if (dataObj[matchupData.roster_id])
+        if (dataObj[matchupData.roster_id]) {
           dataObj[matchupData.roster_id] += matchupData.points;
-        else dataObj[matchupData.roster_id] = matchupData.points;
+        } else {
+          dataObj[matchupData.roster_id] = matchupData.points;
+        }
       });
-    });
-    setTrendingData(dataObj);
+    }
+
+    async function processData() {
+      for (const week of activeWeeksArr) {
+        await fetchDataForWeek(week);
+      }
+      _setChartData(dataObj, activeWeeksArr);
+    }
+    processData();
   };
 
-  useEffect(() => {
-    fetchRosters();
-  }, [trendingData]);
-  useEffect(() => {
-    getMatchupData();
-  }, [activeWeeks]);
+  const _onRangeUpdate = (arr) => {
+    setActiveWeeks(arr);
+    getMatchupData(arr);
+  };
+
   useEffect(() => {
     getNflState();
   }, []);
@@ -143,6 +154,7 @@ const TrendsPage = () => {
       },
     },
   };
+
   if (nflWeek < 4)
     return (
       <Content dark>
@@ -170,7 +182,7 @@ const TrendsPage = () => {
         </p>
         <div style={{ padding: "12px 0", width: "100%" }}>
           <RangeSlider
-            onRangeUpdate={(arr) => setActiveWeeks(arr)}
+            onRangeUpdate={_onRangeUpdate}
             activeWeek={nflWeek}
             range={activeWeeks}
           />
