@@ -13,6 +13,9 @@ import usersObj from "../../sleeper/users.json";
 import { find } from "lodash";
 import RangeSlider from "../../components/inputs/RangeSlider";
 import { Content } from "../../components/layout";
+import { useDispatch, useSelector } from "react-redux";
+import { selectTrendingPoints } from "../../api/matchupsSlice";
+import { useGetNflStateQuery } from "../../api/api";
 
 ChartJS.register(
   LinearScale,
@@ -33,6 +36,8 @@ const TrendsPage = () => {
   const [nflWeek, setNflWeek] = useState(1);
   const [dataset, setDataset] = useState([]);
   const [activeWeeks, setActiveWeeks] = useState([]);
+  // const { data: nflState } = useGetNflStateQuery();
+  // const trendingPointsByRoster = useSelector(selectTrendingPoints);
 
   const _setChartData = async (trendingData, activeWeeksArr) => {
     let response = await fetch(rostersUrl);
@@ -150,7 +155,7 @@ const TrendsPage = () => {
           display: true,
           text: "PPG",
         },
-        min: 50,
+        min: 60,
       },
     },
   };

@@ -1,15 +1,12 @@
 import { Content } from "../../components/layout";
-import SummaryCard from "./cards/summary";
+import TrendsCard from "./cards/trends";
 import "./home.scss";
 
 const HomePage = () => {
   return (
     <Content dark home>
-      <h3 style={{ margin: 24 }}>
-        Welcome to the Bad Franchise Builders' Site
-      </h3>
       <div className="home-body">
-        <SummaryCard
+        {/* <SummaryCard
           title="Players"
           subtitle="This should show top players at each position and their team"
           href="/teams"
@@ -18,12 +15,8 @@ const HomePage = () => {
           title="Drafts"
           subtitle="Best Draft pick at each position and their team"
           href="/drafts"
-        />
-        <SummaryCard
-          title="Trends"
-          subtitle="Hottest/Coldest Team"
-          href="/trends"
-        />
+        /> */}
+        <TrendsCard title="Trending Teams" href="/trends" />
       </div>
     </Content>
   );

@@ -7,6 +7,8 @@ import DraftsPage from "./pages/drafts";
 import TeamsPage from "./pages/teams";
 import TrendsPage from "./pages/trends";
 import HomePage from "./pages/home";
+import { store } from "./store";
+import { Provider } from "react-redux";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +17,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <TeamsPage />,
+        element: <HomePage />,
       },
       {
         path: "teams",
@@ -37,6 +39,10 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
+    </Provider>
   </React.StrictMode>
 );

@@ -6,9 +6,9 @@ $light: rgb(206, 206, 206);
   height: 100%;
   padding: 8px;
   border-radius: 8px;
-  box-shadow: 0 0 4px $light;
+  // box-shadow: 0 0 4px $light;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
 }
 
 .text {
@@ -19,4 +19,17 @@ $light: rgb(206, 206, 206);
   text-align: center;
   color: white;
   height: 100%;
+}
+
+.icon-container {
+  background: linear-gradient(
+    to right,
+    #ff7e5f,
+    #feb47b
+  ); /* Your gradient colors */
+  padding: 10px;
+}
+
+.icon-container i {
+  color: transparent; /* Make the icon color transparent to allow the gradient to show through */
 }

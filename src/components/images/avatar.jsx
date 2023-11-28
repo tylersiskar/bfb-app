@@ -1,12 +1,13 @@
 import "./images.scss";
 
-const Avatar = (props) => {
+const Avatar = ({ avatarId }) => {
   return (
     <img
       className="avatar"
       src={
-        props.url ??
-        "https://sleepercdn.com/avatars/8eb8f8bf999945d523f2c4033f70473e"
+        avatarId
+          ? `https://sleepercdn.com/avatars/${avatarId}`
+          : "https://sleepercdn.com/avatars/8eb8f8bf999945d523f2c4033f70473e"
       }
     />
   );
