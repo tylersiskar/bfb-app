@@ -145,9 +145,6 @@ const TrendsPage = () => {
     },
   };
 
-  if (matchupIsLoading) {
-    return <Content dark isLoading={matchupIsLoading}></Content>;
-  }
   if (nflState && nflState.week < 4)
     return (
       <Content dark>
