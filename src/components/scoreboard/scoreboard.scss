@@ -4,6 +4,7 @@ $light: rgb(206, 206, 206);
   overflow: scroll;
   box-shadow: 0 2px 1px -1px $light;
   margin-bottom: 24px;
+  max-width: 1272px;
 }
 
 .scoreboard::-webkit-scrollbar {
