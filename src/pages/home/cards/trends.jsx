@@ -1,19 +1,21 @@
-import { VerticalListItem } from "../../../components/list-items";
-import "./cards.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMatchupsForMultipleWeeks } from "../../../api/matchupsThunks";
-import { useGetNflStateQuery, useGetRostersQuery } from "../../../api/api";
 import { useEffect } from "react";
 import { keyBy, find, minBy, maxBy } from "lodash";
-import { selectTrendingPoints } from "../../../api/matchupsSlice";
 import { Link } from "react-router-dom";
+import { VerticalListItem } from "../../../components/list-items";
+import "./cards.scss";
+import { fetchMatchupsForMultipleWeeks } from "../../../api/matchupsThunks";
+import { useGetNflStateQuery, useGetRostersQuery } from "../../../api/api";
+import { selectTrendingPoints } from "../../../api/matchupsSlice";
 import usersObj from "../../../sleeper/users.json";
+import Icon from "@mdi/react";
+import { mdiFootball } from "@mdi/js";
 
 const TrendsCard = ({ title, subtitle, href }) => {
   const dispatch = useDispatch();
   const { data: nflState } = useGetNflStateQuery();
   const trendingPointsByRoster = useSelector(selectTrendingPoints);
-  const { data: rostersData, isLoading } = useGetRostersQuery();
+  const { data: rostersData } = useGetRostersQuery();
 
   useEffect(() => {
     let activeWeek = nflState ? nflState.week : 0;
@@ -49,8 +51,17 @@ const TrendsCard = ({ title, subtitle, href }) => {
   let trendingUpTeam = maxBy(team, "trendingPts");
   return (
     <div className="summary">
-      <Link className="w-100" style={{ textDecoration: "none" }} to={href}>
-        <h3 style={{ paddingBottom: 12 }}>{title}</h3>
+      <Link
+        className="flex flex-column justify-between w-100 h-100"
+        style={{
+          textDecoration: "none",
+          alignItems: "center",
+        }}
+        to={href}
+      >
+        <h3 className="w-100" style={{ marginBottom: 12 }}>
+          {title}
+        </h3>
         <div
           style={{
             display: "grid",

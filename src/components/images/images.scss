@@ -6,3 +6,14 @@ $light: rgb(206, 206, 206);
   box-shadow: 0 0 8px $light;
   border-radius: 50%;
 }
+
+.avatar-lg {
+  height: 56px;
+  width: 56px;
+  box-shadow: 0 0 8px $light;
+}
+.avatar-sm {
+  height: 16px;
+  width: 16px;
+  box-shadow: 0 0 2px $light;
+}

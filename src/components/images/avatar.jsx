@@ -1,9 +1,9 @@
 import "./images.scss";
 
-const Avatar = ({ avatarId }) => {
+const Avatar = ({ avatarId, size = "lg" }) => {
   return (
     <img
-      className="avatar"
+      className={`avatar avatar-${size}`}
       src={
         avatarId
           ? `https://sleepercdn.com/avatars/${avatarId}`

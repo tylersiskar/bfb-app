@@ -1,0 +1,31 @@
+$light: rgb(206, 206, 206);
+.scoreboard {
+  width: 100vw;
+  overflow: scroll;
+  box-shadow: 0 2px 1px -1px $light;
+  margin-bottom: 24px;
+}
+
+.scoreboard::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+.scoreboard-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  gap: 8;
+}
+
+.scoreboard-row {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+  gap: 8px;
+  padding: 8px;
+}
+
+@media screen and (min-width: 767px) {
+  .scoreboard {
+    justify-content: center;
+  }
+}

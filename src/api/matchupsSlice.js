@@ -32,20 +32,41 @@ export const fetchMatchupsForWeek = createAsyncThunk(
 
 const matchupsSlice = createSlice({
   name: "matchups",
-  initialState: {},
-  reducers: {},
+  initialState: { trendingWeeks: [], points: {} },
+  reducers: {
+    startFetching(state) {
+      return {
+        isLoading: true,
+        trendingWeeks: state.trendingWeeks,
+        points: {},
+      };
+    },
+    resetState(state, action) {
+      return { trendingWeeks: state.trendingWeeks, points: {} };
+    },
+    updateTrendingWeeks: (state, { payload }) => {
+      state.trendingWeeks = payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchMatchupsForWeek.fulfilled, (state, action) => {
       const { week, data } = action.payload;
-      state[week] = data;
+      state.points[week] = data;
+      state.isLoading = false;
     });
   },
 });
 
+const { actions } = matchupsSlice;
+
+export const { updateTrendingWeeks, resetState, startFetching } = actions;
 export default matchupsSlice.reducer;
+
 export const selectMatchupData = (state) => state.matchups;
+export const selectTrendingWeeks = (state) => state.matchups.trendingWeeks;
+export const selectMatchupIsLoading = (state) => state.matchups.isLoading;
 export const selectTrendingPoints = createSelector(
-  (state) => state.matchups,
+  (state) => state.matchups.points,
   (data) => {
     let pointsByRoster = {};
     Object.keys(data).forEach((week) => {

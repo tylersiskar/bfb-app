@@ -9,13 +9,21 @@ import {
   CategoryScale,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import usersObj from "../../sleeper/users.json";
 import { find } from "lodash";
-import RangeSlider from "../../components/inputs/RangeSlider";
-import { Content } from "../../components/layout";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTrendingPoints } from "../../api/matchupsSlice";
-import { useGetNflStateQuery } from "../../api/api";
+import { RangeSlider } from "../../components/inputs";
+import { Content } from "../../components/layout";
+import usersObj from "../../sleeper/users.json";
+import {
+  selectMatchupIsLoading,
+  selectTrendingPoints,
+  selectTrendingWeeks,
+  updateTrendingWeeks,
+} from "../../api/matchupsSlice";
+import { useGetNflStateQuery, useGetRostersQuery } from "../../api/api";
+import { fetchMatchupsForMultipleWeeks } from "../../api/matchupsThunks";
+import Icon from "@mdi/react";
+import { mdiFootball } from "@mdi/js";
 
 ChartJS.register(
   LinearScale,
@@ -26,97 +34,74 @@ ChartJS.register(
   CategoryScale
 );
 
-const rostersUrl =
-  "https://api.sleeper.app/v1/league/934894009888088064/rosters";
-const matchupsUrl =
-  "https://api.sleeper.app/v1/league/934894009888088064/matchups";
-const nflStateUrl = "https://api.sleeper.app/v1/state/nfl";
-
 const TrendsPage = () => {
-  const [nflWeek, setNflWeek] = useState(1);
+  const dispatch = useDispatch();
   const [dataset, setDataset] = useState([]);
-  const [activeWeeks, setActiveWeeks] = useState([]);
-  // const { data: nflState } = useGetNflStateQuery();
-  // const trendingPointsByRoster = useSelector(selectTrendingPoints);
+  const { data: nflState } = useGetNflStateQuery();
+  const trendingWeeks = useSelector(selectTrendingWeeks);
+  const trendingData = useSelector(selectTrendingPoints);
+  const matchupIsLoading = useSelector(selectMatchupIsLoading);
+  const { data: rostersObj } = useGetRostersQuery();
 
-  const _setChartData = async (trendingData, activeWeeksArr) => {
-    let response = await fetch(rostersUrl);
-    let rostersObj = await response.json();
-    let data = rostersObj.map((roster) => {
-      let trendingAverage =
-        trendingData[roster.roster_id] / activeWeeksArr.length;
-      let seasonAverage =
-        roster.settings.fpts / (roster.settings.wins + roster.settings.losses);
-      return {
-        backgroundColor: "white",
-        pointRadius: 5,
-        label: find(usersObj, { user_id: roster.owner_id }).display_name,
-        data: [
-          {
-            x: find(usersObj, { user_id: roster.owner_id }).display_name,
-            y: seasonAverage,
-            label: "Season Average",
-          },
-          {
-            x: find(usersObj, { user_id: roster.owner_id }).display_name,
-            y: trendingAverage,
-            label: "Trending Average",
-          },
-        ],
-        pointStyle: ["circle", "triangle"],
-        borderColor:
-          trendingAverage > seasonAverage
-            ? "rgb(75, 192, 192)"
-            : "rgb(255, 99, 132)",
-      };
-    });
+  const _setChartData = async () => {
+    let data = rostersObj
+      ? rostersObj.map((roster) => {
+          let trendingAverage =
+            trendingData[roster.roster_id] / trendingWeeks.length;
+          let seasonAverage =
+            roster.settings.fpts /
+            (roster.settings.wins + roster.settings.losses);
+          return {
+            backgroundColor: "white",
+            pointRadius: 6,
+            label: find(usersObj, { user_id: roster.owner_id }).display_name,
+            data: [
+              {
+                x: find(usersObj, { user_id: roster.owner_id }).display_name,
+                y: seasonAverage,
+                label: "Season Average",
+              },
+              {
+                x: find(usersObj, { user_id: roster.owner_id }).display_name,
+                y: trendingAverage,
+                label: "Trending Average",
+              },
+            ],
+            pointStyle: ["circle", "triangle"],
+            borderColor:
+              trendingAverage > seasonAverage
+                ? "rgb(75, 192, 192)"
+                : "rgb(255, 99, 132)",
+          };
+        })
+      : [];
     setDataset(data);
   };
 
   const getNflState = async () => {
-    let response = await fetch(nflStateUrl);
-    let nflState = await response.json();
-    let activeWeek = nflState.week;
-    setNflWeek(activeWeek);
-    if (activeWeek > 3) {
-      setActiveWeeks([activeWeek - 3, activeWeek - 2, activeWeek - 1]);
-      getMatchupData([activeWeek - 3, activeWeek - 2, activeWeek - 1]);
+    let activeWeek = nflState && nflState.week;
+    if (activeWeek && activeWeek > 3) {
+      dispatch(
+        updateTrendingWeeks([activeWeek - 3, activeWeek - 2, activeWeek - 1])
+      );
     }
   };
 
-  const getMatchupData = async (activeWeeksArr) => {
-    let dataObj = {};
+  useEffect(() => {
+    if (!matchupIsLoading) _setChartData();
+  }, [trendingData, trendingWeeks, matchupIsLoading]);
 
-    async function fetchDataForWeek(week) {
-      const response = await fetch(`${matchupsUrl}/${week}`);
-      const allMatchupData = await response.json();
-
-      allMatchupData.forEach((matchupData) => {
-        if (dataObj[matchupData.roster_id]) {
-          dataObj[matchupData.roster_id] += matchupData.points;
-        } else {
-          dataObj[matchupData.roster_id] = matchupData.points;
-        }
-      });
-    }
-
-    async function processData() {
-      for (const week of activeWeeksArr) {
-        await fetchDataForWeek(week);
-      }
-      _setChartData(dataObj, activeWeeksArr);
-    }
-    processData();
-  };
+  useEffect(() => {
+    dispatch(fetchMatchupsForMultipleWeeks(trendingWeeks));
+  }, [trendingWeeks]);
 
   const _onRangeUpdate = (arr) => {
-    setActiveWeeks(arr);
-    getMatchupData(arr);
+    dispatch(updateTrendingWeeks(arr));
   };
 
   useEffect(() => {
     getNflState();
-  }, []);
+  }, [nflState, rostersObj]);
 
   const options = {
     maintainAspectRatio: window.innerWidth > 767,
@@ -160,7 +145,10 @@ const TrendsPage = () => {
     },
   };
 
-  if (nflWeek < 4)
+  if (matchupIsLoading) {
+    return <Content dark isLoading={matchupIsLoading}></Content>;
+  }
+  if (nflState && nflState.week < 4)
     return (
       <Content dark>
         <h3 style={{ margin: 16 }}>
@@ -188,8 +176,8 @@ const TrendsPage = () => {
         <div style={{ padding: "12px 0", width: "100%" }}>
           <RangeSlider
             onRangeUpdate={_onRangeUpdate}
-            activeWeek={nflWeek}
-            range={activeWeeks}
+            activeWeek={nflState && nflState.week}
+            range={trendingWeeks}
           />
         </div>
       </div>

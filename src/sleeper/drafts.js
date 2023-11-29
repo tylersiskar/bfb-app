@@ -35,22 +35,4 @@ const useDraft = (year) => {
   return { data, loading, error };
 };
 
-const fetchSingleDraft = async (draftId) => {
-  try {
-    const response = await fetch(
-      draftUrl.replace("<draft_id>", draftId),
-      params
-    ); // Use the URL and parameters to fetch data
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const jsonData = await response.json();
-    setData(jsonData);
-  } catch (error) {
-    setError(error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-export { fetchSingleDraft, useDraft };
+export { useDraft };

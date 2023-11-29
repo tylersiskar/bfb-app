@@ -19,6 +19,12 @@ $yellow: #ffe74c;
   align-items: center;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
+}
 .justify-between {
   justify-content: space-between;
 }
@@ -29,6 +35,9 @@ $yellow: #ffe74c;
 
 .w-100 {
   width: 100%;
+}
+.h-100 {
+  height: 100%;
 }
 
 h1 {
@@ -48,6 +57,10 @@ h3 {
 
 h5 {
   color: $blue;
+  margin: 0;
+}
+
+p {
   margin: 0;
 }
 .subtitle {
