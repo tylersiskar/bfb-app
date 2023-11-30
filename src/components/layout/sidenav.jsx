@@ -5,13 +5,13 @@ const SideNavigation = (props) => {
   return (
     <div className="sidenav">
       <Link className="list-item" to="/teams">
-        <p>Team / Players</p>
+        <h5>Team / Players</h5>
       </Link>
       <Link className="list-item" to="/drafts">
-        <p>Drafts</p>
+        <h5>Drafts</h5>
       </Link>
       <Link className="list-item" to="/trends">
-        <p>Trends</p>
+        <h5>Trends</h5>
       </Link>
     </div>
   );

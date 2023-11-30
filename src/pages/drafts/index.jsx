@@ -142,7 +142,7 @@ const DraftsPage = (props) => {
         }}
       >
         <div className="flex flex-column align-center">
-          <h2 style={{ marginBottom: 12, textAlign: "center" }}>
+          <h2 style={{ margin: 0, marginBottom: 12, textAlign: "center" }}>
             {year} PPG vs {variable === "draft_slot" ? "Draft Slot" : "Team"} By
             Round
           </h2>

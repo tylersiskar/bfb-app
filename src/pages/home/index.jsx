@@ -26,10 +26,10 @@ const HomePage = () => {
   );
 
   return (
-    <Content dark home isLoading={isLoading}>
+    <Content dark home isLoading={isLoading || nflStateIsLoading}>
       <Scoreboard matchups={Object.values(matchupData)} />
       <div className="home-body">
-        <SummaryCard title="Top Players" href="/teams" />
+        <SummaryCard title="Top Players" href="/teams" rosters={data} />
         <TrendsCard title="Trending Teams" href="/trends" />
       </div>
     </Content>

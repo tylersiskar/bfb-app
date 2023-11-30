@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetRostersQuery, useGetStatsQuery } from "../../../api/api";
+import { useGetStatsQuery } from "../../../api/api";
 import players from "../../../sleeper/players.json";
 import usersObj from "../../../sleeper/users.json";
 import { Avatar } from "../../../components/images";
 import { find } from "lodash";
 import "./cards.scss";
 
-const SummaryCard = ({ title, subtitle, href }) => {
+const SummaryCard = ({ title, href, rosters }) => {
   const { data: stats } = useGetStatsQuery("2023");
-  const { data: rosters, isLoading: isRosterLoading } = useGetRostersQuery();
   const [data, setData] = useState();
 
   useEffect(() => {
@@ -37,21 +36,22 @@ const SummaryCard = ({ title, subtitle, href }) => {
     });
     setData(testData);
   }, [rosters, stats]);
-  if (data) {
-    return (
-      <div className="summary">
-        <Link className="w-100" style={{ textDecoration: "none" }} to={href}>
-          <h3 className="lime" style={{ paddingBottom: 24 }}>
-            {title}
-          </h3>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateRows: "1fr 1fr 1fr fr",
-              gap: 16,
-            }}
-          >
-            {["QB", "RB", "WR", "TE"].map((pos) => {
+
+  return (
+    <div className="summary">
+      <Link className="w-100" style={{ textDecoration: "none" }} to={href}>
+        <h3 className="lime" style={{ paddingBottom: 24 }}>
+          {title}
+        </h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateRows: "1fr 1fr 1fr fr",
+            gap: 16,
+          }}
+        >
+          {data &&
+            ["QB", "RB", "WR", "TE"].map((pos) => {
               return (
                 <div
                   style={{
@@ -81,11 +81,10 @@ const SummaryCard = ({ title, subtitle, href }) => {
                 </div>
               );
             })}
-          </div>
-        </Link>
-      </div>
-    );
-  }
+        </div>
+      </Link>
+    </div>
+  );
 };
 
 export default SummaryCard;

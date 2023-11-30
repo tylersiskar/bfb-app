@@ -60,12 +60,12 @@ $yellow: #ffe74c;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  box-shadow: 5px 0 10px rgba(0, 0, 0, 0.3);
   background-color: $dark;
   height: 100%;
   min-height: calc(100vh - 88px);
   position: absolute;
   right: 0px;
+  padding: 0 8px;
   //   padding: 24px 0;
 }
 
@@ -83,26 +83,15 @@ $yellow: #ffe74c;
     width: 100%;
   }
 }
-// .list-item {
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   width: 100%;
-//   padding: 12px 24px;
-//   box-sizing: border-box;
-//   box-shadow: 0px 5px rgba(206, 206, 206, 0.5);
-// }
 
-.list-item p {
+.list-item h5 {
   color: $blue;
-  font-size: 20px;
-  letter-spacing: 0.4px;
   margin: 0;
   transition: all 0.35s ease;
 }
 
 .list-item:hover {
-  p {
+  h5 {
     color: $purple;
   }
 }
@@ -112,19 +101,9 @@ $yellow: #ffe74c;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
-  padding: 12px 24px 16px;
+  padding: 16px;
   box-sizing: border-box;
   background-color: $dark;
   text-decoration: none;
-}
-
-.list-item::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 4px; /* Adjust the height to control the blurring effect */
-  background: linear-gradient(rgba(206, 206, 206, 0.5), transparent);
-  pointer-events: none;
+  border-bottom: 1px solid $light;
 }
