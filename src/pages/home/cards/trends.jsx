@@ -59,7 +59,7 @@ const TrendsCard = ({ title, subtitle, href }) => {
         }}
         to={href}
       >
-        <h3 className="w-100" style={{ marginBottom: 12 }}>
+        <h3 className="w-100 lime" style={{ marginBottom: 12 }}>
           {title}
         </h3>
         <div

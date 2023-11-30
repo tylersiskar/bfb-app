@@ -7,6 +7,10 @@ $light: rgb(206, 206, 206);
   max-width: 1272px;
 }
 
+.scoreboard-row:last-child {
+  border: none;
+}
+
 .scoreboard::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
@@ -22,7 +26,8 @@ $light: rgb(206, 206, 206);
   grid-template-rows: 1fr 1fr;
   height: 100%;
   gap: 8px;
-  padding: 8px;
+  padding: 8px 12px;
+  border-right: 0.5px solid $light;
 }
 
 @media screen and (min-width: 767px) {

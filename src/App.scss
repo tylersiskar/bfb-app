@@ -47,8 +47,15 @@ h1 {
 }
 @media screen and (max-width: 768px) {
   h1 {
+    font-size: 20px;
+  }
+  h3 {
     font-size: 16px;
   }
+}
+
+.lime {
+  color: $lime;
 }
 h3 {
   color: $blue;

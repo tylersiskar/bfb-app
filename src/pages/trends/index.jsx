@@ -22,8 +22,6 @@ import {
 } from "../../api/matchupsSlice";
 import { useGetNflStateQuery, useGetRostersQuery } from "../../api/api";
 import { fetchMatchupsForMultipleWeeks } from "../../api/matchupsThunks";
-import Icon from "@mdi/react";
-import { mdiFootball } from "@mdi/js";
 
 ChartJS.register(
   LinearScale,
@@ -164,7 +162,10 @@ const TrendsPage = () => {
         }}
       >
         <h2 style={{ margin: 0 }}>Team PPG Trending Data</h2>
-        <h4 className="subtitle" style={{ margin: "12px 0" }}>
+        <h4
+          className="subtitle"
+          style={{ margin: "12px 0", textAlign: "center" }}
+        >
           Select Range to compare to Season Average
         </h4>
         <p className="subtitle" style={{ margin: 0 }}>

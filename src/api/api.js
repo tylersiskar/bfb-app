@@ -1,7 +1,7 @@
 // api.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createSelector } from "reselect";
-import users from "../sleeper/users.json";
+import usersObj from "../sleeper/users.json";
 import { find } from "lodash";
 
 const { VITE_LEAGUE_ID: LEAGUE_ID, VITE_SLEEPER_API } = import.meta.env;
@@ -26,7 +26,7 @@ export const api = createApi({
     }),
   }),
 });
-export const selectFullRosters = createSelector(
+export const selectCustomMatchupData = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
   (rawData) => {
     let { matchups, rosters } = rawData;
@@ -35,8 +35,8 @@ export const selectFullRosters = createSelector(
       rosters &&
       matchups.forEach((m) => {
         let currentRoster = find(rosters, { roster_id: m.roster_id });
-        let currentUser = find(users, {
-          user_id: find(rosters, { roster_id: m.roster_id }).owner_id,
+        let currentUser = find(usersObj, {
+          user_id: currentRoster.owner_id,
         });
         if (trueMatchups[m.matchup_id])
           trueMatchups[m.matchup_id] = [
@@ -59,6 +59,7 @@ export const selectFullRosters = createSelector(
     return trueMatchups;
   }
 );
+
 export const {
   useGetRostersQuery,
   useGetStatsQuery,

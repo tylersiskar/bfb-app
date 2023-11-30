@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import players from "../../sleeper/players.json";
-import statsObj from "../../sleeper/stats.json";
 import usersObj from "../../sleeper/users.json";
 import {
   Chart as ChartJS,
@@ -13,6 +12,8 @@ import {
 import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import { Content } from "../../components/layout";
+import { useGetRostersQuery, useGetStatsQuery } from "../../api/api";
+
 let colors = [
   "#bb17bd",
   "#5bce7a",
@@ -29,97 +30,85 @@ let colors = [
 ];
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
-let leagueURL = "https://api.sleeper.app/v1/league/934894009888088064/rosters";
-let statsUrl = "https://api.sleeper.app/v1/stats/nfl/regular/2023";
-const TeamsPage = (props) => {
+const TeamsPage = () => {
   const [leagueState, setLeague] = useState();
-  // active rosters...
-  const [rosters, setRosters] = useState([]);
   const [datasets, setDatasets] = useState([]);
-  const [stats, setStats] = useState(statsObj);
   const [position, setPosition] = useState();
-  const [activeTeam, setActiveTeam] = useState("all");
-  const [teamOptions, setTeamOptions] = useState([]);
+  const { data: stats, isLoading } = useGetStatsQuery("2023");
+  const { data: leagueObject, isLoading: isRosterLoading } =
+    useGetRostersQuery();
 
-  const fetchStats = async () => {
-    let response = await fetch(statsUrl);
-    let statsObj = await response.json();
-    setStats(statsObj);
-  };
-
-  const fetchPlayers = async (pos) => {
+  const fetchPlayers = (pos) => {
     let league = [];
-    let response = await fetch(leagueURL);
-    let leagueObject = await response.json();
-
     let users = {};
     usersObj.forEach((user) => {
       users[user.user_id] = user.display_name;
     });
 
-    leagueObject.forEach((team) => {
-      let teamName = users[team.owner_id];
-      let teamPlayers = team.players.map((player) => {
-        return {
-          name: players[player].full_name,
-          position: players[player].position,
-          pts: stats[player] ? stats[player].pts_half_ppr : 0,
-          gp: stats[player] ? stats[player].gp : 0,
-          ppg: stats[player]
-            ? stats[player].pts_half_ppr / stats[player].gp
-            : 0,
-          x: stats[player] ? stats[player].pts_half_ppr / stats[player].gp : 0,
-          rank: stats[player] ? stats[player].pos_rank_half_ppr : 0,
-          y: stats[player] ? stats[player].pos_rank_half_ppr : 0,
-        };
-      });
-      if (pos) {
-        teamPlayers = teamPlayers.filter((item) => {
-          return item.position === pos;
+    leagueObject &&
+      leagueObject.forEach((team) => {
+        let teamName = users[team.owner_id];
+        let teamPlayers = team.players.map((player) => {
+          return {
+            name: players[player].full_name,
+            position: players[player].position,
+            pts: stats[player] ? stats[player].pts_half_ppr : 0,
+            gp: stats[player] ? stats[player].gp : 0,
+            ppg: stats[player]
+              ? stats[player].pts_half_ppr / stats[player].gp
+              : 0,
+            x: stats[player]
+              ? stats[player].pts_half_ppr / stats[player].gp
+              : 0,
+            rank: stats[player] ? stats[player].pos_rank_half_ppr : 0,
+            y: stats[player] ? stats[player].pos_rank_half_ppr : 0,
+          };
         });
-      }
-
-      league[teamName] = teamPlayers;
-    });
+        if (pos) {
+          teamPlayers = teamPlayers.filter((item) => {
+            return (
+              item.position === pos &&
+              ["K", "DEF"].indexOf(item.position) === -1
+            );
+          });
+        } else {
+          teamPlayers = teamPlayers.filter((item) => {
+            return ["K", "DEF"].indexOf(item.position) === -1;
+          });
+        }
+        league[teamName] = teamPlayers;
+      });
     setLeague(league);
-    setTeamOptions(Object.keys(league));
-    if (activeTeam !== "all") setRosters({ [activeTeam]: league[activeTeam] });
-    else setRosters(league);
   };
 
   useEffect(() => {
-    setDatasets(
-      Object.keys(rosters).map((teamName, i) => {
-        return {
-          label: teamName,
-          data: leagueState[teamName].map((player) => {
-            return {
-              x: player.x,
-              y: player.y,
-              label: player.name,
-            };
-          }),
-          backgroundColor: colors[i],
-          pointRadius: 8,
-          pointHoverRadius: 12,
-        };
-      })
-    );
-  }, [rosters]);
+    if (leagueState) {
+      setDatasets(
+        Object.keys(leagueState).map((teamName, i) => {
+          return {
+            label: teamName,
+            data: leagueState[teamName].map((player) => {
+              return {
+                x: player.x,
+                y: player.y,
+                label: player.name,
+              };
+            }),
+            backgroundColor: colors[i],
+            pointRadius: 8,
+            pointHoverRadius: 12,
+          };
+        })
+      );
+    }
+  }, [leagueState]);
 
   useEffect(() => {
-    fetchPlayers(position);
-  }, [position, activeTeam, stats]);
+    if (stats && leagueObject) fetchPlayers(position);
+  }, [position, stats, leagueObject]);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  let data = {
-    datasets,
-  };
   return (
-    <Content>
+    <Content isLoading={isLoading || isRosterLoading}>
       <div
         className="flex flex-column align-center justify-center"
         style={{
@@ -180,48 +169,9 @@ const TeamsPage = (props) => {
             TE
           </Button>
         </div>
-        <div
-          className="flex flex-column align-center"
-          style={{
-            width: 150,
-          }}
-        >
-          <label style={{ marginBottom: 4 }}>Select Team</label>
-          <select
-            id="teams"
-            onChange={(e) => {
-              if (e.target.value === "all") {
-              } else {
-                setDatasets([
-                  {
-                    label: e.target.value,
-                    data: leagueState[e.target.value].map((player) => ({
-                      x: player.x,
-                      y: player.y,
-                      label: player.name,
-                    })),
-                    backgroundColor:
-                      colors[Object.keys(rosters).indexOf(e.target.value)],
-                    pointRadius: 8,
-                  },
-                ]);
-              }
-              setActiveTeam(e.target.value);
-            }}
-            value={activeTeam}
-          >
-            <option value={"all"}>{"All"}</option>
-
-            {teamOptions.map((r) => (
-              <option value={r} key={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-        </div>
       </div>
       <Scatter
-        data={data}
+        data={{ datasets }}
         options={{
           maintainAspectRatio: window.innerWidth > 767,
           plugins: {

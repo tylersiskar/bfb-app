@@ -5,7 +5,7 @@ const Content = ({ children, dark, home, isLoading }) => {
   return (
     <div
       className={dark ? "bg-dark w-100" : "w-100"}
-      style={{ padding: 4, boxSizing: "border-box" }}
+      style={{ boxSizing: "border-box" }}
     >
       <div
         className={
@@ -20,7 +20,7 @@ const Content = ({ children, dark, home, isLoading }) => {
               path={mdiFootball}
               title="Loading"
               size={3}
-              color={"white"}
+              color={dark ? "white" : "black"}
               spin={3}
             />
           </div>

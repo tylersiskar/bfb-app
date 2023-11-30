@@ -34,7 +34,7 @@ const DraftsPage = (props) => {
     "K",
     "DEF",
   ]);
-  const [year, setYear] = useState("2022");
+  const [year, setYear] = useState("2023");
   const { data, loading, error } = useDraft(year);
   const [dataset, setDataset] = useState([]);
   const [stats, setStats] = useState(statsObj);
