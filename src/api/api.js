@@ -26,6 +26,7 @@ export const api = createApi({
     }),
   }),
 });
+
 export const selectCustomMatchupData = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
   (rawData) => {

@@ -8,8 +8,6 @@ import { fetchMatchupsForMultipleWeeks } from "../../../api/matchupsThunks";
 import { useGetNflStateQuery, useGetRostersQuery } from "../../../api/api";
 import { selectTrendingPoints } from "../../../api/matchupsSlice";
 import usersObj from "../../../sleeper/users.json";
-import Icon from "@mdi/react";
-import { mdiFootball } from "@mdi/js";
 
 const TrendsCard = ({ title, subtitle, href }) => {
   const dispatch = useDispatch();

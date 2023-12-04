@@ -59,6 +59,7 @@ const SummaryCard = ({ title, href, rosters }) => {
                     gridTemplateColumns: "1fr 1.5fr 1fr 0.5fr",
                     gap: 8,
                   }}
+                  key={pos}
                 >
                   <h2
                     className="flex w-100 justify-start"

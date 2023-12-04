@@ -7,6 +7,7 @@ import { groupBy, find } from "lodash";
 import statsObj from "../../sleeper/stats.json";
 import playersObj from "../../sleeper/players.json";
 import usersObj from "../../sleeper/users.json";
+import { useGetRostersQuery } from "../../api/api";
 /**
  *
  * @param {*} props
@@ -38,7 +39,7 @@ const DraftsPage = (props) => {
   const { data, loading, error } = useDraft(year);
   const [dataset, setDataset] = useState([]);
   const [stats, setStats] = useState(statsObj);
-  const [league, setLeague] = useState([]);
+  const { data: league } = useGetRostersQuery();
   const [variable, setVariable] = useState("draft_slot");
 
   const fetchStats = async () => {
@@ -51,15 +52,8 @@ const DraftsPage = (props) => {
     return stats[id].pts_half_ppr / stats[id].gp;
   };
 
-  const fetchLeague = async () => {
-    let response = await fetch(leagueURL);
-    let leagueObject = await response.json();
-    setLeague(leagueObject);
-  };
-
   useEffect(() => {
     fetchStats();
-    fetchLeague();
   }, []);
   useEffect(() => {
     fetchStats();
@@ -131,6 +125,7 @@ const DraftsPage = (props) => {
       return value;
     }
   };
+
   return (
     <Content>
       <div
@@ -168,7 +163,7 @@ const DraftsPage = (props) => {
           </Button>
           <Button
             onClick={(e) =>
-              setVariable(year === e.target.id ? null : e.target.id)
+              setVariable(variable === e.target.id ? null : e.target.id)
             }
             id="roster_id"
             active={variable === "roster_id"}
@@ -275,6 +270,7 @@ const DraftsPage = (props) => {
               },
               ticks: {
                 callback: (value) => {
+                  if (value === 13 || value === 0) return "";
                   return _getTeamName(value);
                 },
                 stepSize: 1,

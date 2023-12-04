@@ -1,10 +1,12 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   selectCustomMatchupData,
   useGetCurrentMatchupsQuery,
   useGetNflStateQuery,
   useGetRostersQuery,
 } from "../../api/api";
+import { fetchTransactionsForYear } from "../../api/transactionsThunks";
 import { Content } from "../../components/layout";
 import Scoreboard from "../../components/scoreboard/scoreboard";
 import SummaryCard from "./cards/summary";
@@ -24,7 +26,13 @@ const HomePage = () => {
   const matchupData = useSelector((state) =>
     selectCustomMatchupData(state, { rosters: data, matchups })
   );
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    nflState &&
+      nflState.week &&
+      dispatch(fetchTransactionsForYear(nflState.week));
+  }, [nflState]);
   return (
     <Content dark home isLoading={isLoading || nflStateIsLoading}>
       <Scoreboard matchups={Object.values(matchupData)} />
