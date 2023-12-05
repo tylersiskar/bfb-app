@@ -9,6 +9,7 @@ import {
 import { fetchTransactionsForYear } from "../../api/transactionsThunks";
 import { Content } from "../../components/layout";
 import Scoreboard from "../../components/scoreboard/scoreboard";
+import AcquisitionCard from "./cards/acquisition";
 import SummaryCard from "./cards/summary";
 import TrendsCard from "./cards/trends";
 import "./home.scss";
@@ -39,6 +40,7 @@ const HomePage = () => {
       <div className="home-body">
         <SummaryCard title="Top Players" href="/teams" rosters={data} />
         <TrendsCard title="Trending Teams" href="/trends" />
+        <AcquisitionCard title="Top Acquisitions" href="/transactions" />
       </div>
     </Content>
   );

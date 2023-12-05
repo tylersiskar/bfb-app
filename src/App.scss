@@ -57,11 +57,19 @@ h1 {
 .lime {
   color: $lime;
 }
+.light {
+  color: white;
+}
+.blue {
+  color: $blue;
+}
 h3 {
   color: $blue;
   margin: 0;
 }
-
+h2 {
+  margin: 0;
+}
 h5 {
   color: $blue;
   margin: 0;
@@ -72,4 +80,9 @@ p {
 }
 .subtitle {
   color: rgb(118 118 118);
+}
+
+.sm {
+  font-size: 12px;
+  margin: 0;
 }

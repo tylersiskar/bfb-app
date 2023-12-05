@@ -1,6 +1,6 @@
 {
   "name": "bfb-app",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "start": "vite --port 3000 --open",
     "dev": "vite --port 3000 --open",

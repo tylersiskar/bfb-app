@@ -48,6 +48,7 @@ const TransactionsPage = (props) => {
     return value;
   };
 
+  /** This needs to be moved to a reducer, and cleaned up to not loop too much.  */
   const createAcquisitonArray = (acquistionArray) => {
     let keyByRosters = keyBy(rosters, "roster_id");
     let rosterOwnerObject = {};
@@ -121,9 +122,8 @@ const TransactionsPage = (props) => {
   }, [trades, rosters, stats, nflState, waivers]);
 
   useEffect(() => {
-    nflState &&
-      nflState.week &&
-      dispatch(fetchTransactionsForYear(nflState.week));
+    if (!nflState || (!!trades && !!waivers)) return; //if no active week yet, or trades and waivers already exist
+    dispatch(fetchTransactionsForYear(nflState.week));
   }, [nflState]);
 
   useEffect(() => {
