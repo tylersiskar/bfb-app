@@ -1,13 +1,10 @@
 import Icon from "@mdi/react";
 import { mdiMenu, mdiClose } from "@mdi/js";
 import "./button.scss";
-import { useState } from "react";
 
-const HamburgerMenu = (props) => {
-  const [open, setOpen] = useState(false);
+const HamburgerMenu = ({ open, onClick }) => {
   const _onClick = () => {
-    props.onClick && props.onClick(!open);
-    setOpen(!open);
+    onClick && onClick(!open);
   };
   return (
     <button className="menu" style={{ cursor: "pointer" }} onClick={_onClick}>

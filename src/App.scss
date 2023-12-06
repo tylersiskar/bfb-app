@@ -86,3 +86,14 @@ p {
   font-size: 12px;
   margin: 0;
 }
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+.nav-open .sidenav {
+  transform: translateX(
+    0px
+  ); /* Slide in the side navigation when nav is open */
+}
