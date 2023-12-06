@@ -179,7 +179,9 @@ const TrendsPage = () => {
           />
         </div>
       </div>
-      <Line data={{ datasets: dataset }} options={options} />
+      <div className="h-100" style={{ paddingBottom: 64 }}>
+        <Line data={{ datasets: dataset }} options={options} />
+      </div>
     </Content>
   );
 };

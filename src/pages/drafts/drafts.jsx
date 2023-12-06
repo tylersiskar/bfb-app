@@ -229,63 +229,65 @@ const DraftsPage = (props) => {
         </div>
       </div>
 
-      <Scatter
-        data={{ datasets: dataset }}
-        options={{
-          maintainAspectRatio: window.innerWidth > 767,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (context) =>
-                  `${context.dataset.label} ${
-                    context.raw.label
-                  }\n PPG: ${context.raw.y.toFixed(2)}\n ${
-                    variable === "draft_slot" ? "Slot" : "Team"
-                  }: ${_getTeamName(context.raw.x)}`,
-              },
-            },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              border: {
-                width: 2,
-                color: "black",
-              },
-              title: {
-                display: true,
-                text: "PPG",
-              },
-              grid: {
-                display: false,
-              },
-              max: 25,
-            },
-            x: {
-              min: 0,
-              max: 13,
-              border: {
-                width: 2,
-                color: "black",
-              },
-              ticks: {
-                callback: (value) => {
-                  if (value === 13 || value === 0) return "";
-                  return _getTeamName(value);
+      <div className="h-100" style={{ paddingBottom: 64 }}>
+        <Scatter
+          data={{ datasets: dataset }}
+          options={{
+            maintainAspectRatio: window.innerWidth > 767,
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (context) =>
+                    `${context.dataset.label} ${
+                      context.raw.label
+                    }\n PPG: ${context.raw.y.toFixed(2)}\n ${
+                      variable === "draft_slot" ? "Slot" : "Team"
+                    }: ${_getTeamName(context.raw.x)}`,
                 },
-                stepSize: 1,
-              },
-              title: {
-                display: true,
-                text: variable === "draft_slot" ? "Draft Slot" : "Team",
-              },
-              grid: {
-                display: true,
               },
             },
-          },
-        }}
-      />
+            scales: {
+              y: {
+                beginAtZero: true,
+                border: {
+                  width: 2,
+                  color: "black",
+                },
+                title: {
+                  display: true,
+                  text: "PPG",
+                },
+                grid: {
+                  display: false,
+                },
+                max: 25,
+              },
+              x: {
+                min: 0,
+                max: 13,
+                border: {
+                  width: 2,
+                  color: "black",
+                },
+                ticks: {
+                  callback: (value) => {
+                    if (value === 13 || value === 0) return "";
+                    return _getTeamName(value);
+                  },
+                  stepSize: 1,
+                },
+                title: {
+                  display: true,
+                  text: variable === "draft_slot" ? "Draft Slot" : "Team",
+                },
+                grid: {
+                  display: true,
+                },
+              },
+            },
+          }}
+        />
+      </div>
     </Content>
   );
 };

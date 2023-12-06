@@ -204,62 +204,64 @@ const TransactionsPage = (props) => {
           </Button>
         </div>
       </div>
-      <Scatter
-        data={{ datasets }}
-        options={{
-          maintainAspectRatio: window.innerWidth > 767,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (context) => {
-                  if (context.raw.week === 1)
-                    return `${context.raw.player} \n Week ${context.raw.week} or OFF\n\n Pos. Rank: ${context.raw.rank} \n\nPPG: ${context.raw.ppg}`;
-                  return `${context.raw.player} \n Week ${context.raw.week}\n\n Pos. Rank: ${context.raw.rank} \n\nPPG: ${context.raw.ppg}`;
+      <div className="h-100" style={{ paddingBottom: 64 }}>
+        <Scatter
+          data={{ datasets }}
+          options={{
+            maintainAspectRatio: window.innerWidth > 767,
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (context) => {
+                    if (context.raw.week === 1)
+                      return `${context.raw.player} \n Week ${context.raw.week} or OFF\n\n Pos. Rank: ${context.raw.rank} \n\nPPG: ${context.raw.ppg}`;
+                    return `${context.raw.player} \n Week ${context.raw.week}\n\n Pos. Rank: ${context.raw.rank} \n\nPPG: ${context.raw.ppg}`;
+                  },
                 },
               },
             },
-          },
-          scales: {
-            y: {
-              reverse: true,
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: "Rank",
-              },
-              ticks: {
-                stepSize: 10,
-              },
-              border: {
-                width: 2,
-                color: "black",
-              },
-            },
-            x: {
-              min: 0,
-              max: 13,
-              border: {
-                width: 2,
-                color: "black",
-              },
-              ticks: {
-                callback: (value) => {
-                  if (value === 13 || value === 0) return "";
-                  return _getTeamName(value);
+            scales: {
+              y: {
+                reverse: true,
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Rank",
                 },
-                stepSize: 1,
+                ticks: {
+                  stepSize: 10,
+                },
+                border: {
+                  width: 2,
+                  color: "black",
+                },
               },
-              title: {
-                display: true,
-                text: "Team",
-              },
-              grid: {
-                display: true,
+              x: {
+                min: 0,
+                max: 13,
+                border: {
+                  width: 2,
+                  color: "black",
+                },
+                ticks: {
+                  callback: (value) => {
+                    if (value === 13 || value === 0) return "";
+                    return _getTeamName(value);
+                  },
+                  stepSize: 1,
+                },
+                title: {
+                  display: true,
+                  text: "Team",
+                },
+                grid: {
+                  display: true,
+                },
               },
             },
-          },
-        }}
-      />
+          }}
+        />
+      </div>
     </Content>
   );
 };

@@ -170,60 +170,62 @@ const TeamsPage = () => {
           </Button>
         </div>
       </div>
-      <Scatter
-        data={{ datasets }}
-        options={{
-          maintainAspectRatio: window.innerWidth > 767,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (context) =>
-                  `${context.dataset.label} ${
-                    context.raw.label
-                  }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
-                    context.raw.y
-                  }`,
+      <div className="h-100" style={{ paddingBottom: 64 }}>
+        <Scatter
+          data={{ datasets }}
+          options={{
+            maintainAspectRatio: window.innerWidth > 767,
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: (context) =>
+                    `${context.dataset.label} ${
+                      context.raw.label
+                    }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
+                      context.raw.y
+                    }`,
+                },
               },
             },
-          },
-          scales: {
-            y: {
-              reverse: true,
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: "Rank",
+            scales: {
+              y: {
+                reverse: true,
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Rank",
+                },
+                ticks: {
+                  stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
+                },
+                border: {
+                  width: 2,
+                  color: "black",
+                },
+                max:
+                  position === "TE" || position === "QB"
+                    ? 50
+                    : position === "RB"
+                    ? 100
+                    : 125,
               },
-              ticks: {
-                stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
+              x: {
+                title: {
+                  display: true,
+                  text: "PPG",
+                },
+                border: {
+                  width: 2,
+                  color: "black",
+                },
+                gridLines: {
+                  display: false,
+                },
               },
-              border: {
-                width: 2,
-                color: "black",
-              },
-              max:
-                position === "TE" || position === "QB"
-                  ? 50
-                  : position === "RB"
-                  ? 100
-                  : 125,
             },
-            x: {
-              title: {
-                display: true,
-                text: "PPG",
-              },
-              border: {
-                width: 2,
-                color: "black",
-              },
-              gridLines: {
-                display: false,
-              },
-            },
-          },
-        }}
-      />
+          }}
+        />
+      </div>
     </Content>
   );
 };
