@@ -122,7 +122,11 @@ const TransactionsPage = (props) => {
   }, [trades, rosters, stats, nflState, waivers]);
 
   useEffect(() => {
-    if (!nflState || (!!trades && !!waivers)) return; //if no active week yet, or trades and waivers already exist
+    if (
+      !nflState ||
+      (Object.keys(trades).length > 0 && Object.keys(waivers).length > 0)
+    )
+      return; //if no active week yet, or trades and waivers already exist
     dispatch(fetchTransactionsForYear(nflState.week));
   }, [nflState]);
 

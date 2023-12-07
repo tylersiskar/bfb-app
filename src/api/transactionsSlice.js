@@ -54,26 +54,32 @@ export default transactionsSlice.reducer;
 
 export const selectTransactions = (state) => state.transactions.data;
 
-export const selectWaiverPickups = (state) => {
-  let transactions = state.transactions.data;
-  let waiverObj = {};
-  if (transactions) {
-    Object.keys(transactions).forEach((week) => {
-      waiverObj[week] = transactions[week].filter(
-        (obj) => obj.type === "waiver"
-      );
-    });
+export const selectWaiverPickups = createSelector(
+  [selectTransactions],
+  (transactions) => {
+    let waiverObj = {};
+    if (transactions) {
+      Object.keys(transactions).forEach((week) => {
+        waiverObj[week] = transactions[week].filter(
+          (obj) => obj.type === "waiver"
+        );
+      });
+    }
+    return waiverObj;
   }
-  return waiverObj;
-};
+);
 
-export const selectTrades = (state) => {
-  let transactions = state.transactions.data;
-  let tradeObj = {};
-  if (transactions) {
-    Object.keys(transactions).forEach((week) => {
-      tradeObj[week] = transactions[week].filter((obj) => obj.type === "trade");
-    });
+export const selectTrades = createSelector(
+  [selectTransactions],
+  (transactions) => {
+    let tradeObj = {};
+    if (transactions) {
+      Object.keys(transactions).forEach((week) => {
+        tradeObj[week] = transactions[week].filter(
+          (obj) => obj.type === "trade"
+        );
+      });
+    }
+    return tradeObj;
   }
-  return tradeObj;
-};
+);

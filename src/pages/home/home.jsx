@@ -6,6 +6,7 @@ import {
   useGetNflStateQuery,
   useGetRostersQuery,
 } from "../../api/api";
+import { selectTrades, selectWaiverPickups } from "../../api/transactionsSlice";
 import { fetchTransactionsForYear } from "../../api/transactionsThunks";
 import { Content } from "../../components/layout";
 import Scoreboard from "../../components/scoreboard/scoreboard";
@@ -15,6 +16,7 @@ import TrendsCard from "./cards/trends";
 import "./home.scss";
 
 const HomePage = () => {
+  const dispatch = useDispatch();
   const { data, isLoading } = useGetRostersQuery();
   const { data: nflState, isLoading: nflStateIsLoading } =
     useGetNflStateQuery();
@@ -24,15 +26,19 @@ const HomePage = () => {
       skip: nflStateIsLoading,
     }
   );
+  const trades = useSelector(selectTrades);
+  const waivers = useSelector(selectWaiverPickups);
   const matchupData = useSelector((state) =>
     selectCustomMatchupData(state, { rosters: data, matchups })
   );
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    nflState &&
-      nflState.week &&
-      dispatch(fetchTransactionsForYear(nflState.week));
+    if (
+      !nflState ||
+      (Object.keys(trades).length > 0 && Object.keys(waivers).length > 0)
+    )
+      return; //if no active week yet, or trades and waivers already exist
+    dispatch(fetchTransactionsForYear(nflState.week));
   }, [nflState]);
   return (
     <Content dark home isLoading={isLoading || nflStateIsLoading}>

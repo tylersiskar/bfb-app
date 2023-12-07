@@ -94,72 +94,70 @@ const AcquisitionCard = ({ href, title }) => {
     setTopWaiverAdd(topWaiverAdd);
   }, [trades, waivers]);
   return (
-    <div style={{ paddingBottom: 32 }}>
-      <div className="summary">
-        <Link
-          className="flex flex-column justify-between w-100 h-100"
+    <div className="summary">
+      <Link
+        className="flex flex-column  w-100 h-100"
+        style={{
+          textDecoration: "none",
+          alignItems: "center",
+        }}
+        to={href}
+      >
+        <h3 className="w-100 lime" style={{ marginBottom: 24 }}>
+          {title}
+        </h3>
+        <div
+          className="w-100"
           style={{
-            textDecoration: "none",
-            alignItems: "center",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 12,
           }}
-          to={href}
         >
-          <h3 className="w-100 lime" style={{ marginBottom: 24 }}>
-            {title}
-          </h3>
-          <div
-            className="w-100"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 12,
-            }}
-          >
-            <div className="flex flex-column align-center w-100">
-              <div style={{ paddingBottom: 16 }}>
-                <h2 className="light">Trade</h2>
-              </div>
-              {topTrade && (
-                <>
-                  <Avatar avatarId={topTrade?.avatarId} />
-                  <div style={{ padding: "16px 0 8px" }}>
-                    <h5>{topTrade.name}</h5>
-                  </div>
-                  <div style={{ paddingBottom: 8 }}>
-                    <p className="blue sm">
-                      {topTrade.position} · {topTrade.nflTeam}
-                    </p>
-                  </div>
-                  <div style={{ paddingBottom: 8 }}>
-                    <p className="blue sm">{topTrade.team}</p>
-                  </div>
-                </>
-              )}
+          <div className="flex flex-column align-center w-100">
+            <div style={{ paddingBottom: 16 }}>
+              <h2 className="light">Trade</h2>
             </div>
-            <div className="flex flex-column align-center w-100">
-              <div style={{ paddingBottom: 16 }}>
-                <h2 className="light">Waiver</h2>
-              </div>
-              {topWaiver && (
-                <>
-                  <Avatar avatarId={topWaiver?.avatarId} />
-                  <div style={{ padding: "16px 0 8px" }}>
-                    <h5>{topWaiver.name}</h5>
-                  </div>
-                  <div style={{ paddingBottom: 8 }}>
-                    <p className="blue sm">
-                      {topWaiver.position} · {topWaiver.nflTeam}
-                    </p>
-                  </div>
-                  <div style={{ paddingBottom: 8 }}>
-                    <p className="blue sm">{topWaiver.team}</p>
-                  </div>
-                </>
-              )}
-            </div>
+            {topTrade && (
+              <>
+                <Avatar avatarId={topTrade?.avatarId} />
+                <div style={{ padding: "16px 0 8px" }}>
+                  <h5>{topTrade.name}</h5>
+                </div>
+                <div style={{ paddingBottom: 8 }}>
+                  <p className="blue sm">
+                    {topTrade.position} · {topTrade.nflTeam}
+                  </p>
+                </div>
+                <div style={{ paddingBottom: 8 }}>
+                  <p className="blue sm">{topTrade.team}</p>
+                </div>
+              </>
+            )}
           </div>
-        </Link>
-      </div>
+          <div className="flex flex-column align-center w-100">
+            <div style={{ paddingBottom: 16 }}>
+              <h2 className="light">Waiver</h2>
+            </div>
+            {topWaiver && (
+              <>
+                <Avatar avatarId={topWaiver?.avatarId} />
+                <div style={{ padding: "16px 0 8px" }}>
+                  <h5>{topWaiver.name}</h5>
+                </div>
+                <div style={{ paddingBottom: 8 }}>
+                  <p className="blue sm">
+                    {topWaiver.position} · {topWaiver.nflTeam}
+                  </p>
+                </div>
+                <div style={{ paddingBottom: 8 }}>
+                  <p className="blue sm">{topWaiver.team}</p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </Link>
     </div>
   );
 };
