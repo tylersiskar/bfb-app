@@ -2,8 +2,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 32px;
-  margin: 0 24px 32px;
-  padding-bottom: 32px;
 }
 
 @media screen and (max-width: 767px) {
@@ -11,4 +9,24 @@
     display: grid;
     grid-template-columns: auto;
   }
+}
+
+.bottom-drawer {
+  position: absolute;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  z-index: 999;
+  background-color: #1f2126;
+  transition: all 0.35s ease;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.half-expanded {
+  height: 50vh;
+}
+
+.expanded {
+  height: 70vh;
 }

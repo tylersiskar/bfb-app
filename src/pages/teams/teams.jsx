@@ -170,7 +170,7 @@ const TeamsPage = () => {
           </Button>
         </div>
       </div>
-      <div className="h-100" style={{ paddingBottom: 64 }}>
+      <div className="h-100" style={{ paddingBottom: 64, height: 600 }}>
         <Scatter
           data={{ datasets }}
           options={{

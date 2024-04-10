@@ -33,8 +33,6 @@ const AcquisitionCard = ({ href, title }) => {
 
   useEffect(() => {
     if (!trades || !waivers || !rosters || !stats) return;
-    // let topTradeAdd =
-    // console.log({ trades, waivers });
     let keyByRosters = keyBy(rosters, "roster_id");
     let rosterOwnerObject = {};
     rosters.forEach((r) => {

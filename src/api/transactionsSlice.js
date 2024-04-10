@@ -4,9 +4,6 @@ import {
   createAsyncThunk,
   createSelector,
 } from "@reduxjs/toolkit";
-import users from "../sleeper/users.json";
-import players from "../sleeper/players.json";
-import { groupBy, keyBy } from "lodash";
 
 export const fetchTransactionsForWeek = createAsyncThunk(
   "matchups/fetchTransactionsForWeek",

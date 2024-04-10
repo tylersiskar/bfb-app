@@ -2,9 +2,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createSelector } from "reselect";
 import usersObj from "../sleeper/users.json";
-import { find } from "lodash";
+import { find, reverse } from "lodash";
+import { draftsObject, leaguesObject } from "../sleeper/constants";
 
-const { VITE_LEAGUE_ID: LEAGUE_ID, VITE_SLEEPER_API } = import.meta.env;
+const { VITE_SLEEPER_API } = import.meta.env;
+let LEAGUE_ID = leaguesObject["2024"];
 
 export const api = createApi({
   reducerPath: "api",
@@ -24,8 +26,56 @@ export const api = createApi({
     getCurrentMatchups: builder.query({
       query: (week) => `league/${LEAGUE_ID}/matchups/${week}`,
     }),
+    getDraftDetails: builder.query({
+      query: (season) => `draft/${draftsObject[season]}/picks`,
+    }),
+    getTradedPicks: builder.query({
+      query: (season) => `league/${leaguesObject[season]}/traded_picks`,
+    }),
+    getPlayers: builder.query({
+      query: () => `players/nfl`,
+    }),
   }),
 });
+
+export const selectDraftOrder = createSelector(
+  (state, rawData) => rawData, // Pass the raw data as an argument
+  (rawData) => {
+    let { standings, tradedPicks, rosters } = rawData;
+    if (!standings || !standings.length) return [];
+    let ROUNDS = 8;
+    let copyStandings = [...standings];
+    let reverseStandings = reverse(copyStandings);
+    let draftOrder = []; // array of objects { round, pick, team }
+    for (let i = 1; i <= ROUNDS; i++) {
+      draftOrder.push(
+        reverseStandings.map((teamSlot, pick) => {
+          // if this pick has been traded , set draft slot to owner of pick, else set to current team
+          let tradedPick = find(tradedPicks, {
+            roster_id: teamSlot.roster_id,
+            round: i,
+          });
+          //need to get owner name of
+          return !!tradedPick
+            ? {
+                team: find(standings, { roster_id: tradedPick.owner_id }).owner,
+                roster_id: find(standings, { roster_id: tradedPick.owner_id })
+                  .roster_id,
+                round: i,
+                pick: pick + 1,
+              }
+            : {
+                team: teamSlot.owner,
+                roster_id: teamSlot.roster_id,
+                round: i,
+                pick: pick + 1,
+              };
+        })
+      );
+    }
+    return draftOrder;
+  }
+);
 
 export const selectCustomMatchupData = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
@@ -66,4 +116,7 @@ export const {
   useGetStatsQuery,
   useGetNflStateQuery,
   useGetCurrentMatchupsQuery,
+  useGetDraftDetailsQuery,
+  useGetTradedPicksQuery,
+  useGetPlayersQuery,
 } = api;

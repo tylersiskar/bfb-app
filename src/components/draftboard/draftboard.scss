@@ -1,0 +1,70 @@
+$lime: #54d846;
+$purple: #ce85ff;
+$yellow: #ffe74c;
+$blue: #35a7ff;
+$orange: #ffc335;
+$red: #ff3f5d;
+
+.card {
+  border-radius: 6px;
+  background-color: #16181d;
+  box-shadow: 0 0 2px rgba(204, 204, 204, 0.6);
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  box-sizing: border-box;
+  align-items: flex-start;
+  justify-content: space-between;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  aspect-ratio: 4/3;
+  width: 100%;
+  h6 {
+    margin: 0px;
+  }
+}
+
+.selected {
+  box-shadow: 0 0 4px $orange;
+}
+.draftboard {
+  display: flex;
+  flex-direction: column;
+  margin: 4px 0px;
+  padding: 4px 24px;
+  box-sizing: border-box;
+  width: 100vw;
+  overflow-x: auto;
+}
+
+.WR {
+  background-color: $yellow;
+}
+
+.QB {
+  background-color: $red;
+}
+
+.RB {
+  background-color: $lime;
+}
+.TE {
+  background-color: $purple;
+}
+
+.round {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  // border-bottom: 1px solid #333;
+  // .card:nth-child(3) {
+  //   background-color: yellow;
+  // }
+}
