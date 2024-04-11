@@ -32,9 +32,6 @@ export const api = createApi({
     getTradedPicks: builder.query({
       query: (season) => `league/${leaguesObject[season]}/traded_picks`,
     }),
-    getPlayers: builder.query({
-      query: () => `players/nfl`,
-    }),
   }),
 });
 
@@ -118,5 +115,4 @@ export const {
   useGetCurrentMatchupsQuery,
   useGetDraftDetailsQuery,
   useGetTradedPicksQuery,
-  useGetPlayersQuery,
 } = api;

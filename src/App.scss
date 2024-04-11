@@ -146,14 +146,19 @@ p {
 }
 .p-1 {
   padding: 4px;
+  box-sizing: border-box;
 }
 
 .p-2 {
   padding: 8px;
+  box-sizing: border-box;
 }
 
 .pb-1 {
   padding-bottom: 4px;
+}
+.pr-1 {
+  padding-right: 4px;
 }
 
 .content-wrapper {
@@ -175,4 +180,7 @@ p {
 }
 .bg-lime {
   background-color: $lime;
+}
+.bg-gray {
+  background-color: $light;
 }

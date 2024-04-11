@@ -4,6 +4,7 @@ $yellow: #ffe74c;
 $blue: #35a7ff;
 $orange: #ffc335;
 $red: #ff3f5d;
+$light: rgb(206, 206, 206);
 
 .card {
   border-radius: 6px;
@@ -53,6 +54,14 @@ $red: #ff3f5d;
 }
 .TE {
   background-color: $purple;
+}
+
+.K {
+  background-color: $orange;
+}
+
+.DEF {
+  background-color: $light;
 }
 
 .round {

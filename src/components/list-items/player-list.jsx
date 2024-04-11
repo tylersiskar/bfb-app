@@ -1,57 +1,17 @@
 import { Button } from "../buttons";
 import playersArr from "../../sleeper/playersArray.json";
 import { useSelector } from "react-redux";
-import { selectDraftedPlayers } from "../../api/draftSlice";
+import { selectActiveSlot, selectDraftedPlayers } from "../../api/draftSlice";
 import { find } from "lodash";
 
 const PlayerList = ({
-  players = [
-    {
-      first_name: "Malik",
-      last_name: "Nabers",
-      position: "WR",
-      team: "BUF",
-    },
-    {
-      first_name: "Marvin",
-      last_name: "Harrison Jr.",
-      position: "WR",
-      team: "ARI",
-    },
-    {
-      first_name: "Trey",
-      last_name: "Benson",
-      position: "RB",
-      team: "NE",
-    },
-    {
-      first_name: "Caleb",
-      last_name: "Williams",
-      position: "QB",
-      team: "CHI",
-    },
-    {
-      first_name: "Brock",
-      last_name: "Bowers",
-      position: "TE",
-      team: "NYJ",
-    },
-    {
-      first_name: "Rome",
-      last_name: "Odunze",
-      position: "WR",
-      team: "NYG",
-    },
-    {
-      first_name: "Brian",
-      last_name: "Thomas Jr.",
-      position: "WR",
-      team: "TEN",
-    },
-  ],
+  players = [],
   scrollHeight = "50vh",
   onDraft,
+  page,
+  setPage,
 }) => {
+  const activeSlot = useSelector(selectActiveSlot);
   const draftedPlayers = useSelector(selectDraftedPlayers);
   let filteredPlayers = players.filter(
     (player) =>
@@ -101,9 +61,23 @@ const PlayerList = ({
             key={`${player.first_name}_${player.last_name}`}
           >
             <Button
-              style={{ borderColor: "#54d846", height: 32 }}
-              className="bg-lime p-1"
-              onClick={() => onDraft(player)}
+              style={{
+                borderColor:
+                  !activeSlot || Object.keys(activeSlot).length === 0
+                    ? "rgb(206, 206, 206)"
+                    : "#54d846",
+                height: 32,
+              }}
+              className={
+                !activeSlot || Object.keys(activeSlot).length === 0
+                  ? "bg-gray p-1"
+                  : "bg-lime p-1"
+              }
+              onClick={() =>
+                !(!activeSlot || Object.keys(activeSlot).length === 0) &&
+                onDraft(player)
+              }
+              disabled={!activeSlot || Object.keys(activeSlot).length === 0}
             >
               <p className="sm dark bold">DRAFT</p>
             </Button>
@@ -116,10 +90,23 @@ const PlayerList = ({
                 </p>
               </div>
             </div>
-            <p className="light">N/A</p>
-            <p className="light">N/A</p>
+            <p className="light">{player.pos_rank_half_ppr}</p>
+            <p className="light">{parseFloat(player.ppg).toFixed(2)}</p>
           </div>
         ))}
+        <div className="flex align-center justify-between w-100 p-2">
+          <div style={{ width: 50 }}>
+            <Button active onClick={() => setPage(page - 1)}>
+              Prev
+            </Button>
+          </div>
+          <p className="light">Page: {page}</p>
+          <div style={{ width: 50 }}>
+            <Button active onClick={() => setPage(page + 1)}>
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
     </>
   );

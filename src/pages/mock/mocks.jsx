@@ -11,7 +11,7 @@ import "../home/home.scss";
 import { fetchStandings, selectStandings } from "../../api/standingsSlice";
 import Draftboard from "../../components/draftboard/draftboard";
 import { mdiArrowDownThin, mdiArrowUpThin } from "@mdi/js";
-import { IconButton } from "../../components/buttons";
+import { Button, IconButton } from "../../components/buttons";
 import { PlayerList } from "../../components/list-items";
 import {
   selectActiveSlot,
@@ -19,18 +19,21 @@ import {
   updateDraftedPlayers,
   setActiveSlot,
 } from "../../api/draftSlice";
+import { useGetPlayersQuery } from "../../api/bfbApi";
 
 const MockDraftCenter = () => {
   const dispatch = useDispatch();
   const [expandList, setExpandList] = useState(false);
   const [roundIdx, setRoundIdx] = useState(0);
   const [pickIdx, setPickIdx] = useState(0);
+  const [page, setPage] = useState(1);
   const { data: tradedPicks } = useGetTradedPicksQuery("2024");
   const { data, isLoading } = useGetRostersQuery();
   const { data: nflState } = useGetNflStateQuery();
   const activeSlot = useSelector(selectActiveSlot);
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
+  const { data: players } = useGetPlayersQuery({ page });
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
       standings,
@@ -106,10 +109,12 @@ const MockDraftCenter = () => {
                 {!!Object.keys(activeSlot).length && (
                   <div className="flex flex-column">
                     <h6 className="pb-1">Active Draft Selection</h6>
-                    <p className="light pb-1">{activeSlot.team}</p>
-                    <p className="light pb-1">
-                      {activeSlot.round}.{activeSlot.pick}
-                    </p>
+                    <div className="flex align-end">
+                      <p className="light pb-1 pr-1 bold">{activeSlot.team} </p>
+                      <p className="light sm pb-1">
+                        Pick {activeSlot.round}.{activeSlot.pick}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -131,7 +136,10 @@ const MockDraftCenter = () => {
             </div>
             <PlayerList
               onDraft={_onDraft}
+              players={players}
               scrollHeight={expandList ? "70vh" : activeSlot ? "50vh" : "170px"}
+              page={page}
+              setPage={setPage}
             />
           </div>
         </div>
