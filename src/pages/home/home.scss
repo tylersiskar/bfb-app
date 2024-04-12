@@ -16,7 +16,7 @@
   bottom: 0;
   height: 50px;
   width: 100%;
-  z-index: 999;
+  z-index: 98;
   background-color: #1f2126;
   transition: all 0.35s ease;
   padding: 16px;
@@ -24,9 +24,9 @@
 }
 
 .half-expanded {
-  height: 50vh;
+  height: 60vh;
 }
 
 .expanded {
-  height: 70vh;
+  height: 75vh;
 }

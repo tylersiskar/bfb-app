@@ -36,7 +36,7 @@ $yellow: #ffe74c;
 .primary-active {
   background-color: $blue;
   border: 2px solid $blue;
-  color: $dark;
+  color: $dark !important;
   border-radius: 4px;
   height: 36px;
   padding: 8px;
@@ -60,4 +60,21 @@ $yellow: #ffe74c;
 .icon-button {
   background-color: transparent;
   border-width: 0px;
+  display: flex;
+}
+
+.button-sm {
+  height: 24px;
+  border-radius: 4px;
+  padding: 0px;
+}
+.inverted {
+  border: 2px solid $blue;
+  color: $blue;
+  font-weight: bold;
+}
+
+.button-disabled {
+  background-color: $light;
+  border-color: $light;
 }

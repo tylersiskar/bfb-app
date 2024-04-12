@@ -19,7 +19,7 @@ import {
   updateDraftedPlayers,
   setActiveSlot,
 } from "../../api/draftSlice";
-import { useGetPlayersQuery } from "../../api/bfbApi";
+import { selectNonKeepers, useGetPlayersQuery } from "../../api/bfbApi";
 
 const MockDraftCenter = () => {
   const dispatch = useDispatch();
@@ -27,13 +27,15 @@ const MockDraftCenter = () => {
   const [roundIdx, setRoundIdx] = useState(0);
   const [pickIdx, setPickIdx] = useState(0);
   const [page, setPage] = useState(1);
+  const [position, setPosition] = useState();
+  const [rookies, setRookies] = useState("");
   const { data: tradedPicks } = useGetTradedPicksQuery("2024");
   const { data, isLoading } = useGetRostersQuery();
   const { data: nflState } = useGetNflStateQuery();
   const activeSlot = useSelector(selectActiveSlot);
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
-  const { data: players } = useGetPlayersQuery({ page });
+  const { data: players } = useGetPlayersQuery({ page, position, rookies });
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
       standings,
@@ -41,6 +43,10 @@ const MockDraftCenter = () => {
       rosters: data,
     })
   );
+  const nonKeepers = useSelector((state) =>
+    selectNonKeepers(state, { rosters: data, players })
+  );
+  console.log({ nonKeepers });
 
   useEffect(() => {
     dispatch(fetchStandings());
@@ -65,11 +71,30 @@ const MockDraftCenter = () => {
     }
   };
 
+  const _setPosition = (e) => {
+    if (position === e.target.id) setPosition();
+    else setPosition(e.target.id);
+  };
+
   return (
     <Content dark isLoading={isLoading}>
       <div className="home-body">
         <div className="d-flex flex-column">
-          <h2 style={{ padding: "0 24px" }}> {nflState?.season} Draft Order</h2>
+          <div className="flex justify-between" style={{ padding: "0 16px" }}>
+            <h2> {nflState?.season} Draft Order</h2>
+            {draftedPlayers.length > 0 && (
+              <div>
+                <Button
+                  className="bg-lime button-sm flex align-center p-1"
+                  style={{
+                    borderColor: "#54d846",
+                  }}
+                >
+                  <p className="sm dark bold">SUBMIT MOCK</p>
+                </Button>
+              </div>
+            )}
+          </div>
           <Draftboard
             standings={standings}
             rosters={data}
@@ -88,7 +113,7 @@ const MockDraftCenter = () => {
               padding: "8px 16px",
               marginTop: 8,
               width: "100%",
-              height: "50vh",
+              height: "60vh",
               overflowY: "auto",
               boxSizing: "border-box",
             }}
@@ -134,10 +159,51 @@ const MockDraftCenter = () => {
                 }}
               />
             </div>
+            <div className="flex my-2">
+              <Button
+                className="button-sm inverted mr-2"
+                id="QB"
+                onClick={_setPosition}
+                active={position === "QB"}
+              >
+                QB
+              </Button>
+              <Button
+                className="button-sm inverted mr-2"
+                id="RB"
+                onClick={_setPosition}
+                active={position === "RB"}
+              >
+                RB
+              </Button>
+              <Button
+                className="button-sm inverted mr-2"
+                id="WR"
+                onClick={_setPosition}
+                active={position === "WR"}
+              >
+                WR
+              </Button>
+              <Button
+                className="button-sm inverted mr-2"
+                id="TE"
+                onClick={_setPosition}
+                active={position === "TE"}
+              >
+                TE
+              </Button>
+              <Button
+                className="button-sm inverted"
+                onClick={() => setRookies(!rookies ? "true" : "")}
+                active={!!rookies}
+              >
+                Rookies
+              </Button>
+            </div>
             <PlayerList
               onDraft={_onDraft}
-              players={players}
-              scrollHeight={expandList ? "70vh" : activeSlot ? "50vh" : "170px"}
+              players={nonKeepers}
+              scrollHeight={expandList ? "75vh" : activeSlot ? "60vh" : "170px"}
               page={page}
               setPage={setPage}
             />

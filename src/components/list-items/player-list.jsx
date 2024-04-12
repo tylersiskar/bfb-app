@@ -6,7 +6,7 @@ import { find } from "lodash";
 
 const PlayerList = ({
   players = [],
-  scrollHeight = "50vh",
+  scrollHeight = "60vh",
   onDraft,
   page,
   setPage,
@@ -47,12 +47,12 @@ const PlayerList = ({
       <div
         style={{
           overflow: "auto",
-          height: `calc(${scrollHeight} - 120px)`,
+          height: `calc(${scrollHeight} - 136px)`,
         }}
       >
         {filteredPlayers?.map((player) => (
           <div
-            className="p-2 align-center"
+            className="p-1 align-center"
             style={{
               display: "grid",
               gridTemplateColumns: "0.5fr 1fr 0.5fr 0.5fr",
@@ -94,15 +94,26 @@ const PlayerList = ({
             <p className="light">{parseFloat(player.ppg).toFixed(2)}</p>
           </div>
         ))}
-        <div className="flex align-center justify-between w-100 p-2">
+        <div className="flex align-center justify-center w-100 p-2">
           <div style={{ width: 50 }}>
-            <Button active onClick={() => setPage(page - 1)}>
+            <Button
+              className="button-sm"
+              active
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
               Prev
             </Button>
           </div>
-          <p className="light">Page: {page}</p>
+          <p className="light" style={{ margin: "0 8px" }}>
+            Page: {page}
+          </p>
           <div style={{ width: 50 }}>
-            <Button active onClick={() => setPage(page + 1)}>
+            <Button
+              className="button-sm"
+              active
+              onClick={() => setPage(page + 1)}
+            >
               Next
             </Button>
           </div>
