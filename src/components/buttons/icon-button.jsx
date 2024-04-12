@@ -1,5 +1,6 @@
 import Icon from "@mdi/react";
 import "./button.scss";
+import { Link } from "react-router-dom";
 
 const IconButton = ({
   onClick,
@@ -7,11 +8,18 @@ const IconButton = ({
   iconColor = "white",
   iconSize = 1,
   title = "Arrow",
+  href,
+  className = "",
 }) => {
+  let Element = href ? Link : "button";
   return (
-    <button className="icon-button" onClick={onClick}>
+    <Element
+      className={"icon-button" + " " + className}
+      onClick={onClick}
+      to={href}
+    >
       <Icon path={icon} title={title} color={iconColor} size={iconSize} />
-    </button>
+    </Element>
   );
 };
 

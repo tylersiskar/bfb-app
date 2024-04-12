@@ -21,6 +21,7 @@ $yellow: #ffe74c;
   padding: 8px;
   width: 100%;
   cursor: pointer;
+  text-decoration: none;
 }
 .secondary {
   background-color: white;
@@ -31,6 +32,7 @@ $yellow: #ffe74c;
   padding: 8px;
   width: 100%;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .primary-active {
@@ -43,6 +45,7 @@ $yellow: #ffe74c;
   width: 100%;
   font-weight: bold;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .secondary-active {
@@ -55,10 +58,12 @@ $yellow: #ffe74c;
   width: 100%;
   font-weight: bold;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .icon-button {
   background-color: transparent;
+  text-decoration: none;
   border-width: 0px;
   display: flex;
 }
@@ -72,6 +77,7 @@ $yellow: #ffe74c;
   border: 2px solid $blue;
   color: $blue;
   font-weight: bold;
+  text-decoration: none;
 }
 
 .button-disabled {

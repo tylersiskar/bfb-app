@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import "./button.scss";
 
 const Button = (props) => {
+  let Element = props.href ? Link : "button";
   return (
-    <button
+    <Element
       className={
         (props.secondary
           ? props.active
@@ -19,9 +21,10 @@ const Button = (props) => {
       onClick={props.onClick}
       id={props.id}
       disabled={props.disabled}
+      to={props.href}
     >
       {props.children}
-    </button>
+    </Element>
   );
 };
 

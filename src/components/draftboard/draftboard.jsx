@@ -10,7 +10,6 @@ const Draftboard = ({
   rounds = 8,
   width,
 }) => {
-  console.log(draftedPlayers);
   return (
     <div className={width ? "draftboard w-100" : "draftboard"}>
       {draftOrderWithTrades.map((round, roundIdx) => {

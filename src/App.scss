@@ -96,7 +96,9 @@ h2 {
 .blue {
   color: $blue;
 }
-
+.p-0 {
+  padding: 0px;
+}
 .yellow {
   color: $yellow;
 }
@@ -189,4 +191,7 @@ p {
 }
 .bg-gray {
   background-color: $light;
+}
+a {
+  text-decoration: none;
 }

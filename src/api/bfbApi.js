@@ -16,6 +16,19 @@ export const bfbApi = createApi({
         params: params, // Pass the entire params object as query parameters
       }),
     }),
+    getMocks: builder.query({
+      query: () => ({
+        url: `/mocks`,
+      }),
+    }),
+    postMock: builder.mutation({
+      query: (mock) => ({
+        url: `/mocks`,
+        method: "POST",
+        body: mock,
+        serializeBody: (data) => JSON.stringify(data),
+      }),
+    }),
   }),
 });
 
@@ -34,4 +47,5 @@ export const selectNonKeepers = createSelector(
   }
 );
 
-export const { useGetPlayersQuery } = bfbApi;
+export const { useGetPlayersQuery, useGetMocksQuery, usePostMockMutation } =
+  bfbApi;
