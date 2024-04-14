@@ -19,18 +19,21 @@ import {
   updateDraftedPlayers,
   setActiveSlot,
   clearDraftedPlayers,
+  setFullDraft,
 } from "../../api/draftSlice";
 import {
   selectNonKeepers,
+  useGetMockQuery,
   useGetMocksQuery,
   useGetPlayersQuery,
   usePostMockMutation,
 } from "../../api/bfbApi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const MockNew = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { id } = useParams();
   const [mockName, setMockName] = useState("");
   const [expandList, setExpandList] = useState(false);
   const [roundIdx, setRoundIdx] = useState(0);
@@ -46,6 +49,7 @@ const MockNew = () => {
   const draftedPlayers = useSelector(selectDraftedPlayers);
   const { data: players } = useGetPlayersQuery({ page, position, rookies });
   const { refetch: fetchMocks } = useGetMocksQuery();
+  const { data: currentMock } = useGetMockQuery({ id });
   const [postMock, { isSuccess }] = usePostMockMutation();
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
@@ -57,6 +61,11 @@ const MockNew = () => {
   const nonKeepers = useSelector((state) =>
     selectNonKeepers(state, { rosters: data, players })
   );
+
+  useEffect(() => {
+    if (currentMock) dispatch(setFullDraft(currentMock[0].picks));
+    else dispatch(clearDraftedPlayers());
+  }, [currentMock]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -108,23 +117,44 @@ const MockNew = () => {
     <Content dark isLoading={isLoading}>
       <div className="home-body">
         <div className="d-flex flex-column">
-          <div className="flex justify-between">
+          <div className="flex justify-between mb-1">
             <Link className="flex align-center justify-start p-2" to="/mocks">
               <IconButton className="p-0" icon={mdiChevronLeft} />
               <p className="light"> Back</p>
             </Link>
-            <input
-              onChange={(e) => setMockName(e.target.value)}
-              style={{ height: 24, width: 100, marginRight: 16 }}
-              placeholder="Mock Name"
-            />
+            {currentMock ? (
+              <p
+                className="light d-flex align-center"
+                style={{ paddingRight: 16 }}
+              >
+                {currentMock[0].name}
+              </p>
+            ) : (
+              <input
+                onChange={(e) => setMockName(e.target.value)}
+                style={{
+                  background: "black",
+                  color: "white",
+                  height: "36px",
+                  width: "86px",
+                  marginRight: "16px",
+                  border: "none",
+                  borderRadius: "4px",
+                  padding: "0 8px",
+                  fontStyle: "italic",
+                  outline: "none",
+                  display: id ? "none" : "block",
+                }}
+                placeholder="Mock Name"
+              />
+            )}
           </div>
           <div className="flex justify-between" style={{ padding: "0 16px" }}>
             <h2> {nflState?.season} Draft Order</h2>
             {draftedPlayers.length > 0 && (
               <div>
                 <Button
-                  className={`bg-${
+                  className={`${id ? "d-none" : ""} bg-${
                     mockName ? "lime" : "gray"
                   } button-sm flex align-center p-1`}
                   style={{
@@ -164,7 +194,7 @@ const MockNew = () => {
             <h5>Trades Made (Coming soon...)</h5>
           </div>
           <div
-            className={`bottom-drawer ${
+            className={`bottom-drawer ${id ? "d-none" : ""} ${
               !!Object.keys(activeSlot).length
                 ? "half-expanded"
                 : expandList

@@ -1,0 +1,13 @@
+.mock-item {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  text-decoration: none;
+}
+
+.mock-item:hover {
+  opacity: 0.8;
+}
+.mock-item:active {
+  opacity: 0.8;
+}

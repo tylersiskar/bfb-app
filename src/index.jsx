@@ -41,6 +41,10 @@ const router = createBrowserRouter([
         element: <MockNew />,
       },
       {
+        path: "mocks/:id",
+        element: <MockNew />,
+      },
+      {
         path: "trends",
         element: <TrendsPage />,
       },

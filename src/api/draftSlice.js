@@ -54,6 +54,10 @@ const draftSlice = createSlice({
     updateDraftedPlayers: (state, action) => {
       state.drafted = [...state.drafted, action.payload];
     },
+
+    setFullDraft: (state, action) => {
+      state.drafted = action.payload;
+    },
     clearDraftedPlayers: (state, action) => {
       state.drafted = [];
     },
@@ -65,6 +69,10 @@ const draftSlice = createSlice({
 
 export const selectActiveSlot = (state) => state.draft.activeSlot;
 export const selectDraftedPlayers = (state) => state.draft.drafted;
-export const { updateDraftedPlayers, setActiveSlot, clearDraftedPlayers } =
-  draftSlice.actions;
+export const {
+  updateDraftedPlayers,
+  setActiveSlot,
+  clearDraftedPlayers,
+  setFullDraft,
+} = draftSlice.actions;
 export default draftSlice.reducer;

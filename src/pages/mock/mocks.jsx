@@ -1,7 +1,9 @@
 import { Content } from "../../components/layout";
 import { Button } from "../../components/buttons";
 import "../home/home.scss";
+import "./mocks.scss";
 import { useGetMocksQuery } from "../../api/bfbApi";
+import { Link } from "react-router-dom";
 
 const MockDraftCenter = () => {
   const { data: mocks, isLoading } = useGetMocksQuery(undefined, {
@@ -28,7 +30,11 @@ const MockDraftCenter = () => {
           <h3 className="yellow pb-1">Created Mocks</h3>
           {mocks?.map((mock) => {
             return (
-              <div className="flex justify-between w-100 p-2 border-bottom">
+              <Link
+                className="p-2 border-bottom mock-item"
+                key={mock.name}
+                to={`/mocks/${mock.id}`}
+              >
                 <div className="flex flex-column align-start">
                   <p className="light bold pb-1">{mock.name}</p>
                   <p className="light sm">
@@ -41,7 +47,7 @@ const MockDraftCenter = () => {
                     {mock.picks[0].first_name} {mock.picks[0].last_name}
                   </p>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
