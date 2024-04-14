@@ -4,8 +4,8 @@
   "scripts": {
     "start": "env-cmd --file .env.development vite --port 3000 --open",
     "dev": "vite --port 3000 --open",
-    "build": "env-cmd .env.development vite build",
-    "build:prod": "env-cmd .env.production vite build",
+    "build": "env-cmd --file .env.development vite build",
+    "build:prod": "env-cmd --file .env.production vite build",
     "serve": "vite preview",
     "test": "vitest"
   },
