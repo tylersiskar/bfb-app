@@ -186,7 +186,7 @@ const MockNew = () => {
               padding: "8px 16px",
               marginTop: 8,
               width: "100%",
-              height: "60vh",
+              height: "60dvh",
               overflowY: "auto",
               boxSizing: "border-box",
             }}
@@ -278,7 +278,9 @@ const MockNew = () => {
             <PlayerList
               onDraft={_onDraft}
               players={nonKeepers}
-              scrollHeight={expandList ? "75vh" : activeSlot ? "60vh" : "170px"}
+              scrollHeight={
+                expandList ? "75dvh" : activeSlot ? "60dvh" : "170px"
+              }
               page={page}
               setPage={setPage}
             />
