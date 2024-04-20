@@ -39,6 +39,7 @@ $light: rgb(206, 206, 206);
   box-sizing: border-box;
   width: 100vw;
   overflow-x: auto;
+  max-width: 1272px;
 }
 
 .WR {
@@ -72,8 +73,10 @@ $light: rgb(206, 206, 206);
   gap: 4px;
   padding-bottom: 4px;
   margin-bottom: 4px;
-  // border-bottom: 1px solid #333;
-  // .card:nth-child(3) {
-  //   background-color: yellow;
-  // }
+}
+@media screen and (min-width: 767px) {
+    .round:not(.round-home) {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    }
 }

@@ -19,7 +19,7 @@ const Draftboard = ({
         return (
           <div className="flex flex-column" key={roundIdx}>
             <p className="sm color-light pb-1">Round {roundIdx + 1}</p>
-            <div className="round">
+            <div className={isHome ? "round" + " round-home" : "round"}>
               {round.map((pick, pickIdx) => {
                 let draftedPlayer = find(drafted, {
                   pick: pick.pick,
