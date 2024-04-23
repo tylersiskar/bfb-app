@@ -27,7 +27,7 @@ const PlayerList = ({
         className="p-2 align-center"
         style={{
           display: "grid",
-          gridTemplateColumns: "0.5fr 1fr 0.5fr 0.5fr",
+          gridTemplateColumns: "0.5fr 1fr 0.5fr 0.5fr 0.5fr",
           gap: 8,
         }}
       >
@@ -43,6 +43,10 @@ const PlayerList = ({
           {" "}
           <p className="light bold sm">PPG</p>
         </div>
+        <div className="flex justify-start">
+          {" "}
+          <p className="light bold sm">KTC Value</p>
+        </div>
       </div>
       <div
         style={{
@@ -55,7 +59,7 @@ const PlayerList = ({
             className="p-1 align-center"
             style={{
               display: "grid",
-              gridTemplateColumns: "0.5fr 1fr 0.5fr 0.5fr",
+              gridTemplateColumns: "0.5fr 1fr 0.5fr 0.5fr 0.5fr",
               gap: 8,
             }}
             key={`${player.first_name}_${player.last_name}`}
@@ -92,6 +96,7 @@ const PlayerList = ({
             </div>
             <p className="light">{player.pos_rank_half_ppr}</p>
             <p className="light">{parseFloat(player.ppg).toFixed(2)}</p>
+            <p className="light">{player.value}</p>
           </div>
         ))}
         <div className="flex align-center justify-center w-100 p-2">
