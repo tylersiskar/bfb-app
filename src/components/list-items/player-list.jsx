@@ -39,7 +39,7 @@ const PlayerList = ({
           {" "}
           <p className="light bold sm">Pos Rk</p>
         </div>
-        <div className="flex justify-start">
+        <div className="flex justify-center">
           {" "}
           <p className="light bold sm">PPG</p>
         </div>
