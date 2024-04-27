@@ -80,12 +80,22 @@ const MockNew = () => {
   }, [dispatch]);
 
   const _onDraft = (player) => {
+    let filteredDraftedPlayers = draftedPlayers.filter((obj) => {
+      if (obj.round === activeSlot.round) {
+        if (obj.pick === activeSlot.pick) {
+          return false;
+        } else return true;
+      } else return true;
+    });
     dispatch(
-      updateDraftedPlayers({
-        ...player,
-        round: activeSlot.round,
-        pick: activeSlot.pick,
-      })
+      updateDraftedPlayers([
+        ...filteredDraftedPlayers,
+        {
+          ...player,
+          round: activeSlot.round,
+          pick: activeSlot.pick,
+        },
+      ])
     );
     if (pickIdx === 11) {
       setRoundIdx(roundIdx + 1);

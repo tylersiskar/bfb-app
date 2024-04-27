@@ -16,15 +16,7 @@ const draftSlice = createSlice({
   initialState,
   reducers: {
     updateDraftedPlayers: (state, action) => {
-      // need to replace if a pick has already been selected
-      state.drafted = [
-        ...state.drafted.filter(
-          (obj) =>
-            obj.round !== action.payload.round &&
-            obj.pick !== action.payload.pick,
-        ),
-        action.payload,
-      ];
+      state.drafted = action.payload;
     },
 
     setFullDraft: (state, action) => {
