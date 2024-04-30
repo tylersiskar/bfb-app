@@ -10,7 +10,12 @@ import { Content } from "../../components/layout";
 import "../home/home.scss";
 import { fetchStandings, selectStandings } from "../../api/standingsSlice";
 import Draftboard from "../../components/draftboard/draftboard";
-import { mdiArrowDownThin, mdiArrowUpThin, mdiChevronLeft } from "@mdi/js";
+import {
+  mdiArrowDownThin,
+  mdiArrowUpThin,
+  mdiChevronLeft,
+  mdiTrashCanOutline,
+} from "@mdi/js";
 import { Button, IconButton } from "../../components/buttons";
 import { PlayerList } from "../../components/list-items";
 import {
@@ -29,6 +34,7 @@ import {
   usePostMockMutation,
 } from "../../api/bfbApi";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { find } from "lodash";
 
 const MockNew = () => {
   const dispatch = useDispatch();
@@ -122,7 +128,6 @@ const MockNew = () => {
       // Handle error
     }
   };
-
   return (
     <Content dark isLoading={isLoading}>
       <div className="home-body">
@@ -228,21 +233,46 @@ const MockNew = () => {
                   <h6 className="">Select Draft Position</h6>
                 )}
               </div>
-              <IconButton
-                icon={
-                  Object.keys(activeSlot).length > 0 || expandList
-                    ? mdiArrowDownThin
-                    : mdiArrowUpThin
-                }
-                onClick={() => {
-                  dispatch(setActiveSlot({}));
-                  if (Object.keys(activeSlot).length > 0) {
-                    setExpandList(false);
-                  } else {
-                    setExpandList(!expandList);
+              <div className="flex align-center">
+                {!!find(draftedPlayers, {
+                  round: activeSlot.round,
+                  pick: activeSlot.pick,
+                }) && (
+                  <IconButton
+                    icon={mdiTrashCanOutline}
+                    title="Remove Selection"
+                    iconColor="#ff3f5d"
+                    onClick={() => {
+                      dispatch(
+                        updateDraftedPlayers(
+                          draftedPlayers.filter(
+                            (player) =>
+                              !(
+                                player.round === activeSlot.round &&
+                                player.pick === activeSlot.pick
+                              )
+                          )
+                        )
+                      );
+                    }}
+                  />
+                )}
+                <IconButton
+                  icon={
+                    Object.keys(activeSlot).length > 0 || expandList
+                      ? mdiArrowDownThin
+                      : mdiArrowUpThin
                   }
-                }}
-              />
+                  onClick={() => {
+                    dispatch(setActiveSlot({}));
+                    if (Object.keys(activeSlot).length > 0) {
+                      setExpandList(false);
+                    } else {
+                      setExpandList(!expandList);
+                    }
+                  }}
+                />
+              </div>
             </div>
             <div className="flex my-2">
               <Button
