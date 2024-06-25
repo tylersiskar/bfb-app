@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Body from "./components/layout/body";
 import Header from "./components/layout/header";
 import "./App.scss";
-import SideNavigation from "./components/layout/sidenav";
+import { useSelector } from "react-redux";
+import { selectNavIsOpen } from "./api/navSlice";
+import { SideNavigation } from "./components/layout";
 
 function App() {
-  const location = useLocation();
-  const [openMenu, setOpenMenu] = useState(false);
-  useEffect(() => setOpenMenu(false), [location]);
+  const isOpen = useSelector(selectNavIsOpen);
+
   return (
     <div>
-      <Header onMenuClick={setOpenMenu} open={openMenu} />
+      <Header open={isOpen} />
       <Body>
-        <div className={`content-wrapper ${openMenu ? "nav-open" : ""}`}>
+        <div className={`content-wrapper ${isOpen ? "nav-open" : ""}`}>
           <Outlet />
           <SideNavigation />
         </div>

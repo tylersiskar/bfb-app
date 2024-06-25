@@ -14,6 +14,8 @@ import {
   mdiArrowDownThin,
   mdiArrowUpThin,
   mdiChevronLeft,
+  mdiCloseBoxOutline,
+  mdiListBoxOutline,
   mdiTrashCanOutline,
 } from "@mdi/js";
 import { Button, IconButton } from "../../components/buttons";
@@ -35,6 +37,7 @@ import {
 } from "../../api/bfbApi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { find } from "lodash";
+import RosterPanel from "./roster-panel";
 
 const MockNew = () => {
   const dispatch = useDispatch();
@@ -55,7 +58,7 @@ const MockNew = () => {
   const draftedPlayers = useSelector(selectDraftedPlayers);
   const { data: players } = useGetPlayersQuery({ page, position, rookies });
   const { refetch: fetchMocks } = useGetMocksQuery();
-  const { data: currentMock } = useGetMockQuery({ id });
+  const { data: currentMock } = useGetMockQuery({ id }, { skip: !id });
   const [postMock, { isSuccess }] = usePostMockMutation();
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
@@ -67,6 +70,8 @@ const MockNew = () => {
   const nonKeepers = useSelector((state) =>
     selectNonKeepers(state, { rosters: data, players })
   );
+
+  const [openPanel, setOpenPanel] = useState(false);
 
   useEffect(() => {
     if (currentMock) dispatch(setFullDraft(currentMock[0].picks));
@@ -100,6 +105,7 @@ const MockNew = () => {
           ...player,
           round: activeSlot.round,
           pick: activeSlot.pick,
+          roster_id: activeSlot.roster_id,
         },
       ])
     );
@@ -201,13 +207,19 @@ const MockNew = () => {
               padding: "8px 16px",
               marginTop: 8,
               width: "100%",
-              height: "60dvh",
+              height: "40dvh",
               overflowY: "auto",
               boxSizing: "border-box",
             }}
           >
             <h5>Trades Made (Coming soon...)</h5>
           </div>
+          <RosterPanel
+            isExpanded={openPanel}
+            isVisible={!!Object.keys(activeSlot).length}
+            activeSlot={activeSlot}
+            draftedPlayers={draftedPlayers}
+          />
           <div
             className={`bottom-drawer ${id ? "d-none" : ""} ${
               !!Object.keys(activeSlot).length
@@ -257,6 +269,12 @@ const MockNew = () => {
                     }}
                   />
                 )}
+                {Object.keys(activeSlot).length > 0 && (
+                  <IconButton
+                    icon={openPanel ? mdiCloseBoxOutline : mdiListBoxOutline}
+                    onClick={() => setOpenPanel(!openPanel)}
+                  />
+                )}
                 <IconButton
                   icon={
                     Object.keys(activeSlot).length > 0 || expandList
@@ -267,6 +285,7 @@ const MockNew = () => {
                     dispatch(setActiveSlot({}));
                     if (Object.keys(activeSlot).length > 0) {
                       setExpandList(false);
+                      setOpenPanel(false);
                     } else {
                       setExpandList(!expandList);
                     }
@@ -318,9 +337,9 @@ const MockNew = () => {
             <PlayerList
               onDraft={_onDraft}
               players={nonKeepers}
-              scrollHeight={
-                expandList ? "75dvh" : activeSlot ? "60dvh" : "170px"
-              }
+              scrollHeight={`calc(${
+                expandList ? "75dvh" : activeSlot ? "40dvh" : "170px"
+              } - 136px)`}
               page={page}
               setPage={setPage}
             />

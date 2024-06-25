@@ -20,8 +20,6 @@ export const fetchStandings = createAsyncThunk(
       const rosters = await rostersResponse.json();
 
       let standingsSlot = {};
-      let secondRoundLosers = [];
-      console.log(playoffBracket);
       playoffBracket.forEach((match) => {
         const isConsolationMatch =
           (match.t1_from && match.t1_from.l) ||

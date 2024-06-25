@@ -1,7 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { selectNavContent } from "../../api/navSlice";
 
-const SideNavigation = (props) => {
+const DefaultNavContent = () => {
   return (
     <div className="sidenav">
       <Link className="list-item" to="/teams">
@@ -21,6 +23,24 @@ const SideNavigation = (props) => {
       </Link>
     </div>
   );
+};
+
+const contentTypes = {
+  DEFAULT: <DefaultNavContent />,
+};
+
+const renderNavContent = (content) => {
+  switch (content) {
+    case "DEFAULT":
+      return contentTypes.DEFAULT;
+    default:
+      return contentTypes.DEFAULT;
+  }
+};
+
+const SideNavigation = (props) => {
+  const navContent = useSelector(selectNavContent);
+  return renderNavContent(navContent);
 };
 
 export default SideNavigation;

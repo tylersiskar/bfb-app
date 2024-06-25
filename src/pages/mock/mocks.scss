@@ -1,3 +1,5 @@
+$darker: #16181d;
+
 .mock-item {
   display: flex;
   justify-content: space-between;
@@ -10,4 +12,24 @@
 }
 .mock-item:active {
   opacity: 0.8;
+}
+
+.roster-panel {
+  height: 0;
+  padding: 0;
+  width: 100%;
+  background-color: $darker;
+  position: absolute;
+  bottom: 50px;
+  transition: height 0.35s ease;
+  border-top: 1px solid rgba(204, 204, 204, 0.6);
+  box-sizing: border-box;
+}
+
+.visible {
+  bottom: 40dvh;
+}
+.panel-expanded {
+  height: 25dvh;
+  padding: 16px;
 }

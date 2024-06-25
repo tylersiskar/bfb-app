@@ -6,12 +6,14 @@ import transactionsSlice from "./transactionsSlice";
 import standingsSlice from "./standingsSlice";
 import draftSlice from "./draftSlice";
 import { bfbApi } from "./bfbApi";
+import navReducer from "./navSlice";
 
 const rootReducer = combineReducers({
   matchups: matchupsReducer,
   transactions: transactionsSlice,
   standings: standingsSlice,
   draft: draftSlice,
+  nav: navReducer,
   [api.reducerPath]: api.reducer,
   [bfbApi.reducerPath]: bfbApi.reducer,
 });

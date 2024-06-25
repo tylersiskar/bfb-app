@@ -10,6 +10,11 @@ export const bfbApi = createApi({
     baseUrl: VITE_BFB_API,
   }),
   endpoints: (builder) => ({
+    getPlayersAll: builder.query({
+      query: (params) => ({
+        url: `/playersAll`,
+      }),
+    }),
     getPlayers: builder.query({
       query: (params) => ({
         url: `/players`,
@@ -57,4 +62,5 @@ export const {
   useGetMocksQuery,
   usePostMockMutation,
   useGetMockQuery,
+  useGetPlayersAllQuery,
 } = bfbApi;
