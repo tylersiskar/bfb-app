@@ -13,14 +13,17 @@ import { find } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { RangeSlider } from "../../components/inputs";
 import { Content } from "../../components/layout";
-import usersObj from "../../sleeper/users.json";
 import {
   selectMatchupIsLoading,
   selectTrendingPoints,
   selectTrendingWeeks,
   updateTrendingWeeks,
 } from "../../api/matchupsSlice";
-import { useGetNflStateQuery, useGetRostersQuery } from "../../api/api";
+import {
+  useGetNflStateQuery,
+  useGetRostersQuery,
+  useGetUsersQuery,
+} from "../../api/api";
 import { fetchMatchupsForMultipleWeeks } from "../../api/matchupsThunks";
 
 ChartJS.register(
@@ -40,6 +43,7 @@ const TrendsPage = () => {
   const trendingData = useSelector(selectTrendingPoints);
   const matchupIsLoading = useSelector(selectMatchupIsLoading);
   const { data: rostersObj } = useGetRostersQuery();
+  const { data: usersObj } = useGetUsersQuery();
 
   const _setChartData = async () => {
     let data = rostersObj

@@ -15,9 +15,6 @@ const DefaultNavContent = () => {
       <Link className="list-item" to="/trends">
         <h5>Trends</h5>
       </Link>
-      <Link className="list-item" to="/transactions">
-        <h5>Transactions</h5>
-      </Link>
       <Link className="list-item" to="/mocks">
         <h5>Mock Draft Center</h5>
       </Link>

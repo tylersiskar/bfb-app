@@ -5,6 +5,7 @@ import {
   useGetNflStateQuery,
   useGetRostersQuery,
   useGetStatsQuery,
+  useGetUsersQuery,
 } from "../../../api/api";
 import {
   selectTrades,
@@ -12,9 +13,8 @@ import {
 } from "../../../api/transactionsSlice";
 import { fetchTransactionsForYear } from "../../../api/transactionsThunks";
 import { Avatar } from "../../../components/images";
-import users from "../../../sleeper/users.json";
-import players from "../../../sleeper/players.json";
 import { keyBy, find } from "lodash";
+import { useGetPlayersAllQuery } from "../../../api/bfbApi";
 
 const AcquisitionCard = ({ href, title }) => {
   const dispatch = useDispatch();
@@ -25,6 +25,8 @@ const AcquisitionCard = ({ href, title }) => {
   const { data: rosters } = useGetRostersQuery();
   const [topTrade, setTopTradeAdd] = useState();
   const [topWaiver, setTopWaiverAdd] = useState();
+  const { data: users } = useGetUsersQuery();
+  const { data: players } = useGetPlayersAllQuery();
 
   useEffect(() => {
     if (!nflState) return; //if no active week yet, or trades and waivers already exist

@@ -1,26 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetStatsQuery } from "../../../api/api";
-import players from "../../../sleeper/players.json";
-import usersObj from "../../../sleeper/users.json";
+import { useGetStatsQuery, useGetUsersQuery } from "../../../api/api";
 import { Avatar } from "../../../components/images";
 import { find } from "lodash";
 import "./cards.scss";
+import { useGetPlayersAllQuery } from "../../../api/bfbApi";
 
 const SummaryCard = ({ title, href, rosters }) => {
   const { data: stats } = useGetStatsQuery("2023");
+  const { data: usersObj } = useGetUsersQuery();
+  const { data: players, isLoading } = useGetPlayersAllQuery();
   const [data, setData] = useState();
 
   useEffect(() => {
-    if (!rosters || !stats) return;
+    if (!rosters || !stats || isLoading || !usersObj) return;
     let testData = {};
     rosters.forEach((roster) => {
       roster.players.forEach((player) => {
+        let currentPlayer = find(players, { id: player });
         let obj = {
-          name: `${players[player].first_name.slice(0, 1)}. ${
-            players[player].last_name
+          name: `${currentPlayer.first_name.slice(0, 1)}. ${
+            currentPlayer.last_name
           }`,
-          team: players[player].team,
+          team: currentPlayer.team,
           ppg: (stats[player].pts_half_ppr / stats[player].gp).toFixed(2),
           rank: stats[player].pos_rank_half_ppr,
           avatar: find(usersObj, {
@@ -29,13 +31,13 @@ const SummaryCard = ({ title, href, rosters }) => {
         };
         if (
           obj.rank === 1 &&
-          ["K", "DEF"].indexOf(players[player].position) === -1
+          ["K", "DEF"].indexOf(currentPlayer.position) === -1
         )
-          testData[players[player].position] = obj;
+          testData[currentPlayer.position] = obj;
       });
     });
     setData(testData);
-  }, [rosters, stats]);
+  }, [rosters, stats, players, usersObj]);
 
   return (
     <div className="summary">
@@ -51,6 +53,7 @@ const SummaryCard = ({ title, href, rosters }) => {
           }}
         >
           {data &&
+            !isLoading &&
             ["QB", "RB", "WR", "TE"].map((pos) => {
               return (
                 <div

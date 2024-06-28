@@ -5,6 +5,7 @@ import {
   useGetNflStateQuery,
   useGetRostersQuery,
   useGetTradedPicksQuery,
+  useGetUsersQuery,
 } from "../../api/api";
 import { Content } from "../../components/layout";
 import "../home/home.scss";
@@ -60,11 +61,12 @@ const MockNew = () => {
   const { refetch: fetchMocks } = useGetMocksQuery();
   const { data: currentMock } = useGetMockQuery({ id }, { skip: !id });
   const [postMock, { isSuccess }] = usePostMockMutation();
+  const { data: users } = useGetUsersQuery();
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
       standings,
       tradedPicks,
-      rosters: data,
+      users,
     })
   );
   const nonKeepers = useSelector((state) =>
@@ -327,7 +329,7 @@ const MockNew = () => {
               onDraft={_onDraft}
               players={nonKeepers}
               scrollHeight={`calc(${
-                expandList ? "75dvh" : activeSlot ? "40dvh" : "170px"
+                expandList ? (openPanel ? "40dvh" : "55dvh") : "170px"
               } - 136px)`}
               page={page}
               setPage={setPage}

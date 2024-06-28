@@ -1,7 +1,7 @@
 // standingsSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import usersObj from "../sleeper/users.json";
 import { find } from "lodash";
+import { api } from "./api";
 
 const { VITE_LEAGUE_ID: LEAGUE_ID, VITE_SLEEPER_API } = import.meta.env;
 
@@ -13,12 +13,12 @@ export const fetchStandings = createAsyncThunk(
         `${VITE_SLEEPER_API}/league/${LEAGUE_ID}/winners_bracket`
       );
       const playoffBracket = await playoffBracketResponse.json();
-
       const rostersResponse = await fetch(
         `${VITE_SLEEPER_API}/league/${LEAGUE_ID}/rosters`
       );
       const rosters = await rostersResponse.json();
-
+      const state = thunkAPI.getState();
+      const { data: users } = api.endpoints.getUsers.select()(state);
       let standingsSlot = {};
       playoffBracket.forEach((match) => {
         const isConsolationMatch =
@@ -51,12 +51,12 @@ export const fetchStandings = createAsyncThunk(
       let final = [];
       sortedRosters.forEach((roster) => {
         final.push({
-          owner: find(usersObj, { user_id: roster.owner_id }).display_name,
+          owner: find(users, { user_id: roster.owner_id }).display_name,
           roster_id: roster.roster_id,
           playoff_position: standingsSlot[roster.roster_id] || "N/A",
           wins: roster.settings.wins,
           points_for: roster.settings.fpts,
-          ...find(usersObj, { user_id: roster.owner_id }),
+          ...find(users, { user_id: roster.owner_id }),
         });
       });
       return final; // Ensure this is the data you expect

@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import players from "../../sleeper/players.json";
-import usersObj from "../../sleeper/users.json";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -12,7 +10,13 @@ import {
 import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import { Content } from "../../components/layout";
-import { useGetRostersQuery, useGetStatsQuery } from "../../api/api";
+import {
+  useGetRostersQuery,
+  useGetStatsQuery,
+  useGetUsersQuery,
+} from "../../api/api";
+import { find } from "lodash";
+import { useGetPlayersAllQuery } from "../../api/bfbApi";
 
 let colors = [
   "#bb17bd",
@@ -37,6 +41,8 @@ const TeamsPage = () => {
   const { data: stats, isLoading } = useGetStatsQuery("2023");
   const { data: leagueObject, isLoading: isRosterLoading } =
     useGetRostersQuery();
+  const { data: usersObj } = useGetUsersQuery();
+  const { data: players } = useGetPlayersAllQuery();
 
   const fetchPlayers = (pos) => {
     let league = [];
@@ -49,9 +55,10 @@ const TeamsPage = () => {
       leagueObject.forEach((team) => {
         let teamName = users[team.owner_id];
         let teamPlayers = team.players.map((player) => {
+          let currentPlayer = find(players, { id: player });
           return {
-            name: players[player].full_name,
-            position: players[player].position,
+            name: currentPlayer.full_name,
+            position: currentPlayer.position,
             pts: stats[player] ? stats[player].pts_half_ppr : 0,
             gp: stats[player] ? stats[player].gp : 0,
             ppg: stats[player]

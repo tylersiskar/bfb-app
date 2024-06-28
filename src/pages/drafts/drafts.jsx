@@ -4,16 +4,13 @@ import Button from "../../components/buttons/button";
 import Content from "../../components/layout/content";
 import { useDraft } from "../../sleeper/drafts";
 import { groupBy, find } from "lodash";
-import statsObj from "../../sleeper/stats.json";
-import playersObj from "../../sleeper/players.json";
-import usersObj from "../../sleeper/users.json";
-import { useGetRostersQuery } from "../../api/api";
-/**
- *
- * @param {*} props
- * @returns
- * This page is supposed to be a multiseries chart that shows each draft slot vs ppg for that year, then marked red or someting if they were a keeper the following year?
- */
+import {
+  useGetRostersQuery,
+  useGetStatsQuery,
+  useGetUsersQuery,
+} from "../../api/api";
+import { useGetPlayersAllQuery } from "../../api/bfbApi";
+
 const colors = [
   "red",
   "orange",
@@ -24,8 +21,7 @@ const colors = [
   "purple",
   "pink",
 ];
-let leagueURL = "https://api.sleeper.app/v1/league/934894009888088064/rosters";
-let statsUrl = "https://api.sleeper.app/v1/stats/nfl/regular/<year>";
+
 const DraftsPage = (props) => {
   const [positions, setPositions] = useState([
     "QB",
@@ -36,28 +32,17 @@ const DraftsPage = (props) => {
     "DEF",
   ]);
   const [year, setYear] = useState("2023");
-  const { data, loading, error } = useDraft(year);
+  const { data } = useDraft(year);
   const [dataset, setDataset] = useState([]);
-  const [stats, setStats] = useState(statsObj);
   const { data: league } = useGetRostersQuery();
-  const [variable, setVariable] = useState("draft_slot");
-
-  const fetchStats = async () => {
-    let response = await fetch(statsUrl.replace("<year>", year));
-    let statsObj = await response.json();
-    setStats(statsObj);
-  };
+  const [variable, setVariable] = useState("roster_id");
+  const { data: usersObj, isLoading: isUserLoading } = useGetUsersQuery();
+  const { data: stats } = useGetStatsQuery(year);
+  const { data: playersObj, isLoading } = useGetPlayersAllQuery();
 
   const _calculatePPG = (id) => {
     return stats[id].pts_half_ppr / stats[id].gp;
   };
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
-  useEffect(() => {
-    fetchStats();
-  }, [year]);
 
   const _setDataset = () => {
     let arr = groupBy(data, "round");
@@ -71,12 +56,13 @@ const DraftsPage = (props) => {
             pointRadius: 8,
             pointHoverRadius: 12,
             data: arr[round].reduce((newArray, obj) => {
-              if (positions.includes(playersObj[obj.player_id].position)) {
+              let player = find(playersObj, { id: obj.player_id });
+              if (positions.includes(player.position)) {
                 newArray.push({
                   x: obj[variable],
                   y: _calculatePPG(obj.player_id),
-                  label: playersObj[obj.player_id].full_name ?? "DEF",
-                  position: playersObj[obj.player_id].position,
+                  label: `${player.first_name} ${player.last_name}`,
+                  position: player.position,
                 });
               }
               return newArray;
@@ -86,8 +72,8 @@ const DraftsPage = (props) => {
     );
   };
   useEffect(() => {
-    _setDataset();
-  }, [data, stats, positions, variable]);
+    if (playersObj) _setDataset();
+  }, [data, stats, positions, variable, playersObj]);
 
   const _exportToCSV = () => {
     let csvData = [["Year", "Round", "Draft Slot", "Player", "PPG"]];
@@ -127,7 +113,7 @@ const DraftsPage = (props) => {
   };
 
   return (
-    <Content>
+    <Content isLoading={isLoading || isUserLoading}>
       <div
         className="flex flex-column align-center justify-center"
         style={{

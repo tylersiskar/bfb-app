@@ -5,13 +5,7 @@ import "./index.css";
 import App from "./App";
 import { store } from "./store";
 import { Provider } from "react-redux";
-import {
-  TransactionsPage,
-  HomePage,
-  TrendsPage,
-  TeamsPage,
-  DraftsPage,
-} from "./pages";
+import { HomePage, TrendsPage, TeamsPage, DraftsPage } from "./pages";
 import MockDraftCenter from "./pages/mock/mocks";
 import { MockNew } from "./pages/mock";
 
@@ -47,10 +41,6 @@ const router = createBrowserRouter([
       {
         path: "trends",
         element: <TrendsPage />,
-      },
-      {
-        path: "transactions",
-        element: <TransactionsPage />,
       },
     ],
   },

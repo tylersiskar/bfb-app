@@ -1,5 +1,4 @@
 import { Button } from "../buttons";
-import playersArr from "../../sleeper/playersArray.json";
 import { useSelector } from "react-redux";
 import { selectActiveSlot, selectDraftedPlayers } from "../../api/draftSlice";
 import { find } from "lodash";

@@ -5,15 +5,19 @@ import { Link } from "react-router-dom";
 import { VerticalListItem } from "../../../components/list-items";
 import "./cards.scss";
 import { fetchMatchupsForMultipleWeeks } from "../../../api/matchupsThunks";
-import { useGetNflStateQuery, useGetRostersQuery } from "../../../api/api";
+import {
+  useGetNflStateQuery,
+  useGetRostersQuery,
+  useGetUsersQuery,
+} from "../../../api/api";
 import { selectTrendingPoints } from "../../../api/matchupsSlice";
-import usersObj from "../../../sleeper/users.json";
 
 const TrendsCard = ({ title, subtitle, href }) => {
   const dispatch = useDispatch();
   const { data: nflState } = useGetNflStateQuery();
   const trendingPointsByRoster = useSelector(selectTrendingPoints);
   const { data: rostersData } = useGetRostersQuery();
+  const { data: usersObj } = useGetUsersQuery();
 
   useEffect(() => {
     let activeWeek = nflState ? nflState.week : 0;

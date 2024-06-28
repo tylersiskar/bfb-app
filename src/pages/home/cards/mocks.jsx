@@ -1,11 +1,11 @@
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { VerticalListItem } from "../../../components/list-items";
 import "./cards.scss";
 import {
   selectDraftOrder,
   useGetRostersQuery,
   useGetTradedPicksQuery,
+  useGetUsersQuery,
 } from "../../../api/api";
 import { selectStandings } from "../../../api/standingsSlice";
 import { selectDraftedPlayers } from "../../../api/draftSlice";
@@ -13,7 +13,8 @@ import Draftboard from "../../../components/draftboard/draftboard";
 
 const MocksCard = ({ title, subtitle, href }) => {
   const { data: tradedPicks } = useGetTradedPicksQuery("2024");
-  const { data, isLoading } = useGetRostersQuery();
+  const { data } = useGetRostersQuery();
+  const { data: users } = useGetUsersQuery();
 
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
@@ -21,7 +22,7 @@ const MocksCard = ({ title, subtitle, href }) => {
     selectDraftOrder(state, {
       standings,
       tradedPicks,
-      rosters: data,
+      users,
     })
   );
   return (

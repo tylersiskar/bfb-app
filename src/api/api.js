@@ -1,7 +1,6 @@
 // api.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { createSelector } from "reselect";
-import usersObj from "../sleeper/users.json";
 import { find, reverse } from "lodash";
 import { draftsObject, leaguesObject } from "../sleeper/constants";
 
@@ -14,6 +13,9 @@ export const api = createApi({
     baseUrl: VITE_SLEEPER_API,
   }),
   endpoints: (builder) => ({
+    getUsers: builder.query({
+      query: () => `league/${LEAGUE_ID}/users`,
+    }),
     getRosters: builder.query({
       query: () => `league/${LEAGUE_ID}/rosters`,
     }),
@@ -38,7 +40,7 @@ export const api = createApi({
 export const selectDraftOrder = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
   (rawData) => {
-    let { standings, tradedPicks, rosters } = rawData;
+    let { standings, tradedPicks, users } = rawData;
     if (!standings || !standings.length) return [];
     let ROUNDS = 8;
     let copyStandings = [...standings];
@@ -83,7 +85,7 @@ export const selectCustomMatchupData = createSelector(
       rosters &&
       matchups.forEach((m) => {
         let currentRoster = find(rosters, { roster_id: m.roster_id });
-        let currentUser = find(usersObj, {
+        let currentUser = find(users, {
           user_id: currentRoster.owner_id,
         });
         if (trueMatchups[m.matchup_id])
@@ -115,4 +117,5 @@ export const {
   useGetCurrentMatchupsQuery,
   useGetDraftDetailsQuery,
   useGetTradedPicksQuery,
+  useGetUsersQuery,
 } = api;
