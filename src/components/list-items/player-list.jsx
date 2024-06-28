@@ -58,6 +58,7 @@ const PlayerList = ({
         style={{
           overflow: "auto",
           height: scrollHeight,
+          transition: "height 0.350s ease",
         }}
       >
         {filteredPlayers?.map((player) => (

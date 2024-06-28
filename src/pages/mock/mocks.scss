@@ -20,16 +20,23 @@ $darker: #16181d;
   width: 100%;
   background-color: $darker;
   position: absolute;
-  bottom: 50px;
-  transition: height 0.35s ease;
-  border-top: 1px solid rgba(204, 204, 204, 0.6);
+  bottom: 64px;
+  transition: all 0.35s ease;
   box-sizing: border-box;
 }
-
-.visible {
-  bottom: 40dvh;
+.panel-full-expanded {
+  border-top: 1px solid rgba(204, 204, 204, 0.6);
+  height: 55dvh;
+  padding: 16px;
+  bottom: 64px !important;
 }
 .panel-expanded {
+  border-top: 1px solid rgba(204, 204, 204, 0.6);
   height: 25dvh;
+  bottom: 40dvh;
   padding: 16px;
+}
+
+.collapsed {
+  height: 64px;
 }

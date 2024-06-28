@@ -195,7 +195,7 @@ const MockNew = () => {
             onSelectPick={(pick, roundIdx, pickIdx) => {
               setRoundIdx(roundIdx);
               setPickIdx(pickIdx);
-              setExpandList(false);
+              setExpandList(true);
             }}
             selectedPick={activeSlot}
             draftedPlayers={draftedPlayers}
@@ -216,17 +216,18 @@ const MockNew = () => {
           </div>
           <RosterPanel
             isExpanded={openPanel}
+            playerListExpanded={expandList}
             isVisible={!!Object.keys(activeSlot).length}
             activeSlot={activeSlot}
             draftedPlayers={draftedPlayers}
           />
           <div
             className={`bottom-drawer ${id ? "d-none" : ""} ${
-              !!Object.keys(activeSlot).length
-                ? "half-expanded"
-                : expandList
-                ? "expanded"
-                : ""
+              expandList
+                ? openPanel
+                  ? "half-expanded"
+                  : "expanded"
+                : "collapsed"
             }`}
           >
             <div className="flex w-100 justify-between">
@@ -276,20 +277,8 @@ const MockNew = () => {
                   />
                 )}
                 <IconButton
-                  icon={
-                    Object.keys(activeSlot).length > 0 || expandList
-                      ? mdiArrowDownThin
-                      : mdiArrowUpThin
-                  }
-                  onClick={() => {
-                    dispatch(setActiveSlot({}));
-                    if (Object.keys(activeSlot).length > 0) {
-                      setExpandList(false);
-                      setOpenPanel(false);
-                    } else {
-                      setExpandList(!expandList);
-                    }
-                  }}
+                  icon={expandList ? mdiArrowDownThin : mdiArrowUpThin}
+                  onClick={() => setExpandList(!expandList)}
                 />
               </div>
             </div>

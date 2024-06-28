@@ -7,6 +7,7 @@ import { Button } from "../../components/buttons";
 const RosterPanel = ({
   isVisible,
   isExpanded,
+  playerListExpanded,
   activeSlot = {},
   draftedPlayers,
 }) => {
@@ -31,7 +32,11 @@ const RosterPanel = ({
   return (
     <div
       className={`roster-panel ${isVisible ? "visible" : ""}  ${
-        isExpanded ? "panel-expanded" : ""
+        isExpanded
+          ? playerListExpanded
+            ? "panel-expanded"
+            : "panel-full-expanded"
+          : ""
       }`}
     >
       {isExpanded && (
@@ -39,7 +44,7 @@ const RosterPanel = ({
           <h6>Current Roster</h6>
           <PlayerList
             players={sortBy(combinedPlayers, "position")}
-            scrollHeight={`calc(25dvh - 60px)`}
+            scrollHeight={`calc(${!playerListExpanded ? 55 : 25}dvh - 60px)`}
             hidePagination
             actionColumn={(player) => (
               <Button
