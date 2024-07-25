@@ -39,6 +39,7 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { find } from "lodash";
 import RosterPanel from "./roster-panel";
+import { selectLeagueYear } from "../../api/leagueSlice";
 
 const MockNew = () => {
   const dispatch = useDispatch();
@@ -51,13 +52,19 @@ const MockNew = () => {
   const [page, setPage] = useState(1);
   const [position, setPosition] = useState();
   const [rookies, setRookies] = useState("");
-  const { data: tradedPicks } = useGetTradedPicksQuery("2024");
+  const year = useSelector(selectLeagueYear);
+  const { data: tradedPicks } = useGetTradedPicksQuery(year, { skip: !year });
   const { data, isLoading } = useGetRostersQuery();
   const { data: nflState } = useGetNflStateQuery();
   const activeSlot = useSelector(selectActiveSlot);
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
-  const { data: players } = useGetPlayersQuery({ page, position, rookies });
+  const { data: players } = useGetPlayersQuery({
+    page,
+    position,
+    rookies,
+    year,
+  });
   const { refetch: fetchMocks } = useGetMocksQuery();
   const { data: currentMock } = useGetMockQuery({ id }, { skip: !id });
   const [postMock, { isSuccess }] = usePostMockMutation();
@@ -209,7 +216,7 @@ const MockNew = () => {
               padding: "8px 16px",
               marginTop: 8,
               width: "100%",
-              height: "40dvh",
+              height: "40svh",
               overflowY: "auto",
               boxSizing: "border-box",
             }}
@@ -329,7 +336,7 @@ const MockNew = () => {
               onDraft={_onDraft}
               players={nonKeepers}
               scrollHeight={`calc(${
-                expandList ? (openPanel ? "40dvh" : "55dvh") : "170px"
+                expandList ? (openPanel ? "40svh" : "55svh") : "170px"
               } - 136px)`}
               page={page}
               setPage={setPage}

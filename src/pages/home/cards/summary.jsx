@@ -1,39 +1,48 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useGetStatsQuery, useGetUsersQuery } from "../../../api/api";
+import { useGetUsersQuery } from "../../../api/api";
 import { Avatar } from "../../../components/images";
 import { find } from "lodash";
 import "./cards.scss";
-import { useGetPlayersAllQuery } from "../../../api/bfbApi";
+import { useGetStatsQuery, useGetPlayersAllQuery } from "../../../api/bfbApi";
 
-const SummaryCard = ({ title, href, rosters }) => {
-  const { data: stats } = useGetStatsQuery("2023");
+const SummaryCard = ({ title, href, rosters, year }) => {
+  const { data: stats } = useGetStatsQuery(year, { skip: !year });
   const { data: usersObj } = useGetUsersQuery();
-  const { data: players, isLoading } = useGetPlayersAllQuery();
+  const { data: players, isLoading } = useGetPlayersAllQuery(year, {
+    skip: !year,
+  });
   const [data, setData] = useState();
 
   useEffect(() => {
     if (!rosters || !stats || isLoading || !usersObj) return;
     let testData = {};
+    let ranks = [];
     rosters.forEach((roster) => {
-      roster.players.forEach((player) => {
+      roster.players?.forEach((player) => {
         let currentPlayer = find(players, { id: player });
-        let obj = {
-          name: `${currentPlayer.first_name.slice(0, 1)}. ${
-            currentPlayer.last_name
-          }`,
-          team: currentPlayer.team,
-          ppg: (stats[player].pts_half_ppr / stats[player].gp).toFixed(2),
-          rank: stats[player].pos_rank_half_ppr,
-          avatar: find(usersObj, {
-            user_id: roster.owner_id,
-          }).avatar,
-        };
-        if (
-          obj.rank === 1 &&
-          ["K", "DEF"].indexOf(currentPlayer.position) === -1
-        )
-          testData[currentPlayer.position] = obj;
+        let playerStats = find(stats, { id: player });
+        if (currentPlayer) {
+          let obj = {
+            name: `${currentPlayer.first_name.slice(0, 1)}. ${
+              currentPlayer.last_name
+            }`,
+            team: currentPlayer.team,
+            ppg: playerStats
+              ? (playerStats.pts_half_ppr / playerStats.gms_active).toFixed(2)
+              : "N/A",
+            rank: playerStats?.pos_rank_half_ppr,
+            avatar: find(usersObj, {
+              user_id: roster.owner_id,
+            }).avatar,
+          };
+          if (
+            parseInt(obj.rank) === 1 &&
+            ["K", "DEF"].indexOf(currentPlayer.position) === -1
+          ) {
+            testData[currentPlayer.position] = obj;
+          }
+        }
       });
     });
     setData(testData);
@@ -53,6 +62,7 @@ const SummaryCard = ({ title, href, rosters }) => {
           }}
         >
           {data &&
+            Object.keys(data).length > 0 &&
             !isLoading &&
             ["QB", "RB", "WR", "TE"].map((pos) => {
               return (

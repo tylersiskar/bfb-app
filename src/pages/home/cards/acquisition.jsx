@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import {
   useGetNflStateQuery,
   useGetRostersQuery,
-  useGetStatsQuery,
   useGetUsersQuery,
 } from "../../../api/api";
 import {
@@ -14,7 +13,7 @@ import {
 import { fetchTransactionsForYear } from "../../../api/transactionsThunks";
 import { Avatar } from "../../../components/images";
 import { keyBy, find } from "lodash";
-import { useGetPlayersAllQuery } from "../../../api/bfbApi";
+import { useGetPlayersAllQuery, useGetStatsQuery } from "../../../api/bfbApi";
 
 const AcquisitionCard = ({ href, title }) => {
   const dispatch = useDispatch();
@@ -26,7 +25,7 @@ const AcquisitionCard = ({ href, title }) => {
   const [topTrade, setTopTradeAdd] = useState();
   const [topWaiver, setTopWaiverAdd] = useState();
   const { data: users } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery();
+  const { data: players } = useGetPlayersAllQuery("2023");
 
   useEffect(() => {
     if (!nflState) return; //if no active week yet, or trades and waivers already exist

@@ -5,7 +5,7 @@ import { find } from "lodash";
 
 const PlayerList = ({
   players = [],
-  scrollHeight = `calc(40dvh - 136px)`,
+  scrollHeight = `calc(40svh - 136px)`,
   onDraft,
   page,
   setPage,

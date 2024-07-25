@@ -10,13 +10,9 @@ import {
 import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import { Content } from "../../components/layout";
-import {
-  useGetRostersQuery,
-  useGetStatsQuery,
-  useGetUsersQuery,
-} from "../../api/api";
+import { useGetRostersQuery, useGetUsersQuery } from "../../api/api";
 import { find } from "lodash";
-import { useGetPlayersAllQuery } from "../../api/bfbApi";
+import { useGetStatsQuery, useGetPlayersAllQuery } from "../../api/bfbApi";
 
 let colors = [
   "#bb17bd",
@@ -42,7 +38,7 @@ const TeamsPage = () => {
   const { data: leagueObject, isLoading: isRosterLoading } =
     useGetRostersQuery();
   const { data: usersObj } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery();
+  const { data: players } = useGetPlayersAllQuery("2023");
 
   const fetchPlayers = (pos) => {
     let league = [];
@@ -56,31 +52,35 @@ const TeamsPage = () => {
         let teamName = users[team.owner_id];
         let teamPlayers = team.players.map((player) => {
           let currentPlayer = find(players, { id: player });
-          return {
-            name: currentPlayer.full_name,
-            position: currentPlayer.position,
-            pts: stats[player] ? stats[player].pts_half_ppr : 0,
-            gp: stats[player] ? stats[player].gp : 0,
-            ppg: stats[player]
-              ? stats[player].pts_half_ppr / stats[player].gp
-              : 0,
-            x: stats[player]
-              ? stats[player].pts_half_ppr / stats[player].gp
-              : 0,
-            rank: stats[player] ? stats[player].pos_rank_half_ppr : 0,
-            y: stats[player] ? stats[player].pos_rank_half_ppr : 0,
-          };
+          if (currentPlayer) {
+            let currentStat = find(stats, { player_id: player });
+            return {
+              name: currentPlayer.full_name,
+              position: currentPlayer.position,
+              pts: currentStat ? currentStat.pts_half_ppr : 0,
+              gp: currentStat ? currentStat.gms_active : 0,
+              ppg: currentStat
+                ? currentStat.pts_half_ppr / currentStat.gms_active
+                : 0,
+              x: currentStat
+                ? currentStat.pts_half_ppr / currentStat.gms_active
+                : 0,
+              rank: currentStat ? currentStat.pos_rank_half_ppr : 0,
+              y: currentStat ? currentStat.pos_rank_half_ppr : 0,
+            };
+          }
         });
         if (pos) {
           teamPlayers = teamPlayers.filter((item) => {
             return (
+              item &&
               item.position === pos &&
               ["K", "DEF"].indexOf(item.position) === -1
             );
           });
         } else {
           teamPlayers = teamPlayers.filter((item) => {
-            return ["K", "DEF"].indexOf(item.position) === -1;
+            return item && ["K", "DEF"].indexOf(item.position) === -1;
           });
         }
         league[teamName] = teamPlayers;

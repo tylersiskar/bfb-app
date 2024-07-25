@@ -3,6 +3,8 @@ import { useGetPlayersQuery } from "../../api/bfbApi";
 import { find, sortBy } from "lodash";
 import { PlayerList } from "../../components/list-items";
 import { Button } from "../../components/buttons";
+import { selectLeagueYear } from "../../api/leagueSlice";
+import { useSelector } from "react-redux";
 
 const RosterPanel = ({
   isVisible,
@@ -11,6 +13,7 @@ const RosterPanel = ({
   activeSlot = {},
   draftedPlayers,
 }) => {
+  const year = useSelector(selectLeagueYear);
   const { data: playerIdsData, isLoading } = useGetRostersQuery({
     roster_id: activeSlot.roster_id,
   });
@@ -18,7 +21,7 @@ const RosterPanel = ({
     roster_id: activeSlot.roster_id,
   })?.keepers;
   const { data } = useGetPlayersQuery(
-    { id: JSON.stringify(playerIds) },
+    { id: JSON.stringify(playerIds), year },
     { skip: !playerIds || !playerIds.length || isLoading }
   );
 
@@ -44,7 +47,7 @@ const RosterPanel = ({
           <h6>Current Roster</h6>
           <PlayerList
             players={sortBy(combinedPlayers, "position")}
-            scrollHeight={`calc(${!playerListExpanded ? 55 : 25}dvh - 60px)`}
+            scrollHeight={`calc(${!playerListExpanded ? 55 : 25}svh - 60px)`}
             hidePagination
             actionColumn={(player) => (
               <Button

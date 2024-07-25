@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { selectLeague } from "../api/leagueSlice";
 import { draftUrl, allDraftsUrl } from "./constants";
 
 const useDraft = (year) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  let drafts = {
-    2023: "934894009888088065",
-    2022: "812458201160237056",
-  };
-
+  let { draft_id } = useSelector(selectLeague);
   useEffect(() => {
-    let url = year
-      ? draftUrl.replace("<draft_id>", drafts[year])
-      : allDraftsUrl;
+    let url = year ? draftUrl.replace("<draft_id>", draft_id) : allDraftsUrl;
     async function fetchData() {
       try {
         const response = await fetch(url); // Use the URL and parameters to fetch data

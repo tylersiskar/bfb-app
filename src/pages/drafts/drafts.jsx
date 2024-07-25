@@ -5,11 +5,13 @@ import Content from "../../components/layout/content";
 import { useDraft } from "../../sleeper/drafts";
 import { groupBy, find } from "lodash";
 import {
+  useGetDraftDetailsQuery,
   useGetRostersQuery,
-  useGetStatsQuery,
   useGetUsersQuery,
 } from "../../api/api";
-import { useGetPlayersAllQuery } from "../../api/bfbApi";
+import { useGetPlayersAllQuery, useGetStatsQuery } from "../../api/bfbApi";
+import { useSelector } from "react-redux";
+import { selectLeagues } from "../../api/leagueSlice";
 
 const colors = [
   "red",
@@ -32,17 +34,22 @@ const DraftsPage = (props) => {
     "DEF",
   ]);
   const [year, setYear] = useState("2023");
-  const { data } = useDraft(year);
+  // const { data } = useDraft(year);
   const [dataset, setDataset] = useState([]);
   const { data: league } = useGetRostersQuery();
   const [variable, setVariable] = useState("roster_id");
   const { data: usersObj, isLoading: isUserLoading } = useGetUsersQuery();
   const { data: stats } = useGetStatsQuery(year);
-  const { data: playersObj, isLoading } = useGetPlayersAllQuery();
-
-  const _calculatePPG = (id) => {
-    return stats[id].pts_half_ppr / stats[id].gp;
-  };
+  const { data: playersObj, isLoading } = useGetPlayersAllQuery(year);
+  const leagues = useSelector(selectLeagues);
+  let draftIds;
+  leagues?.forEach((l) => {
+    if (!draftIds) draftIds = {};
+    draftIds[l.season] = l.draft_id;
+  });
+  const { data } = useGetDraftDetailsQuery(draftIds && draftIds[year], {
+    skip: !draftIds,
+  });
 
   const _setDataset = () => {
     let arr = groupBy(data, "round");
@@ -57,13 +64,18 @@ const DraftsPage = (props) => {
             pointHoverRadius: 12,
             data: arr[round].reduce((newArray, obj) => {
               let player = find(playersObj, { id: obj.player_id });
-              if (positions.includes(player.position)) {
-                newArray.push({
-                  x: obj[variable],
-                  y: _calculatePPG(obj.player_id),
-                  label: `${player.first_name} ${player.last_name}`,
-                  position: player.position,
-                });
+              if (player && positions.includes(player.position)) {
+                let playerStat = find(stats, { player_id: obj.player_id });
+                if (playerStat) {
+                  newArray.push({
+                    x: obj[variable],
+                    y: playerStat.gms_active
+                      ? playerStat.pts_half_ppr / playerStat.gms_active
+                      : 0,
+                    label: `${player.first_name} ${player.last_name}`,
+                    position: player.position,
+                  });
+                }
               }
               return newArray;
             }, []),
@@ -181,6 +193,13 @@ const DraftsPage = (props) => {
           >
             2023
           </Button>
+          {/* <Button
+            onClick={(e) => setYear(year === e.target.id ? null : e.target.id)}
+            id="2024"
+            active={year === "2024"}
+          >
+            2024
+          </Button> */}
           <Button onClick={_exportToCSV}>Export {year} Data</Button>
         </div>
 
@@ -223,12 +242,13 @@ const DraftsPage = (props) => {
             plugins: {
               tooltip: {
                 callbacks: {
-                  label: (context) =>
-                    `${context.dataset.label} ${
+                  label: (context) => {
+                    return `${context.dataset.label} ${
                       context.raw.label
-                    }\n PPG: ${context.raw.y.toFixed(2)}\n ${
+                    }\n PPG: ${parseFloat(context.raw.y).toFixed(2)}\n ${
                       variable === "draft_slot" ? "Slot" : "Team"
-                    }: ${_getTeamName(context.raw.x)}`,
+                    }: ${_getTeamName(context.raw.x)}`;
+                  },
                 },
               },
             },

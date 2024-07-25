@@ -3,11 +3,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { find } from "lodash";
 import { api } from "./api";
 
-const { VITE_LEAGUE_ID: LEAGUE_ID, VITE_SLEEPER_API } = import.meta.env;
-
+const { VITE_SLEEPER_API } = import.meta.env;
 export const fetchStandings = createAsyncThunk(
   "standings/fetchStandings",
-  async (_, thunkAPI) => {
+  async ({ seasons, year }, thunkAPI) => {
+    let activeLeague = find(seasons, { season: year.toString() });
+    let LEAGUE_ID = activeLeague?.league_id;
     try {
       const playoffBracketResponse = await fetch(
         `${VITE_SLEEPER_API}/league/${LEAGUE_ID}/winners_bracket`

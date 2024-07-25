@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { selectNavContent } from "../../api/navSlice";
 
 const DefaultNavContent = () => {
@@ -18,6 +18,15 @@ const DefaultNavContent = () => {
       <Link className="list-item" to="/mocks">
         <h5>Mock Draft Center</h5>
       </Link>
+      <button
+        className="list-item"
+        onClick={() => {
+          localStorage.removeItem("league_id");
+          localStorage.removeItem("year");
+        }}
+      >
+        <h5>Enter new League ID</h5>
+      </button>
     </div>
   );
 };

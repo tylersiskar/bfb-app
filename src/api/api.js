@@ -1,38 +1,33 @@
 // api.js
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { createSelector } from "reselect";
 import { find, reverse } from "lodash";
-import { draftsObject, leaguesObject } from "../sleeper/constants";
-
-const { VITE_SLEEPER_API } = import.meta.env;
-let LEAGUE_ID = leaguesObject["2024"];
+import customBaseQuery from "./customBaseQuery";
 
 export const api = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: VITE_SLEEPER_API,
-  }),
+  baseQuery: customBaseQuery,
   endpoints: (builder) => ({
     getUsers: builder.query({
-      query: () => `league/${LEAGUE_ID}/users`,
+      query: () => `league/{LEAGUE_ID}/users`,
     }),
     getRosters: builder.query({
-      query: () => `league/${LEAGUE_ID}/rosters`,
-    }),
-    getStats: builder.query({
-      query: (year) => ({ url: `stats/nfl/regular/${year}` }),
+      query: () => `league/{LEAGUE_ID}/rosters`,
     }),
     getNflState: builder.query({
       query: () => "state/nfl",
     }),
     getCurrentMatchups: builder.query({
-      query: (week) => `league/${LEAGUE_ID}/matchups/${week}`,
+      query: (week) => `league/{LEAGUE_ID}/matchups/${week}`,
     }),
     getDraftDetails: builder.query({
-      query: (season) => `draft/${draftsObject[season]}/picks`,
+      query: (draft_id) => `draft/${draft_id}/picks`,
     }),
     getTradedPicks: builder.query({
-      query: (season) => `league/${leaguesObject[season]}/traded_picks`,
+      query: (season) => `league/{LEAGUE_ID}/traded_picks`,
+    }),
+    getLeague: builder.query({
+      query: (id) => `league/${id}`,
     }),
   }),
 });
@@ -112,10 +107,10 @@ export const selectCustomMatchupData = createSelector(
 
 export const {
   useGetRostersQuery,
-  useGetStatsQuery,
   useGetNflStateQuery,
   useGetCurrentMatchupsQuery,
   useGetDraftDetailsQuery,
   useGetTradedPicksQuery,
   useGetUsersQuery,
+  useGetLeagueQuery,
 } = api;
