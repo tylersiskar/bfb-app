@@ -9,8 +9,13 @@ import {
   useGetUsersQuery,
 } from "../../api/api";
 import { useGetPlayersAllQuery, useGetStatsQuery } from "../../api/bfbApi";
-import { useSelector } from "react-redux";
-import { selectLeagues, selectLeagueYear } from "../../api/leagueSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchLeagues,
+  selectLeagueId,
+  selectLeagues,
+  selectLeagueYear,
+} from "../../api/leagueSlice";
 
 const colors = [
   "red",
@@ -24,6 +29,7 @@ const colors = [
 ];
 
 const DraftsPage = (props) => {
+  const dispatch = useDispatch();
   const [positions, setPositions] = useState([
     "QB",
     "RB",
@@ -37,11 +43,13 @@ const DraftsPage = (props) => {
   const [variable, setVariable] = useState("roster_id");
   const { data: usersObj, isLoading: isUserLoading } = useGetUsersQuery();
   const leagueYear = useSelector(selectLeagueYear);
+  const leagueId = useSelector(selectLeagueId);
   const [year, setYear] = useState(leagueYear);
   const { data: stats } = useGetStatsQuery(year);
   const { data: playersObj, isLoading } = useGetPlayersAllQuery(year);
   const leagues = useSelector(selectLeagues);
   let draftIds;
+
   leagues?.forEach((l) => {
     if (!draftIds) draftIds = {};
     draftIds[l.season] = l.draft_id;
@@ -82,6 +90,11 @@ const DraftsPage = (props) => {
         })
     );
   };
+
+  useEffect(() => {
+    dispatch(fetchLeagues(leagueId));
+  }, []);
+
   useEffect(() => {
     if (playersObj) _setDataset();
   }, [data, stats, positions, variable, playersObj]);
@@ -186,6 +199,7 @@ const DraftsPage = (props) => {
                     setYear(year === e.target.id ? null : e.target.id)
                   }
                   id={season.season}
+                  key={season.season}
                   active={year === season.season}
                 >
                   {season.season}

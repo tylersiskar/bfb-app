@@ -18,15 +18,17 @@ const DefaultNavContent = () => {
       <Link className="list-item" to="/mocks">
         <h5>Mock Draft Center</h5>
       </Link>
-      <button
+      <Link
         className="list-item"
+        to="/"
         onClick={() => {
           localStorage.removeItem("league_id");
           localStorage.removeItem("year");
+          window.location.reload();
         }}
       >
         <h5>Enter new League ID</h5>
-      </button>
+      </Link>
     </div>
   );
 };

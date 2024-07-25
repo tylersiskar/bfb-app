@@ -46,7 +46,6 @@ const TeamsPage = () => {
     usersObj.forEach((user) => {
       users[user.user_id] = user.display_name;
     });
-
     leagueObject &&
       leagueObject.forEach((team) => {
         let teamName = users[team.owner_id];
@@ -85,34 +84,30 @@ const TeamsPage = () => {
         }
         league[teamName] = teamPlayers;
       });
+
+    setDatasets(
+      Object.keys(league).map((teamName, i) => {
+        return {
+          label: teamName,
+          data: league[teamName].map((player) => {
+            return {
+              x: player.x,
+              y: player.y,
+              label: player.name,
+            };
+          }),
+          backgroundColor: colors[i],
+          pointRadius: 8,
+          pointHoverRadius: 12,
+        };
+      })
+    );
     setLeague(league);
   };
 
   useEffect(() => {
-    if (leagueState) {
-      setDatasets(
-        Object.keys(leagueState).map((teamName, i) => {
-          return {
-            label: teamName,
-            data: leagueState[teamName].map((player) => {
-              return {
-                x: player.x,
-                y: player.y,
-                label: player.name,
-              };
-            }),
-            backgroundColor: colors[i],
-            pointRadius: 8,
-            pointHoverRadius: 12,
-          };
-        })
-      );
-    }
-  }, [leagueState]);
-
-  useEffect(() => {
     if (stats && leagueObject) fetchPlayers(position);
-  }, [position, stats, leagueObject]);
+  }, [position, stats, leagueObject, players]);
 
   return (
     <Content isLoading={isLoading || isRosterLoading}>
@@ -178,60 +173,62 @@ const TeamsPage = () => {
         </div>
       </div>
       <div className="h-100" style={{ paddingBottom: 64, height: 600 }}>
-        <Scatter
-          data={{ datasets }}
-          options={{
-            maintainAspectRatio: window.innerWidth > 767,
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (context) =>
-                    `${context.dataset.label} ${
-                      context.raw.label
-                    }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
-                      context.raw.y
-                    }`,
+        {datasets && (
+          <Scatter
+            data={{ datasets }}
+            options={{
+              maintainAspectRatio: window.innerWidth > 767,
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: (context) =>
+                      `${context.dataset.label} ${
+                        context.raw.label
+                      }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
+                        context.raw.y
+                      }`,
+                  },
                 },
               },
-            },
-            scales: {
-              y: {
-                reverse: true,
-                beginAtZero: true,
-                title: {
-                  display: true,
-                  text: "Rank",
+              scales: {
+                y: {
+                  reverse: true,
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: "Rank",
+                  },
+                  ticks: {
+                    stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
+                  },
+                  border: {
+                    width: 2,
+                    color: "black",
+                  },
+                  max:
+                    position === "TE" || position === "QB"
+                      ? 50
+                      : position === "RB"
+                      ? 100
+                      : 125,
                 },
-                ticks: {
-                  stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
+                x: {
+                  title: {
+                    display: true,
+                    text: "PPG",
+                  },
+                  border: {
+                    width: 2,
+                    color: "black",
+                  },
+                  gridLines: {
+                    display: false,
+                  },
                 },
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                max:
-                  position === "TE" || position === "QB"
-                    ? 50
-                    : position === "RB"
-                    ? 100
-                    : 125,
               },
-              x: {
-                title: {
-                  display: true,
-                  text: "PPG",
-                },
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                gridLines: {
-                  display: false,
-                },
-              },
-            },
-          }}
-        />
+            }}
+          />
+        )}
       </div>
     </Content>
   );
