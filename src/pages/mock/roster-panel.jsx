@@ -20,11 +20,11 @@ const RosterPanel = ({
   let playerIds = find(playerIdsData, {
     roster_id: activeSlot.roster_id,
   })?.keepers;
+
   const { data } = useGetPlayersQuery(
-    { id: JSON.stringify(playerIds), year },
+    { id: JSON.stringify(playerIds), year: year - 1 },
     { skip: !playerIds || !playerIds.length || isLoading }
   );
-
   let players = data ? data.map((p) => ({ ...p, isKeeper: true })) : [];
 
   let combinedPlayers = [
