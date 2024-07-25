@@ -1,6 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { draftsObject, leaguesObject } from "../sleeper/constants";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   draftDetails: [],

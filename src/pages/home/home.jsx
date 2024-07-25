@@ -55,7 +55,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    if (seasons && seasons.length > 0 && leagueYear) {
+    if (seasons && seasons.length > 1 && leagueYear) {
       dispatch(fetchStandings({ seasons, year: leagueYear - 1 }));
     }
   }, [seasons.length]);
@@ -91,7 +91,7 @@ const HomePage = () => {
           {seasonType === "in-season" && (
             <>
               <TrendsCard title="Trending Teams" href="/trends" />
-              <AcquisitionCard title="Top Acquisitions" href="/transactions" />
+              {/* <AcquisitionCard title="Top Acquisitions" href="/transactions" /> */}
             </>
           )}
           {seasonType === "off-season" && (

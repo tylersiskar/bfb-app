@@ -15,7 +15,6 @@ const customBaseQuery = async (args, api, extraOptions) => {
     args.url = args.url.replace("{LEAGUE_ID}", leagueId);
     args.url = args.url.replace("{DRAFT_ID}", draftId);
   }
-
   return fetchBaseQuery({ baseUrl: VITE_SLEEPER_API })(args, api, extraOptions);
 };
 

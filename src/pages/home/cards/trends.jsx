@@ -31,6 +31,7 @@ const TrendsCard = ({ title, subtitle, href }) => {
   /**
    * need to create an object of {team_name, avatar, trendingPoints}
    */
+  if (!usersObj) return null;
   let rostersById = keyBy(rostersData, "roster_id");
   let team = Object.keys(rostersById).map((roster) => {
     let currentRoster = rostersById[roster];
@@ -41,9 +42,10 @@ const TrendsCard = ({ title, subtitle, href }) => {
       (currentRoster.settings.wins + currentRoster.settings.losses);
 
     let trendingAverage = trendingPointsByRoster[roster] / 3;
-
     return {
-      teamName: user.metadata.team_name.trim(" "),
+      teamName: user.metadata.team_name
+        ? user.metadata.team_name.trim(" ")
+        : user.metadata.display_name,
       avatar: user.avatar,
       trendingPts: seasonAverage - trendingAverage,
     };
@@ -64,17 +66,23 @@ const TrendsCard = ({ title, subtitle, href }) => {
         <h3 className="w-100 lime" style={{ marginBottom: 12 }}>
           {title}
         </h3>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 12,
-            height: "100%",
-          }}
-        >
-          <VerticalListItem item={trendingDownTeam} />
-          <VerticalListItem arrowUp item={trendingUpTeam} />
-        </div>
+        {trendingDownTeam && trendingUpTeam ? (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 12,
+              height: "100%",
+            }}
+          >
+            <VerticalListItem item={trendingDownTeam} />
+            <VerticalListItem arrowUp item={trendingUpTeam} />
+          </div>
+        ) : (
+          <div className="flex w-100 h-100 align-center justify-center">
+            <p style={{ color: "white" }}> No Trends Until Week 4!</p>
+          </div>
+        )}
       </Link>
     </div>
   );

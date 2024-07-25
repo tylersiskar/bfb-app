@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import Content from "../../components/layout/content";
-import { useDraft } from "../../sleeper/drafts";
 import { groupBy, find } from "lodash";
 import {
   useGetDraftDetailsQuery,
@@ -11,7 +10,7 @@ import {
 } from "../../api/api";
 import { useGetPlayersAllQuery, useGetStatsQuery } from "../../api/bfbApi";
 import { useSelector } from "react-redux";
-import { selectLeagues } from "../../api/leagueSlice";
+import { selectLeagues, selectLeagueYear } from "../../api/leagueSlice";
 
 const colors = [
   "red",
@@ -33,12 +32,12 @@ const DraftsPage = (props) => {
     "K",
     "DEF",
   ]);
-  const [year, setYear] = useState("2023");
-  // const { data } = useDraft(year);
   const [dataset, setDataset] = useState([]);
   const { data: league } = useGetRostersQuery();
   const [variable, setVariable] = useState("roster_id");
   const { data: usersObj, isLoading: isUserLoading } = useGetUsersQuery();
+  const leagueYear = useSelector(selectLeagueYear);
+  const [year, setYear] = useState(leagueYear);
   const { data: stats } = useGetStatsQuery(year);
   const { data: playersObj, isLoading } = useGetPlayersAllQuery(year);
   const leagues = useSelector(selectLeagues);
@@ -173,34 +172,28 @@ const DraftsPage = (props) => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 2fr",
+            gridTemplateColumns: leagues.map(() => "1fr").join(" "),
             gap: 4,
             width: "100%",
             marginBottom: 8,
           }}
         >
-          <Button
-            onClick={(e) => setYear(year === e.target.id ? null : e.target.id)}
-            id="2022"
-            active={year === "2022"}
-          >
-            2022
-          </Button>
-          <Button
-            onClick={(e) => setYear(year === e.target.id ? null : e.target.id)}
-            id="2023"
-            active={year === "2023"}
-          >
-            2023
-          </Button>
-          {/* <Button
-            onClick={(e) => setYear(year === e.target.id ? null : e.target.id)}
-            id="2024"
-            active={year === "2024"}
-          >
-            2024
-          </Button> */}
-          <Button onClick={_exportToCSV}>Export {year} Data</Button>
+          {leagues
+            ?.map((season) => {
+              return (
+                <Button
+                  onClick={(e) =>
+                    setYear(year === e.target.id ? null : e.target.id)
+                  }
+                  id={season.season}
+                  active={year === season.season}
+                >
+                  {season.season}
+                </Button>
+              );
+            })
+            .reverse()}
+          {/* <Button onClick={_exportToCSV}>Export {year} Data</Button> */}
         </div>
 
         <div
@@ -235,64 +228,68 @@ const DraftsPage = (props) => {
       </div>
 
       <div className="h-100" style={{ paddingBottom: 64 }}>
-        <Scatter
-          data={{ datasets: dataset }}
-          options={{
-            maintainAspectRatio: window.innerWidth > 767,
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (context) => {
-                    return `${context.dataset.label} ${
-                      context.raw.label
-                    }\n PPG: ${parseFloat(context.raw.y).toFixed(2)}\n ${
-                      variable === "draft_slot" ? "Slot" : "Team"
-                    }: ${_getTeamName(context.raw.x)}`;
+        {!data || data.length === 0 ? (
+          "No Draft Data Yet!"
+        ) : (
+          <Scatter
+            data={{ datasets: dataset }}
+            options={{
+              maintainAspectRatio: window.innerWidth > 767,
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: (context) => {
+                      return `${context.dataset.label} ${
+                        context.raw.label
+                      }\n PPG: ${parseFloat(context.raw.y).toFixed(2)}\n ${
+                        variable === "draft_slot" ? "Slot" : "Team"
+                      }: ${_getTeamName(context.raw.x)}`;
+                    },
                   },
                 },
               },
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                title: {
-                  display: true,
-                  text: "PPG",
-                },
-                grid: {
-                  display: false,
-                },
-                max: 25,
-              },
-              x: {
-                min: 0,
-                max: 13,
-                border: {
-                  width: 2,
-                  color: "black",
-                },
-                ticks: {
-                  callback: (value) => {
-                    if (value === 13 || value === 0) return "";
-                    return _getTeamName(value);
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  border: {
+                    width: 2,
+                    color: "black",
                   },
-                  stepSize: 1,
+                  title: {
+                    display: true,
+                    text: "PPG",
+                  },
+                  grid: {
+                    display: false,
+                  },
+                  max: 25,
                 },
-                title: {
-                  display: true,
-                  text: variable === "draft_slot" ? "Draft Slot" : "Team",
-                },
-                grid: {
-                  display: true,
+                x: {
+                  min: 0,
+                  max: 13,
+                  border: {
+                    width: 2,
+                    color: "black",
+                  },
+                  ticks: {
+                    callback: (value) => {
+                      if (value === 13 || value === 0) return "";
+                      return _getTeamName(value);
+                    },
+                    stepSize: 1,
+                  },
+                  title: {
+                    display: true,
+                    text: variable === "draft_slot" ? "Draft Slot" : "Team",
+                  },
+                  grid: {
+                    display: true,
+                  },
                 },
               },
-            },
-          }}
-        />
+            }}
+          />
+        )}
       </div>
     </Content>
   );
