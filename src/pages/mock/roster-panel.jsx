@@ -1,37 +1,13 @@
-import { useGetRostersQuery } from "../../api/api";
-import { useGetPlayersQuery } from "../../api/bfbApi";
-import { find, sortBy } from "lodash";
+import { sortBy } from "lodash";
 import { PlayerList } from "../../components/list-items";
 import { Button } from "../../components/buttons";
-import { selectLeagueYear } from "../../api/leagueSlice";
-import { useSelector } from "react-redux";
 
 const RosterPanel = ({
   isVisible,
   isExpanded,
   playerListExpanded,
-  activeSlot = {},
-  draftedPlayers,
+  activeRoster,
 }) => {
-  const year = useSelector(selectLeagueYear);
-  const { data: playerIdsData, isLoading } = useGetRostersQuery({
-    roster_id: activeSlot.roster_id,
-  });
-  let playerIds = find(playerIdsData, {
-    roster_id: activeSlot.roster_id,
-  })?.keepers;
-
-  const { data } = useGetPlayersQuery(
-    { id: JSON.stringify(playerIds), year: year - 1 },
-    { skip: !playerIds || !playerIds.length || isLoading }
-  );
-  let players = data ? data.map((p) => ({ ...p, isKeeper: true })) : [];
-
-  let combinedPlayers = [
-    ...players,
-    ...draftedPlayers.filter((p) => p.roster_id === activeSlot.roster_id),
-  ];
-
   return (
     <div
       className={`roster-panel ${isVisible ? "visible" : ""}  ${
@@ -46,7 +22,8 @@ const RosterPanel = ({
         <>
           <h6>Current Roster</h6>
           <PlayerList
-            players={sortBy(combinedPlayers, "position")}
+            isRoster
+            playerList={sortBy(activeRoster, "position")}
             scrollHeight={`calc(${!playerListExpanded ? 55 : 25}svh - 60px)`}
             hidePagination
             actionColumn={(player) => (

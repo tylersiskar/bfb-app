@@ -4,6 +4,7 @@ import "../home/home.scss";
 import "./mocks.scss";
 import { useGetMocksQuery } from "../../api/bfbApi";
 import { Link } from "react-router-dom";
+import { groupBy } from "lodash";
 
 const MockDraftCenter = () => {
   const { data: mocks, isLoading } = useGetMocksQuery(undefined, {
@@ -29,24 +30,23 @@ const MockDraftCenter = () => {
         <div className="flex flex-column w-100" style={{ paddingBottom: 24 }}>
           <h3 className="yellow pb-1">Created Mocks</h3>
           {mocks?.map((mock) => {
+            let roundOne = mock.picks.filter((m) => m.round === 1);
+            let positionalGrouping = groupBy(roundOne, "pos");
+            console.log(positionalGrouping);
             return (
               <Link
-                className="p-2 border-bottom mock-item"
+                className="p-3 border-bottom mock-item"
                 key={mock.name}
                 to={`/mocks/${mock.id}`}
               >
-                <div className="flex flex-column align-start">
-                  <p className="light bold pb-1">{mock.name}</p>
-                  <p className="light sm">
-                    Created: {mock.create_date.split("T")[0]}
-                  </p>
-                </div>
-                <div className="flex flex-column align-end">
-                  <p className="light bold pb-1">Top Pick</p>
-                  <p className="light sm">
-                    {mock.picks[0].first_name} {mock.picks[0].last_name}
-                  </p>
-                </div>
+                <p className="light bold pb-1">{mock.name}</p>
+                <p className="light">{mock.create_date.split("T")[0]}</p>
+                {/* <div className="flex w-100 justify-end">
+                  <p className="light md pr-1">1st Round:</p>
+                  {Object.keys(positionalGrouping).map((pos) => (
+                    <p className="light md pr-1">{`${positionalGrouping[pos].length} ${pos} `}</p>
+                  ))}
+                </div> */}
               </Link>
             );
           })}

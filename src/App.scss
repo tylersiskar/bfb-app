@@ -143,6 +143,10 @@ p {
   font-size: 12px;
   margin: 0;
 }
+.md {
+  font-size: 14px;
+  margin: 0;
+}
 .bold {
   font-weight: 600;
 }
@@ -153,6 +157,11 @@ p {
 
 .p-2 {
   padding: 8px;
+  box-sizing: border-box;
+}
+
+.p-3 {
+  padding: 12px;
   box-sizing: border-box;
 }
 

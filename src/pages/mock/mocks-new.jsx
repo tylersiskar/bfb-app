@@ -17,6 +17,7 @@ import {
   mdiChevronLeft,
   mdiCloseBoxOutline,
   mdiListBoxOutline,
+  mdiLoading,
   mdiTrashCanOutline,
 } from "@mdi/js";
 import { Button, IconButton } from "../../components/buttons";
@@ -31,15 +32,20 @@ import {
 } from "../../api/draftSlice";
 import {
   selectNonKeepers,
+  selectKeepers,
   useGetMockQuery,
   useGetMocksQuery,
   useGetPlayersQuery,
+  useLazyGetPlayerValueQuery,
   usePostMockMutation,
+  useGetPlayersAllQuery,
 } from "../../api/bfbApi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { find } from "lodash";
 import RosterPanel from "./roster-panel";
 import { selectLeagueYear } from "../../api/leagueSlice";
+import useActiveRoster from "./useActiveRoster";
+import Icon from "@mdi/react";
 
 const MockNew = () => {
   const dispatch = useDispatch();
@@ -49,7 +55,6 @@ const MockNew = () => {
   const [expandList, setExpandList] = useState(false);
   const [roundIdx, setRoundIdx] = useState(0);
   const [pickIdx, setPickIdx] = useState(0);
-  const [page, setPage] = useState(1);
   const [position, setPosition] = useState();
   const [rookies, setRookies] = useState("");
   const year = useSelector(selectLeagueYear);
@@ -59,12 +64,6 @@ const MockNew = () => {
   const activeSlot = useSelector(selectActiveSlot);
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
-  const { data: players } = useGetPlayersQuery({
-    page,
-    position,
-    rookies,
-    year,
-  });
   const { refetch: fetchMocks } = useGetMocksQuery();
   const { data: currentMock } = useGetMockQuery({ id }, { skip: !id });
   const [postMock, { isSuccess }] = usePostMockMutation();
@@ -76,9 +75,28 @@ const MockNew = () => {
       users,
     })
   );
-  const nonKeepers = useSelector((state) =>
-    selectNonKeepers(state, { rosters: data, players })
+  const { data: playersAll } = useGetPlayersAllQuery(year);
+
+  const keepers = useSelector((state) =>
+    selectKeepers(state, { rosters: data, players: playersAll })
   );
+
+  const [trigger, { data: playerValue, isFetching: playerValueIsLoading }] =
+    useLazyGetPlayerValueQuery();
+
+  const {
+    activeRoster,
+    activeId,
+    isFetching: isActiveRosterFetching,
+  } = useActiveRoster();
+
+  useEffect(() => updatePlayerValueList(), [activeId, isActiveRosterFetching]);
+
+  const updatePlayerValueList = (newDrafted) => {
+    if (isActiveRosterFetching) return;
+    let drafted = newDrafted ?? draftedPlayers;
+    trigger({ activeRoster, draftedPlayers: [...drafted, ...keepers] });
+  };
 
   const [openPanel, setOpenPanel] = useState(false);
 
@@ -107,17 +125,15 @@ const MockNew = () => {
         } else return true;
       } else return true;
     });
-    dispatch(
-      updateDraftedPlayers([
-        ...filteredDraftedPlayers,
-        {
-          ...player,
-          round: activeSlot.round,
-          pick: activeSlot.pick,
-          roster_id: activeSlot.roster_id,
-        },
-      ])
-    );
+    let newDraftedPlayers = [
+      ...filteredDraftedPlayers,
+      {
+        ...player,
+        round: activeSlot.round,
+        pick: activeSlot.pick,
+        roster_id: activeSlot.roster_id,
+      },
+    ];
     if (pickIdx === 11) {
       setRoundIdx(roundIdx + 1);
       setPickIdx(0);
@@ -127,11 +143,18 @@ const MockNew = () => {
       setPickIdx(pickIdx + 1);
       dispatch(setActiveSlot(draftOrderWithTrades[roundIdx][pickIdx + 1]));
     }
+    dispatch(updateDraftedPlayers(newDraftedPlayers));
   };
 
   const _setPosition = (e) => {
     if (position === e.target.id) setPosition();
     else setPosition(e.target.id);
+  };
+
+  const _getPlayerList = () => {
+    if (position) {
+      return playerValue.filter((p) => p.POS === position);
+    } else return playerValue ?? [];
   };
   const handleSubmit = async (mockData) => {
     try {
@@ -143,6 +166,7 @@ const MockNew = () => {
       // Handle error
     }
   };
+
   return (
     <Content dark isLoading={isLoading}>
       <div className="home-body">
@@ -227,8 +251,7 @@ const MockNew = () => {
             isExpanded={openPanel}
             playerListExpanded={expandList}
             isVisible={!!Object.keys(activeSlot).length}
-            activeSlot={activeSlot}
-            draftedPlayers={draftedPlayers}
+            activeRoster={activeRoster}
           />
           <div
             className={`bottom-drawer ${id ? "d-none" : ""} ${
@@ -256,6 +279,15 @@ const MockNew = () => {
                 )}
               </div>
               <div className="flex align-center">
+                {playerValueIsLoading && (
+                  <Icon
+                    path={mdiLoading}
+                    title={"loading"}
+                    color={"#808080"}
+                    size={1}
+                    className="loading-icon"
+                  />
+                )}
                 {!!find(draftedPlayers, {
                   round: activeSlot.round,
                   pick: activeSlot.pick,
@@ -274,6 +306,15 @@ const MockNew = () => {
                                 player.pick === activeSlot.pick
                               )
                           )
+                        )
+                      );
+                      updatePlayerValueList(
+                        draftedPlayers.filter(
+                          (player) =>
+                            !(
+                              player.round === activeSlot.round &&
+                              player.pick === activeSlot.pick
+                            )
                         )
                       );
                     }}
@@ -324,22 +365,21 @@ const MockNew = () => {
               >
                 TE
               </Button>
-              <Button
+              {/* <Button
                 className="button-sm inverted"
                 onClick={() => setRookies(!rookies ? "true" : "")}
                 active={!!rookies}
               >
                 Rookies
-              </Button>
+              </Button> */}
             </div>
             <PlayerList
               onDraft={_onDraft}
-              players={nonKeepers}
               scrollHeight={`calc(${
                 expandList ? (openPanel ? "40svh" : "55svh") : "170px"
               } - 136px)`}
-              page={page}
-              setPage={setPage}
+              playerList={_getPlayerList()}
+              playerValueIsFetching={playerValueIsLoading}
             />
           </div>
         </div>

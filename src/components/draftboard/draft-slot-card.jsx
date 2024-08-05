@@ -8,7 +8,6 @@ const DraftSlotCard = ({ draftSlot, onSelect, selectedPick }) => {
   let isSelected =
     selectedPick.round === draftSlot.round &&
     selectedPick.pick === draftSlot.pick;
-
   const _onClick = () => {
     dispatch(setActiveSlot(draftSlot));
     onSelect && onSelect(draftSlot);
@@ -32,7 +31,7 @@ const DraftSlotCard = ({ draftSlot, onSelect, selectedPick }) => {
   } else {
     return (
       <div
-        className={`card ${draftSlot.player.position} ${
+        className={`card ${draftSlot.player.pos} ${
           isSelected ? "selected" : ""
         }`}
         onClick={_onClick}
@@ -43,7 +42,7 @@ const DraftSlotCard = ({ draftSlot, onSelect, selectedPick }) => {
         </div>
         <div className="flex align-center">
           <p className="x-sm">
-            {draftSlot.player.position} - {draftSlot.player.team}
+            {draftSlot.player.pos} - {draftSlot.player.team}
           </p>
         </div>
         <div className="flex align-end justify-between w-100">

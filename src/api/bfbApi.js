@@ -1,14 +1,13 @@
 // api.js
 import { createSelector } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { customBfbBaseQuery } from "./customBaseQuery";
 
 const { VITE_BFB_API } = import.meta.env;
 
 export const bfbApi = createApi({
   reducerPath: "bfbApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: VITE_BFB_API,
-  }),
+  baseQuery: customBfbBaseQuery,
   endpoints: (builder) => ({
     getStats: builder.query({
       query: (year) => `stats/${year}`,
@@ -24,19 +23,27 @@ export const bfbApi = createApi({
     }),
     getMocks: builder.query({
       query: () => ({
-        url: `/mocks`,
+        url: `/league/{LEAGUE_ID}/mocks`,
       }),
     }),
     getMock: builder.query({
       query: (params) => ({
-        url: `/mocks/${params.id}`,
+        url: `/league/{LEAGUE_ID}/mocks/${params.id}`,
       }),
     }),
     postMock: builder.mutation({
       query: (mock) => ({
-        url: `/mocks`,
+        url: `/league/{LEAGUE_ID}/mocks`,
         method: "POST",
         body: mock,
+        serializeBody: (data) => JSON.stringify(data),
+      }),
+    }),
+    getPlayerValue: builder.query({
+      query: (roster) => ({
+        url: `/calculate`,
+        method: "POST",
+        body: roster,
         serializeBody: (data) => JSON.stringify(data),
       }),
     }),
@@ -47,6 +54,8 @@ export const selectNonKeepers = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
   (rawData) => {
     let { rosters, players } = rawData;
+    if (!rosters || !players || players.length === 0 || rosters.length === 0)
+      return [];
     return (
       rosters &&
       players &&
@@ -58,6 +67,23 @@ export const selectNonKeepers = createSelector(
   }
 );
 
+export const selectKeepers = createSelector(
+  (state, rawData) => rawData, // Pass the raw data as an argument
+  (rawData) => {
+    let { rosters, players } = rawData;
+    if (!rosters || !players || players.length === 0 || rosters.length === 0)
+      return [];
+    let allKeepers = rosters
+      .map((roster) => {
+        return roster.keepers ?? [];
+      })
+      .flat(1);
+    return players.filter((player) => {
+      return allKeepers.includes(player.id);
+    });
+  }
+);
+
 export const {
   useGetPlayersQuery,
   useGetMocksQuery,
@@ -65,4 +91,6 @@ export const {
   useGetMockQuery,
   useGetPlayersAllQuery,
   useGetStatsQuery,
+  useGetPlayerValueQuery,
+  useLazyGetPlayerValueQuery,
 } = bfbApi;
