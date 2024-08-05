@@ -43,7 +43,12 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { find } from "lodash";
 import RosterPanel from "./roster-panel";
-import { selectLeagueYear } from "../../api/leagueSlice";
+import {
+  selectLeagues,
+  selectLeagueYear,
+  fetchLeagues,
+  selectLeagueId,
+} from "../../api/leagueSlice";
 import useActiveRoster from "./useActiveRoster";
 import Icon from "@mdi/react";
 
@@ -64,6 +69,7 @@ const MockNew = () => {
   const activeSlot = useSelector(selectActiveSlot);
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
+  const seasons = useSelector(selectLeagues);
   const { refetch: fetchMocks } = useGetMocksQuery();
   const { data: currentMock } = useGetMockQuery({ id }, { skip: !id });
   const [postMock, { isSuccess }] = usePostMockMutation();
@@ -76,6 +82,7 @@ const MockNew = () => {
     })
   );
   const { data: playersAll } = useGetPlayersAllQuery(year);
+  const leagueId = useSelector(selectLeagueId);
 
   const keepers = useSelector((state) =>
     selectKeepers(state, { rosters: data, players: playersAll })
@@ -114,8 +121,13 @@ const MockNew = () => {
   }, [isSuccess]);
 
   useEffect(() => {
-    dispatch(fetchStandings());
+    dispatch(fetchLeagues(leagueId));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (seasons.length > 0)
+      dispatch(fetchStandings({ seasons, year: year - 1 }));
+  }, [seasons]);
 
   const _onDraft = (player) => {
     let filteredDraftedPlayers = draftedPlayers.filter((obj) => {

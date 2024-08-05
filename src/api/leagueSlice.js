@@ -9,7 +9,7 @@ import { find } from "lodash";
 export const fetchLeagues = createAsyncThunk(
   "league/fetchLeagues",
   async (initialId, { dispatch, getState }) => {
-    let currentId = initialId;
+    let currentId = initialId ?? localStorage.getItem("league_id");
     const results = [];
     while (currentId !== "0" && currentId !== null) {
       const response = await dispatch(
