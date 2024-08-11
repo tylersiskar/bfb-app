@@ -13,11 +13,13 @@ import { fetchStandings, selectStandings } from "../../api/standingsSlice";
 import Draftboard from "../../components/draftboard/draftboard";
 import {
   mdiArrowDownThin,
+  mdiArrowLeftRight,
   mdiArrowUpThin,
   mdiChevronLeft,
   mdiCloseBoxOutline,
   mdiListBoxOutline,
   mdiLoading,
+  mdiSwapHorizontal,
   mdiTrashCanOutline,
 } from "@mdi/js";
 import { Button, IconButton } from "../../components/buttons";
@@ -183,57 +185,35 @@ const MockNew = () => {
     <Content dark isLoading={isLoading}>
       <div className="home-body">
         <div className="d-flex flex-column">
-          <div className="flex justify-between mb-1">
-            <Link className="flex align-center justify-start p-2" to="/mocks">
+          <div
+            className="flex justify-between"
+            style={{ padding: "0 16px 0 10px" }}
+          >
+            <Link className="flex align-center justify-start" to="/mocks">
               <IconButton className="p-0" icon={mdiChevronLeft} />
               <p className="light"> Back</p>
             </Link>
-            {currentMock ? (
-              <p
-                className="light d-flex align-center"
-                style={{ paddingRight: 16 }}
-              >
-                {currentMock[0].name}
-              </p>
-            ) : (
-              <input
-                onChange={(e) => setMockName(e.target.value)}
-                style={{
-                  background: "black",
-                  color: "white",
-                  height: "36px",
-                  width: "86px",
-                  marginRight: "16px",
-                  border: "none",
-                  borderRadius: "4px",
-                  padding: "0 8px",
-                  fontStyle: "italic",
-                  outline: "none",
-                  display: id ? "none" : "block",
-                }}
-                placeholder="Mock Name"
-              />
-            )}
-          </div>
-          <div className="flex justify-between" style={{ padding: "0 16px" }}>
-            <h2> {nflState?.season} Draft Order</h2>
             {draftedPlayers.length > 0 && (
-              <div>
-                <Button
-                  className={`${id ? "d-none" : ""} bg-${
-                    mockName ? "lime" : "gray"
-                  } button-sm flex align-center p-1`}
-                  style={{
-                    borderColor: mockName ? "#54d846" : "rgb(206, 206, 206)",
-                  }}
-                  onClick={() => mockName && handleSubmit(draftedPlayers)}
-                  dispatch={!mockName}
-                >
-                  <p className="sm dark bold">SUBMIT MOCK</p>
-                </Button>
-              </div>
+              <Button
+                className={`${id ? "d-none" : ""} bg-${
+                  mockName ? "lime" : "gray"
+                } button-sm flex align-center justify-center p-1`}
+                style={{
+                  borderColor: mockName ? "#54d846" : "rgb(206, 206, 206)",
+                  width: 75,
+                }}
+                onClick={() => mockName && handleSubmit(draftedPlayers)}
+                dispatch={!mockName}
+              >
+                <p className="sm dark bold">SUBMIT</p>
+              </Button>
             )}
           </div>
+          {currentMock && (
+            <div className="flex justify-start" style={{ padding: "0 16px" }}>
+              <h2>{currentMock[0].name}</h2>
+            </div>
+          )}
           <Draftboard
             standings={standings}
             rosters={data}
@@ -298,6 +278,13 @@ const MockNew = () => {
                     color={"#808080"}
                     size={1}
                     className="loading-icon"
+                  />
+                )}
+                {Object.keys(activeSlot).length > 0 && (
+                  <IconButton
+                    icon={mdiSwapHorizontal}
+                    title={"trade"}
+                    size={1}
                   />
                 )}
                 {!!find(draftedPlayers, {
