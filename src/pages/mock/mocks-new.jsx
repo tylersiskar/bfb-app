@@ -84,8 +84,13 @@ const MockNew = () => {
   const { data: playersAll } = useGetPlayersAllQuery(year);
   const leagueId = useSelector(selectLeagueId);
 
+  let current = find(seasons, { league_id: leagueId });
   const keepers = useSelector((state) =>
-    selectKeepers(state, { rosters: data, players: playersAll })
+    selectKeepers(state, {
+      rosters: data,
+      players: playersAll,
+      leagueType: current?.settings?.type,
+    })
   );
 
   const [trigger, { data: playerValue, isFetching: playerValueIsLoading }] =

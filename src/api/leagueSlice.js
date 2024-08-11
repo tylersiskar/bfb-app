@@ -84,6 +84,7 @@ const leagueSlice = createSlice({
         // and set league
 
         state.league_id = action.payload.league.id;
+        state.settings = action.payload.league.settings;
         state.year = action.payload.league.year;
         saveLeague(action.payload.league);
       })

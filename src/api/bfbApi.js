@@ -70,12 +70,13 @@ export const selectNonKeepers = createSelector(
 export const selectKeepers = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
   (rawData) => {
-    let { rosters, players } = rawData;
+    let { rosters, players, leagueType } = rawData;
     if (!rosters || !players || players.length === 0 || rosters.length === 0)
       return [];
+    let key = leagueType === 2 ? "players" : "keepers";
     let allKeepers = rosters
       .map((roster) => {
-        return roster.keepers ?? [];
+        return roster[key] ?? [];
       })
       .flat(1);
     return players.filter((player) => {
