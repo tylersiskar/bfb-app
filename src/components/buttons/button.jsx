@@ -22,6 +22,7 @@ const Button = (props) => {
       id={props.id}
       disabled={props.disabled || !props.onClick}
       to={props.href}
+      state={props.state}
     >
       {props.children}
     </Element>

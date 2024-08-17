@@ -68,7 +68,7 @@ const PlayerList = ({
         {!isRoster && (
           <div className="flex flex-column justify-start align-start">
             {" "}
-            <p className="light bold sm">BFB Rk </p>
+            <p className="light bold sm">Rank</p>
           </div>
         )}
       </div>
@@ -128,7 +128,7 @@ const PlayerList = ({
               {/* <p className="light">{parseFloat(player.ppg).toFixed(2)}</p> */}
               {!isRoster && (
                 <p className="md light flex justify-start">
-                  {playerObj["Normalized Rank"]}
+                  {playerObj["Aggregate Rank"]}
                 </p>
               )}
             </div>

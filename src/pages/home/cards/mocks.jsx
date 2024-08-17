@@ -5,24 +5,23 @@ import {
   selectDraftOrder,
   useGetRostersQuery,
   useGetTradedPicksQuery,
-  useGetUsersQuery,
 } from "../../../api/api";
 import { selectStandings } from "../../../api/standingsSlice";
 import { selectDraftedPlayers } from "../../../api/draftSlice";
 import Draftboard from "../../../components/draftboard/draftboard";
+import { selectLeagueYear } from "../../../api/leagueSlice";
 
 const MocksCard = ({ title, subtitle, href }) => {
-  const { data: tradedPicks } = useGetTradedPicksQuery("2024");
+  const year = useSelector(selectLeagueYear);
+  const { data: tradedPicks } = useGetTradedPicksQuery(year, { skip: !year });
   const { data } = useGetRostersQuery();
-  const { data: users } = useGetUsersQuery();
-
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
       standings,
       tradedPicks,
-      users,
+      year,
     })
   );
   return (

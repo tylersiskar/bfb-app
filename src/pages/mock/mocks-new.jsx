@@ -40,7 +40,7 @@ import {
   usePostMockMutation,
   useGetPlayersAllQuery,
 } from "../../api/bfbApi";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { find } from "lodash";
 import RosterPanel from "./roster-panel";
 import {
@@ -56,7 +56,8 @@ const MockNew = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const [mockName, setMockName] = useState("");
+  const location = useLocation();
+  const { name } = location.state;
   const [expandList, setExpandList] = useState(false);
   const [roundIdx, setRoundIdx] = useState(0);
   const [pickIdx, setPickIdx] = useState(0);
@@ -73,17 +74,15 @@ const MockNew = () => {
   const { refetch: fetchMocks } = useGetMocksQuery();
   const { data: currentMock } = useGetMockQuery({ id }, { skip: !id });
   const [postMock, { isSuccess }] = usePostMockMutation();
-  const { data: users } = useGetUsersQuery();
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
       standings,
       tradedPicks,
-      users,
+      year,
     })
   );
   const { data: playersAll } = useGetPlayersAllQuery(year);
   const leagueId = useSelector(selectLeagueId);
-
   let current = find(seasons, { league_id: leagueId });
   const keepers = useSelector((state) =>
     selectKeepers(state, {
@@ -102,13 +101,17 @@ const MockNew = () => {
     isFetching: isActiveRosterFetching,
   } = useActiveRoster();
 
-  useEffect(() => updatePlayerValueList(), [activeId, isActiveRosterFetching]);
-
   const updatePlayerValueList = (newDrafted) => {
     if (isActiveRosterFetching) return;
     let drafted = newDrafted ?? draftedPlayers;
     trigger({ activeRoster, draftedPlayers: [...drafted, ...keepers] });
   };
+
+  useEffect(updatePlayerValueList, [
+    activeId,
+    activeSlot,
+    isActiveRosterFetching,
+  ]);
 
   const [openPanel, setOpenPanel] = useState(false);
 
@@ -177,7 +180,7 @@ const MockNew = () => {
     try {
       await postMock({
         picks: JSON.stringify(mockData),
-        name: mockName,
+        name: name,
       });
     } catch (error) {
       // Handle error
@@ -193,46 +196,20 @@ const MockNew = () => {
               <IconButton className="p-0" icon={mdiChevronLeft} />
               <p className="light"> Back</p>
             </Link>
-            {currentMock ? (
-              <p
-                className="light d-flex align-center"
-                style={{ paddingRight: 16 }}
-              >
-                {currentMock[0].name}
-              </p>
-            ) : (
-              <input
-                onChange={(e) => setMockName(e.target.value)}
-                style={{
-                  background: "black",
-                  color: "white",
-                  height: "36px",
-                  width: "86px",
-                  marginRight: "16px",
-                  border: "none",
-                  borderRadius: "4px",
-                  padding: "0 8px",
-                  fontStyle: "italic",
-                  outline: "none",
-                  display: id ? "none" : "block",
-                }}
-                placeholder="Mock Name"
-              />
-            )}
           </div>
           <div className="flex justify-between" style={{ padding: "0 16px" }}>
-            <h2> {nflState?.season} Draft Order</h2>
+            <h2> {`${name}'s Mock`}</h2>
             {draftedPlayers.length > 0 && (
               <div>
                 <Button
                   className={`${id ? "d-none" : ""} bg-${
-                    mockName ? "lime" : "gray"
+                    name ? "lime" : "gray"
                   } button-sm flex align-center p-1`}
                   style={{
-                    borderColor: mockName ? "#54d846" : "rgb(206, 206, 206)",
+                    borderColor: name ? "#54d846" : "rgb(206, 206, 206)",
                   }}
-                  onClick={() => mockName && handleSubmit(draftedPlayers)}
-                  dispatch={!mockName}
+                  onClick={() => name && handleSubmit(draftedPlayers)}
+                  dispatch={!name}
                 >
                   <p className="sm dark bold">SUBMIT MOCK</p>
                 </Button>

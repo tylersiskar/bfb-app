@@ -53,3 +53,29 @@ $darker: #16181d;
     transform: rotate(360deg);
   }
 }
+
+.modal {
+  position: fixed; /* Position the modal over the content */
+  top: 50%; /* Center the modal vertically */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Adjust the position to be centered */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Add a subtle shadow to give it a popover effect */
+  border-radius: 8px; /* Rounded corners */
+  width: 80vw;
+  height: 30svh;
+  padding: 16px;
+}
+
+.modal-overlay {
+  position: fixed; /* Cover the entire screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(
+    250,
+    250,
+    250,
+    0.2
+  ); /* Semi-transparent background to dim the content behind */
+}

@@ -165,8 +165,17 @@ p {
   box-sizing: border-box;
 }
 
+.pt-1 {
+  padding-top: 4px;
+}
 .pb-1 {
   padding-bottom: 4px;
+}
+.pb-2 {
+  padding-bottom: 8px;
+}
+.pb-3 {
+  padding-bottom: 12px;
 }
 .pr-1 {
   padding-right: 4px;

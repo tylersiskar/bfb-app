@@ -35,7 +35,7 @@ export const api = createApi({
 export const selectDraftOrder = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
   (rawData) => {
-    let { standings, tradedPicks, users } = rawData;
+    let { standings, tradedPicks, year } = rawData;
     if (!standings || !standings.length) return [];
     let ROUNDS = 8;
     let copyStandings = [...standings];
@@ -48,6 +48,7 @@ export const selectDraftOrder = createSelector(
           let tradedPick = find(tradedPicks, {
             roster_id: teamSlot.roster_id,
             round: i,
+            season: year,
           });
           //need to get owner name of
           return !!tradedPick
