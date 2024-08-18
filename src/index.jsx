@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import { HomePage, TrendsPage, TeamsPage, DraftsPage } from "./pages";
 import MockDraftCenter from "./pages/mock/mocks";
 import { MockNew } from "./pages/mock";
+import { Splash } from "./pages/splash";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +17,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <HomePage />,
+        element: <Splash alt={(props) => <HomePage {...props} />} />,
       },
       {
         path: "teams",
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
       },
       {
         path: "mocks/:id",
-        element: <MockNew />,
+        element: <Splash alt={() => <MockNew />} />,
       },
       {
         path: "trends",

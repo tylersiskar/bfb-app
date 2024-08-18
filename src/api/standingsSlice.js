@@ -6,7 +6,7 @@ import { api } from "./api";
 const { VITE_SLEEPER_API } = import.meta.env;
 export const fetchStandings = createAsyncThunk(
   "standings/fetchStandings",
-  async ({ seasons, year }, thunkAPI) => {
+  async ({ seasons, users, year }, thunkAPI) => {
     let activeLeague = find(seasons, { season: year.toString() });
     let LEAGUE_ID = activeLeague?.league_id;
     try {
@@ -18,8 +18,6 @@ export const fetchStandings = createAsyncThunk(
         `${VITE_SLEEPER_API}/league/${LEAGUE_ID}/rosters`
       );
       const rosters = await rostersResponse.json();
-      const state = thunkAPI.getState();
-      const { data: users } = api.endpoints.getUsers.select()(state);
       let standingsSlot = {};
       playoffBracket.forEach((match) => {
         const isConsolationMatch =

@@ -59,7 +59,7 @@ let URL = `https://s3.amazonaws.com/badfranchisebuilders.com/thumbnails/{IMAGE}`
 const captureScreenshot = async () => {
   const element = document.getElementById("round_1"); // You can target a specific element if needed
   const canvas = await html2canvas(element);
-  const image = canvas.toDataURL("image/jpeg", 0.9); // Use JPEG and adjust quality for compression
+  const image = canvas.toDataURL("image/jpeg"); // Use JPEG and adjust quality for compression
   return image;
 };
 
@@ -78,7 +78,7 @@ const MockNew = () => {
   const year = useSelector(selectLeagueYear);
   const { data: tradedPicks } = useGetTradedPicksQuery(year, { skip: !year });
   const { data, isLoading } = useGetRostersQuery();
-  const { data: nflState } = useGetNflStateQuery();
+  const { data: users } = useGetUsersQuery();
   const activeSlot = useSelector(selectActiveSlot);
   const standings = useSelector(selectStandings);
   const draftedPlayers = useSelector(selectDraftedPlayers);
@@ -145,9 +145,9 @@ const MockNew = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (seasons.length > 0)
-      dispatch(fetchStandings({ seasons, year: year - 1 }));
-  }, [seasons]);
+    if (seasons.length > 0 && users)
+      dispatch(fetchStandings({ seasons, users, year: year - 1 }));
+  }, [seasons, users]);
 
   const _onDraft = (player) => {
     let filteredDraftedPlayers = draftedPlayers.filter((obj) => {
