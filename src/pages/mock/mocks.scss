@@ -5,6 +5,11 @@ $darker: #16181d;
   justify-content: space-between;
   width: 100%;
   text-decoration: none;
+  height: 80px;
+  background-color: $darker;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
 }
 
 .mock-item:hover {

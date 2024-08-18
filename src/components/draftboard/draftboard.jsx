@@ -17,7 +17,11 @@ const Draftboard = ({
       {draftOrderWithTrades.map((round, roundIdx) => {
         if (roundIdx > rounds - 1) return;
         return (
-          <div className="flex flex-column" key={roundIdx}>
+          <div
+            className="flex flex-column bg-dark"
+            key={roundIdx}
+            id={`round_${roundIdx + 1}`}
+          >
             <p className="sm color-light pb-1">Round {roundIdx + 1}</p>
             <div className={isHome ? "round" + " round-home" : "round"}>
               {round.map((pick, pickIdx) => {

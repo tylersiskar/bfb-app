@@ -128,7 +128,7 @@ const PlayerList = ({
               {/* <p className="light">{parseFloat(player.ppg).toFixed(2)}</p> */}
               {!isRoster && (
                 <p className="md light flex justify-start">
-                  {playerObj["Aggregate Rank"]}
+                  {playerObj["Normalized Rank"]}
                 </p>
               )}
             </div>

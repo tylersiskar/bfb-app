@@ -51,6 +51,7 @@ const MockDraftCenter = () => {
                           onChange={(obj) =>
                             setMockState({ ...mockState, name: obj.label })
                           }
+                          isSearchable={false}
                         />
                       </div>
                       <div className="d-flex w-100 justify-end">
@@ -74,13 +75,13 @@ const MockDraftCenter = () => {
           </>
         </div>
         <div className="flex flex-column w-100" style={{ paddingBottom: 24 }}>
-          <h3 className="yellow pb-1">Created Mocks</h3>
+          <h3 className="yellow pb-3">Created Mocks</h3>
           {mocks?.map((mock) => {
             let roundOne = mock.picks.filter((m) => m.round === 1);
             let positionalGrouping = groupBy(roundOne, "pos");
             return (
               <Link
-                className="p-3 border-bottom mock-item"
+                className="p-3 mock-item"
                 key={mock.name}
                 to={`/mocks/${mock.id}`}
               >
