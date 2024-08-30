@@ -104,8 +104,18 @@ const MockNew = () => {
     })
   );
 
-  const [trigger, { data: playerValue, isFetching: playerValueIsLoading }] =
-    useLazyGetPlayerValueQuery();
+  const nonKeepers = useSelector((state) =>
+    selectNonKeepers(state, {
+      rosters: data,
+      players: playersAll,
+    })
+  );
+  let availablePlayers = nonKeepers.filter(
+    (p) => !find(draftedPlayers, { id: p.id })
+  );
+
+  // const [trigger, { data: playerValue, isFetching: playerValueIsLoading }] =
+  //   useLazyGetPlayerValueQuery();
 
   const {
     activeRoster,
@@ -113,17 +123,17 @@ const MockNew = () => {
     isFetching: isActiveRosterFetching,
   } = useActiveRoster();
 
-  const updatePlayerValueList = (newDrafted) => {
-    if (isActiveRosterFetching) return;
-    let drafted = newDrafted ?? draftedPlayers;
-    trigger({ activeRoster, draftedPlayers: [...drafted, ...keepers] });
-  };
+  // const updatePlayerValueList = (newDrafted) => {
+  //   if (isActiveRosterFetching) return;
+  //   let drafted = newDrafted ?? draftedPlayers;
+  //   trigger({ activeRoster, draftedPlayers: [...drafted, ...keepers] });
+  // };
 
-  useEffect(updatePlayerValueList, [
-    activeId,
-    activeSlot,
-    isActiveRosterFetching,
-  ]);
+  // useEffect(updatePlayerValueList, [
+  //   activeId,
+  //   activeSlot,
+  //   isActiveRosterFetching,
+  // ]);
 
   const [openPanel, setOpenPanel] = useState(false);
 
@@ -185,8 +195,11 @@ const MockNew = () => {
 
   const _getPlayerList = () => {
     if (position) {
-      return playerValue.filter((p) => p.POS === position);
-    } else return playerValue ?? [];
+      return availablePlayers.filter((p) => p.position === position);
+    } else return availablePlayers ?? [];
+    // if (position) {
+    //   return playerValue.filter((p) => p.POS === position);
+    // } else return playerValue ?? [];
   };
   const handleSubmit = async (mockData) => {
     let image = await captureScreenshot();
@@ -299,7 +312,7 @@ const MockNew = () => {
                   )}
                 </div>
                 <div className="flex align-center">
-                  {playerValueIsLoading && (
+                  {/* {playerValueIsLoading && (
                     <Icon
                       path={mdiLoading}
                       title={"loading"}
@@ -307,7 +320,7 @@ const MockNew = () => {
                       size={1}
                       className="loading-icon"
                     />
-                  )}
+                  )} */}
                   {!!find(draftedPlayers, {
                     round: activeSlot.round,
                     pick: activeSlot.pick,
@@ -328,15 +341,15 @@ const MockNew = () => {
                             )
                           )
                         );
-                        updatePlayerValueList(
-                          draftedPlayers.filter(
-                            (player) =>
-                              !(
-                                player.round === activeSlot.round &&
-                                player.pick === activeSlot.pick
-                              )
-                          )
-                        );
+                        // updatePlayerValueList(
+                        //   draftedPlayers.filter(
+                        //     (player) =>
+                        //       !(
+                        //         player.round === activeSlot.round &&
+                        //         player.pick === activeSlot.pick
+                        //       )
+                        //   )
+                        // );
                       }}
                     />
                   )}
@@ -399,7 +412,7 @@ const MockNew = () => {
                   expandList ? (openPanel ? "40svh" : "55svh") : "170px"
                 } - 136px)`}
                 playerList={_getPlayerList()}
-                playerValueIsFetching={playerValueIsLoading}
+                // playerValueIsFetching={playerValueIsLoading}
               />
             </div>
           </div>

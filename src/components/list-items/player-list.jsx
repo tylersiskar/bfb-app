@@ -13,12 +13,13 @@ const PlayerList = ({
   isRoster,
 }) => {
   const activeSlot = useSelector(selectActiveSlot);
-  const [finalArray, setFinalArray] = useState(playerList ?? []);
+  // const [finalArray, setFinalArray] = useState(
+  // );
   const [page, setPage] = useState(0);
 
-  useEffect(() => {
-    if (!isRoster) setFinalArray(_convertToPaginatedArray(playerList));
-  }, [playerList]);
+  // useEffect(() => {
+  //   if (!isRoster) setFinalArray(_convertToPaginatedArray(playerList));
+  // }, [playerList]);
 
   const _convertToPaginatedArray = (arr) => {
     if (!arr || arr.length === 0) return [];
@@ -32,15 +33,18 @@ const PlayerList = ({
   };
 
   const splitFullName = (player) => {
-    return {
-      first_name: player["PLAYER NAME"].split(" ")[0],
-      last_name: player["PLAYER NAME"].split(" ").splice(1, 1).join(" "),
-      pos: player.POS,
-      team: player.TEAM,
-    };
+    return { ...player, pos: player.position };
+    // return {
+    //   first_name: player["PLAYER NAME"].split(" ")[0],
+    //   last_name: player["PLAYER NAME"].split(" ").splice(1, 1).join(" "),
+    //   pos: player.POS,
+    //   team: player.TEAM,
+    // };
   };
 
+  let finalArray = _convertToPaginatedArray(playerList);
   let activePlayerList = isRoster ? playerList : finalArray[page];
+
   return (
     <>
       <div
@@ -68,7 +72,7 @@ const PlayerList = ({
         {!isRoster && (
           <div className="flex flex-column justify-start align-start">
             {" "}
-            <p className="light bold sm">Rank</p>
+            <p className="light bold sm">Value</p>
           </div>
         )}
       </div>
@@ -128,7 +132,7 @@ const PlayerList = ({
               {/* <p className="light">{parseFloat(player.ppg).toFixed(2)}</p> */}
               {!isRoster && (
                 <p className="md light flex justify-start">
-                  {playerObj["Normalized Rank"]}
+                  {playerObj["Normalized Rank"] ?? playerObj["value"]}
                 </p>
               )}
             </div>

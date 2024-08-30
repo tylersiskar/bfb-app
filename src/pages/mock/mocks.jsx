@@ -82,11 +82,20 @@ const MockDraftCenter = () => {
             return (
               <Link
                 className="p-3 mock-item"
-                key={mock.name}
+                key={mock.id}
                 to={`/mocks/${mock.id}`}
               >
                 <div className="flex flex-column w-100 justify-start align-start">
-                  <p className="light bold pb-1">{mock.name}</p>
+                  <p
+                    className="light bold pb-1"
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      maxWidth: 200,
+                    }}
+                  >
+                    {mock.name}
+                  </p>
                   <p className="light">{mock.create_date.split("T")[0]}</p>
                 </div>
                 <div className="flex flex-column w-100 justify-center align-center">
