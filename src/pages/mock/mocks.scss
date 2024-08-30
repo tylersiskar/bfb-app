@@ -2,10 +2,10 @@ $darker: #16181d;
 
 .mock-item {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   width: 100%;
   text-decoration: none;
-  height: 80px;
   background-color: $darker;
   margin-bottom: 16px;
   border-radius: 8px;

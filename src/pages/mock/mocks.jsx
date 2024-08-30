@@ -77,8 +77,7 @@ const MockDraftCenter = () => {
         <div className="flex flex-column w-100" style={{ paddingBottom: 24 }}>
           <h3 className="yellow pb-3">Created Mocks</h3>
           {mocks?.map((mock) => {
-            let roundOne = mock.picks.filter((m) => m.round === 1);
-            let positionalGrouping = groupBy(roundOne, "pos");
+            let positionalGrouping = groupBy(mock.picks, "pos");
             return (
               <Link
                 className="p-3 mock-item"
@@ -86,38 +85,26 @@ const MockDraftCenter = () => {
                 to={`/mocks/${mock.id}`}
               >
                 <div className="flex flex-column w-100 justify-start align-start">
-                  <p
-                    className="light bold pb-1"
-                    style={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      maxWidth: 200,
-                    }}
-                  >
-                    {mock.name}
-                  </p>
-                  <p className="light">{mock.create_date.split("T")[0]}</p>
+                  <p className="light bold pb-1">{mock.name}</p>
+                  <p className="light pb-1">{mock.create_date.split("T")[0]}</p>
                 </div>
-                <div className="flex flex-column w-100 justify-center align-center">
-                  <p className="light bold md pr-1 pb-1">1st Round</p>
-                  <div className="d-flex">
-                    {Object.keys(positionalGrouping).map((pos, i) => (
-                      <div
-                        className={`${pos} p-1`}
-                        style={{ borderRadius: 4, marginRight: 4 }}
-                        key={pos}
-                      >
-                        {" "}
-                        <p
-                          className={`bold dark md pr-${
-                            Object.keys(positionalGrouping).length - 1 === i
-                              ? 0
-                              : 1
-                          }`}
-                        >{`${positionalGrouping[pos].length} ${pos} `}</p>
-                      </div>
-                    ))}
-                  </div>
+                <div className="d-flex pt-1">
+                  {Object.keys(positionalGrouping).map((pos, i) => (
+                    <div
+                      className={`${pos} p-1`}
+                      style={{ borderRadius: 4, marginRight: 4 }}
+                      key={pos}
+                    >
+                      {" "}
+                      <p
+                        className={`bold dark md pr-${
+                          Object.keys(positionalGrouping).length - 1 === i
+                            ? 0
+                            : 1
+                        }`}
+                      >{`${positionalGrouping[pos].length} ${pos} `}</p>
+                    </div>
+                  ))}
                 </div>
               </Link>
             );
