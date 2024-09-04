@@ -42,10 +42,10 @@ const HomePage = ({ seasonType }) => {
   const leagueId = useSelector(selectLeagueId);
   const leagueYear = useSelector(selectLeagueYear);
   const seasons = useSelector(selectLeagues);
-  const matchupData = useSelector((state) =>
-    selectCustomMatchupData(state, { rosters: data, matchups })
-  );
   const { data: users } = useGetUsersQuery();
+  const matchupData = useSelector((state) =>
+    selectCustomMatchupData(state, { rosters: data, matchups, users })
+  );
 
   useEffect(() => {
     dispatch(fetchLeagues(leagueId));

@@ -75,7 +75,7 @@ export const selectDraftOrder = createSelector(
 export const selectCustomMatchupData = createSelector(
   (state, rawData) => rawData, // Pass the raw data as an argument
   (rawData) => {
-    let { matchups, rosters } = rawData;
+    let { matchups, rosters, users } = rawData;
     let trueMatchups = {};
     matchups &&
       rosters &&
