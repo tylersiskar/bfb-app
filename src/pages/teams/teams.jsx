@@ -34,11 +34,11 @@ const TeamsPage = () => {
   const [leagueState, setLeague] = useState();
   const [datasets, setDatasets] = useState([]);
   const [position, setPosition] = useState();
-  const { data: stats, isLoading } = useGetStatsQuery("2023");
+  const { data: stats, isLoading } = useGetStatsQuery("2024");
   const { data: leagueObject, isLoading: isRosterLoading } =
     useGetRostersQuery();
   const { data: usersObj } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery("2023");
+  const { data: players } = useGetPlayersAllQuery("2024");
 
   const fetchPlayers = (pos) => {
     let league = [];

@@ -20,12 +20,12 @@ const AcquisitionCard = ({ href, title }) => {
   const { data: nflState } = useGetNflStateQuery();
   const waivers = useSelector(selectWaiverPickups);
   const trades = useSelector(selectTrades);
-  const { data: stats } = useGetStatsQuery("2023");
+  const { data: stats } = useGetStatsQuery("2024");
   const { data: rosters } = useGetRostersQuery();
   const [topTrade, setTopTradeAdd] = useState();
   const [topWaiver, setTopWaiverAdd] = useState();
   const { data: users } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery("2023");
+  const { data: players } = useGetPlayersAllQuery("2024");
 
   useEffect(() => {
     if (!nflState) return; //if no active week yet, or trades and waivers already exist
