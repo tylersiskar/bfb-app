@@ -35,8 +35,8 @@ const DraftsPage = (props) => {
     "RB",
     "WR",
     "TE",
-    "K",
-    "DEF",
+    // "K",
+    // "DEF",
   ]);
   const [dataset, setDataset] = useState([]);
   const { data: league } = useGetRostersQuery();
@@ -213,13 +213,13 @@ const DraftsPage = (props) => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+            gridTemplateColumns: "1fr 1fr 1fr 1fr",
             gap: 4,
             width: "100%",
             marginBottom: 8,
           }}
         >
-          {["QB", "RB", "WR", "TE", "K", "DEF"].map((pos) => {
+          {["QB", "RB", "WR", "TE"].map((pos) => {
             return (
               <Button
                 onClick={() => {
@@ -241,7 +241,10 @@ const DraftsPage = (props) => {
         </div>
       </div>
 
-      <div className="h-100" style={{ paddingBottom: 64 }}>
+      <div
+        className="h-100"
+        style={{ paddingBottom: 64, maxHeight: "calc(100vh - 275px)" }}
+      >
         {!data || data.length === 0 ? (
           "No Draft Data Yet!"
         ) : (

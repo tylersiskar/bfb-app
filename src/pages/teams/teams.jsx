@@ -41,6 +41,7 @@ const TeamsPage = () => {
   const { data: players } = useGetPlayersAllQuery("2024");
 
   const fetchPlayers = (pos) => {
+    if (!usersObj) return;
     let league = [];
     let users = {};
     usersObj.forEach((user) => {
@@ -87,6 +88,14 @@ const TeamsPage = () => {
 
     setDatasets(
       Object.keys(league).map((teamName, i) => {
+        let image = new Image();
+        let user = find(usersObj, { display_name: teamName });
+        image.src = user.avatar
+          ? `https://sleepercdn.com/avatars/thumbs/${user.avatar}`
+          : "";
+        image.height = 20;
+        image.width = 20;
+        image.borderRadius = 4;
         return {
           label: teamName,
           data: league[teamName].map((player) => {
@@ -96,6 +105,7 @@ const TeamsPage = () => {
               label: player.name,
             };
           }),
+          pointStyle: image ?? null,
           backgroundColor: colors[i],
           pointRadius: 8,
           pointHoverRadius: 12,
@@ -172,7 +182,10 @@ const TeamsPage = () => {
           </Button>
         </div>
       </div>
-      <div className="h-100" style={{ paddingBottom: 64, height: 600 }}>
+      <div
+        className="h-100"
+        style={{ paddingBottom: 64, maxHeight: "calc(100vh - 275px)" }}
+      >
         {datasets && (
           <Scatter
             data={{ datasets }}

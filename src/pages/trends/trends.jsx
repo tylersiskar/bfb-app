@@ -25,6 +25,7 @@ import {
   useGetUsersQuery,
 } from "../../api/api";
 import { fetchMatchupsForMultipleWeeks } from "../../api/matchupsThunks";
+import Button from "../../components/buttons/button";
 
 ChartJS.register(
   LinearScale,
@@ -38,6 +39,7 @@ ChartJS.register(
 const TrendsPage = () => {
   const dispatch = useDispatch();
   const [dataset, setDataset] = useState([]);
+  const [active, setActive] = useState("fpts");
   const { data: nflState } = useGetNflStateQuery();
   const trendingWeeks = useSelector(selectTrendingWeeks);
   const trendingData = useSelector(selectTrendingPoints);
@@ -48,23 +50,24 @@ const TrendsPage = () => {
   const _setChartData = async () => {
     let data = rostersObj
       ? rostersObj.map((roster) => {
+          let name = find(usersObj, { user_id: roster.owner_id }).display_name;
           let trendingAverage =
             trendingData[roster.roster_id] / trendingWeeks.length;
           let seasonAverage =
-            roster.settings.fpts /
+            (roster.settings[active] + roster.settings[`${active}_decimal`]) /
             (roster.settings.wins + roster.settings.losses);
           return {
             backgroundColor: "white",
             pointRadius: 6,
-            label: find(usersObj, { user_id: roster.owner_id }).display_name,
+            label: name,
             data: [
               {
-                x: find(usersObj, { user_id: roster.owner_id }).display_name,
+                x: name,
                 y: seasonAverage,
                 label: "Season Average",
               },
               {
-                x: find(usersObj, { user_id: roster.owner_id }).display_name,
+                x: name,
                 y: trendingAverage,
                 label: "Trending Average",
               },
@@ -91,7 +94,7 @@ const TrendsPage = () => {
 
   useEffect(() => {
     if (!matchupIsLoading) _setChartData();
-  }, [trendingData, trendingWeeks, matchupIsLoading]);
+  }, [trendingData, trendingWeeks, matchupIsLoading, active]);
 
   useEffect(() => {
     dispatch(fetchMatchupsForMultipleWeeks(trendingWeeks));
@@ -114,7 +117,9 @@ const TrendsPage = () => {
       tooltip: {
         callbacks: {
           label: (context) =>
-            `${context.raw.label}\n PPG: ${context.raw.y.toFixed(2)}`,
+            `${context.raw.label}\n PPG ${
+              active === "fpts" ? "For" : "Against"
+            } : ${context.raw.y.toFixed(2)}`,
         },
       },
     },
@@ -140,7 +145,7 @@ const TrendsPage = () => {
         beginAtZero: false,
         title: {
           display: true,
-          text: "PPG",
+          text: "PPG " + (active === "fpts" ? "For" : "Against"),
         },
         min: 60,
       },
@@ -160,7 +165,10 @@ const TrendsPage = () => {
       <div
         className="flex flex-column align-center justify-center"
         style={{
-          padding: 12,
+          paddingTop: 12,
+          paddingBottom: 12,
+          paddingLeft: 20,
+          paddingRight: 20,
           maxWidth: 500,
           margin: "auto",
         }}
@@ -175,6 +183,26 @@ const TrendsPage = () => {
         <p className="subtitle" style={{ margin: 0 }}>
           <small>Triangle represents Trending Average</small>
         </p>
+        <div className="flex p-2">
+          <div className="flex w-100 mr-1">
+            <Button
+              secondary
+              active={active === "fpts"}
+              onClick={() => setActive("fpts")}
+            >
+              PF
+            </Button>
+          </div>
+          <div className="flex w-100 ml-1">
+            <Button
+              secondary
+              active={active === "fpts_against"}
+              onClick={() => setActive("fpts_against")}
+            >
+              PA
+            </Button>
+          </div>
+        </div>
         <div style={{ padding: "12px 0", width: "100%" }}>
           <RangeSlider
             onRangeUpdate={_onRangeUpdate}
@@ -183,7 +211,10 @@ const TrendsPage = () => {
           />
         </div>
       </div>
-      <div className="h-100" style={{ paddingBottom: 64 }}>
+      <div
+        className="h-100"
+        style={{ paddingBottom: 64, maxHeight: "calc(100vh - 275px)" }}
+      >
         <Line data={{ datasets: dataset }} options={options} />
       </div>
     </Content>
