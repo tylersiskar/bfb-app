@@ -52,7 +52,8 @@ const TrendsPage = () => {
       ? rostersObj.map((roster) => {
           let name = find(usersObj, { user_id: roster.owner_id }).display_name;
           let trendingAverage =
-            trendingData[roster.roster_id] / trendingWeeks.length;
+            trendingData[roster.roster_id][active === "fpts" ? "pf" : "pa"] /
+            trendingWeeks.length;
           let seasonAverage =
             (roster.settings[active] + roster.settings[`${active}_decimal`]) /
             (roster.settings.wins + roster.settings.losses);

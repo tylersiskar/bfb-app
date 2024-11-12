@@ -41,7 +41,7 @@ const TrendsCard = ({ title, subtitle, href }) => {
       currentRoster.settings.fpts /
       (currentRoster.settings.wins + currentRoster.settings.losses);
 
-    let trendingAverage = trendingPointsByRoster[roster] / 3;
+    let trendingAverage = trendingPointsByRoster[roster].pf / 3;
     return {
       teamName: user.metadata.team_name
         ? user.metadata.team_name.trim(" ")

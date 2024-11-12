@@ -17,10 +17,22 @@ export const fetchMatchupsForWeek = createAsyncThunk(
       const data = await response.json();
       let dataObj = {};
       data.forEach((matchupData) => {
+        let { roster_id, matchup_id, points } = matchupData;
+        let ptsAgainst = data.filter(
+          (obj) => obj.matchup_id === matchup_id && obj.roster_id !== roster_id
+        )[0].points;
         if (dataObj[matchupData.roster_id]) {
-          dataObj[matchupData.roster_id] += matchupData.points;
+          dataObj[matchupData.roster_id] = {
+            ...dataObj[roster_id],
+            points: (dataObj[roster_id].points += points),
+            pointsAgainst: (dataObj[roster_id].points += ptsAgainst),
+          };
         } else {
-          dataObj[matchupData.roster_id] = matchupData.points;
+          dataObj[matchupData.roster_id] = {
+            points,
+            matchup_id,
+            pointsAgainst: ptsAgainst,
+          };
         }
       });
       return { data: dataObj, week };
@@ -66,15 +78,24 @@ export const selectMatchupData = (state) => state.matchups;
 export const selectTrendingWeeks = (state) => state.matchups.trendingWeeks;
 export const selectMatchupIsLoading = (state) => state.matchups.isLoading;
 export const selectTrendingPoints = createSelector(
-  (state) => state.matchups.points,
-  (data) => {
+  (state) => state.matchups,
+  (matchups) => {
+    let { points: pointsByWeek } = matchups;
     let pointsByRoster = {};
-    Object.keys(data).forEach((week) => {
-      Object.keys(data[week]).forEach((rosterId) => {
+    Object.keys(pointsByWeek).forEach((week) => {
+      Object.keys(pointsByWeek[week]).forEach((rosterId) => {
         if (pointsByRoster[rosterId]) {
-          pointsByRoster[rosterId] += data[week][rosterId];
+          pointsByRoster[rosterId] = {
+            pf: (pointsByRoster[rosterId].pf +=
+              pointsByWeek[week][rosterId].points),
+            pa: (pointsByRoster[rosterId].pa +=
+              pointsByWeek[week][rosterId].points),
+          };
         } else {
-          pointsByRoster[rosterId] = data[week][rosterId];
+          pointsByRoster[rosterId] = {
+            pf: pointsByWeek[week][rosterId].points,
+            pa: pointsByWeek[week][rosterId].pointsAgainst,
+          };
         }
       });
     });
