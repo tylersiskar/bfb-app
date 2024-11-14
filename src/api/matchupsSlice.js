@@ -89,7 +89,7 @@ export const selectTrendingPoints = createSelector(
             pf: (pointsByRoster[rosterId].pf +=
               pointsByWeek[week][rosterId].points),
             pa: (pointsByRoster[rosterId].pa +=
-              pointsByWeek[week][rosterId].points),
+              pointsByWeek[week][rosterId].pointsAgainst),
           };
         } else {
           pointsByRoster[rosterId] = {
