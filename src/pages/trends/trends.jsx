@@ -55,7 +55,8 @@ const TrendsPage = () => {
             trendingData[roster.roster_id][active === "fpts" ? "pf" : "pa"] /
             trendingWeeks.length;
           let seasonAverage =
-            (roster.settings[active] + roster.settings[`${active}_decimal`]) /
+            (roster.settings[active] +
+              roster.settings[`${active}_decimal`] / 100) /
             (roster.settings.wins + roster.settings.losses);
           return {
             backgroundColor: "white",
