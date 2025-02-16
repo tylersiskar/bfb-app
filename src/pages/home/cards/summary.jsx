@@ -5,8 +5,17 @@ import { Avatar } from "../../../components/images";
 import { find } from "lodash";
 import "./cards.scss";
 import { useGetStatsQuery, useGetPlayersAllQuery } from "../../../api/bfbApi";
+import { IconButton } from "../../../components/buttons";
+import { mdiRefresh } from "@mdi/js";
 
-const SummaryCard = ({ title, href, rosters, year }) => {
+const SummaryCard = ({
+  title,
+  href,
+  rosters,
+  year,
+  onActionClick,
+  actionIsLoading,
+}) => {
   const { data: stats } = useGetStatsQuery(year, { skip: !year });
   const { data: usersObj } = useGetUsersQuery();
   const { data: players, isLoading } = useGetPlayersAllQuery(year, {
@@ -51,9 +60,24 @@ const SummaryCard = ({ title, href, rosters, year }) => {
   return (
     <div className="summary">
       <Link className="w-100" style={{ textDecoration: "none" }} to={href}>
-        <h3 className="lime" style={{ paddingBottom: 24 }}>
-          {title}
-        </h3>
+        <div
+          className="flex justify-between w-100"
+          style={{ marginBottom: 24 }}
+        >
+          <h3 className="w-100 lime">{title}</h3>
+          {onActionClick && (
+            <IconButton
+              icon={mdiRefresh}
+              title="Refresh"
+              onClick={(e) => {
+                e.preventDefault();
+                onActionClick();
+              }}
+              iconColor={"#54d846"}
+              isLoading={actionIsLoading}
+            />
+          )}
+        </div>
         <div
           style={{
             display: "grid",

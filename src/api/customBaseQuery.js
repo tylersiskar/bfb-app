@@ -1,5 +1,5 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { selectLeague } from "./leagueSlice"; // Adjust the path as necessary
+import { selectLeague } from "./selectors/leagueSelectors"; // Adjust the path as necessary
 
 const { VITE_SLEEPER_API, VITE_BFB_API } = import.meta.env;
 export const customBaseQuery = async (args, api, extraOptions) => {

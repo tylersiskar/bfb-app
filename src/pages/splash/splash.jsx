@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetLeagueQuery } from "../../api/api";
-import { fetchLeagues, selectLeagueId } from "../../api/leagueSlice";
+import { fetchLeagues } from "../../api/leagueSlice";
+import { selectLeagueId } from "../../api/selectors/leagueSelectors";
+
 import { Button } from "../../components/buttons";
 import { Content } from "../../components/layout";
 

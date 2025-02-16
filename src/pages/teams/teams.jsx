@@ -13,6 +13,13 @@ import { Content } from "../../components/layout";
 import { useGetRostersQuery, useGetUsersQuery } from "../../api/api";
 import { find } from "lodash";
 import { useGetStatsQuery, useGetPlayersAllQuery } from "../../api/bfbApi";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectLeagueId,
+  selectLeagueStage,
+  selectLeagueYear,
+} from "../../api/selectors/leagueSelectors";
+import { fetchLeagues } from "../../api/leagueSlice";
 
 let colors = [
   "#bb17bd",
@@ -31,14 +38,18 @@ let colors = [
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 const TeamsPage = () => {
-  const [leagueState, setLeague] = useState();
+  const dispatch = useDispatch();
   const [datasets, setDatasets] = useState([]);
   const [position, setPosition] = useState();
-  const { data: stats, isLoading } = useGetStatsQuery("2024");
+  const leagueYear = useSelector(selectLeagueYear);
+  const leagueId = useSelector(selectLeagueId);
+  const leagueStatus = useSelector(selectLeagueStage);
+  let statsYear = leagueStatus === "pre_draft" ? leagueYear - 1 : leagueYear;
+  const { data: stats, isLoading } = useGetStatsQuery(statsYear);
   const { data: leagueObject, isLoading: isRosterLoading } =
     useGetRostersQuery();
   const { data: usersObj } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery("2024");
+  const { data: players } = useGetPlayersAllQuery(statsYear);
 
   const fetchPlayers = (pos) => {
     if (!usersObj) return;
@@ -112,8 +123,10 @@ const TeamsPage = () => {
         };
       })
     );
-    setLeague(league);
   };
+  useEffect(() => {
+    dispatch(fetchLeagues(leagueId));
+  }, []);
 
   useEffect(() => {
     if (stats && leagueObject) fetchPlayers(position);
