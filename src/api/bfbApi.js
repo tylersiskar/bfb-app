@@ -8,12 +8,14 @@ const { VITE_BFB_API } = import.meta.env;
 export const bfbApi = createApi({
   reducerPath: "bfbApi",
   baseQuery: customBfbBaseQuery,
+  tagTypes: ["playersAll"],
   endpoints: (builder) => ({
     getStats: builder.query({
       query: (year) => `stats/${year}`,
     }),
     getPlayersAll: builder.query({
       query: (year) => `playersAll/${year}`,
+      providesTags: ["playersAll"],
     }),
     getPlayers: builder.query({
       query: (params) => ({
@@ -39,13 +41,13 @@ export const bfbApi = createApi({
         serializeBody: (data) => JSON.stringify(data),
       }),
     }),
-    getPlayerValue: builder.query({
-      query: (roster) => ({
-        url: `/calculate`,
+    getPlayerValue: builder.mutation({
+      query: (year) => ({
+        url: `/updatePlayerRankings/${year}`,
         method: "POST",
-        body: roster,
-        serializeBody: (data) => JSON.stringify(data),
+        body: {},
       }),
+      invalidatesTags: ["playersAll"],
     }),
   }),
 });
@@ -92,6 +94,5 @@ export const {
   useGetMockQuery,
   useGetPlayersAllQuery,
   useGetStatsQuery,
-  useGetPlayerValueQuery,
-  useLazyGetPlayerValueQuery,
+  useGetPlayerValueMutation,
 } = bfbApi;

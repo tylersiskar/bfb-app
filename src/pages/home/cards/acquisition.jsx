@@ -14,18 +14,20 @@ import { fetchTransactionsForYear } from "../../../api/transactionsThunks";
 import { Avatar } from "../../../components/images";
 import { keyBy, find } from "lodash";
 import { useGetPlayersAllQuery, useGetStatsQuery } from "../../../api/bfbApi";
+import { selectLeagueYear } from "../../../api/selectors/leagueSelectors";
 
 const AcquisitionCard = ({ href, title }) => {
   const dispatch = useDispatch();
   const { data: nflState } = useGetNflStateQuery();
   const waivers = useSelector(selectWaiverPickups);
   const trades = useSelector(selectTrades);
-  const { data: stats } = useGetStatsQuery("2024");
+  const leagueYear = useSelector(selectLeagueYear);
+  const { data: stats } = useGetStatsQuery(leagueYear);
   const { data: rosters } = useGetRostersQuery();
   const [topTrade, setTopTradeAdd] = useState();
   const [topWaiver, setTopWaiverAdd] = useState();
   const { data: users } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery("2024");
+  const { data: players } = useGetPlayersAllQuery(leagueYear);
 
   useEffect(() => {
     if (!nflState) return; //if no active week yet, or trades and waivers already exist

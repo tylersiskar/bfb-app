@@ -97,22 +97,4 @@ const leagueSlice = createSlice({
 
 export const { setLeagueId } = leagueSlice.actions;
 
-export const selectLeague = (state) => state.league;
-
-export const selectLeagues = (state) => state.league.leagues;
-
-export const selectLeagueId = createSelector(
-  selectLeague,
-  (league) => league.league_id
-);
-export const selectLeagueYear = createSelector(
-  selectLeague,
-  (league) => league.year
-);
-
-export const selectPreviousYear = createSelector(
-  selectLeagueYear,
-  (year) => parseInt(year) - 1
-);
-
 export default leagueSlice.reducer;

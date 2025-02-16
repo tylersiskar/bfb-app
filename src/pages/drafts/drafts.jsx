@@ -10,12 +10,12 @@ import {
 } from "../../api/api";
 import { useGetPlayersAllQuery, useGetStatsQuery } from "../../api/bfbApi";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchLeagues } from "../../api/leagueSlice";
 import {
-  fetchLeagues,
   selectLeagueId,
   selectLeagues,
   selectLeagueYear,
-} from "../../api/leagueSlice";
+} from "../../api/selectors/leagueSelectors";
 
 const colors = [
   "red",

@@ -16,6 +16,7 @@ import {
   mdiChevronLeft,
   mdiCloseBoxOutline,
   mdiListBoxOutline,
+  mdiRefresh,
   mdiTrashCanOutline,
 } from "@mdi/js";
 import { Button, IconButton } from "../../components/buttons";
@@ -35,16 +36,19 @@ import {
   useGetMocksQuery,
   usePostMockMutation,
   useGetPlayersAllQuery,
+  useGetPlayerValueMutation,
 } from "../../api/bfbApi";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { find } from "lodash";
 import RosterPanel from "./roster-panel";
+
+import { fetchLeagues } from "../../api/leagueSlice";
 import {
+  selectLeagueId,
   selectLeagues,
   selectLeagueYear,
-  fetchLeagues,
-  selectLeagueId,
-} from "../../api/leagueSlice";
+} from "../../api/selectors/leagueSelectors";
+
 import useActiveRoster from "./useActiveRoster";
 import html2canvas from "html2canvas";
 import { Helmet, HelmetProvider } from "react-helmet-async";
@@ -81,6 +85,8 @@ const MockNew = () => {
   const { refetch: fetchMocks } = useGetMocksQuery();
   const { data: currentMock } = useGetMockQuery({ id }, { skip: !id });
   const [postMock, { isSuccess }] = usePostMockMutation();
+  const [updatePlayerRankings, { isLoading: isRefreshing }] =
+    useGetPlayerValueMutation();
   const draftOrderWithTrades = useSelector((state) =>
     selectDraftOrder(state, {
       standings,
@@ -366,6 +372,15 @@ const MockNew = () => {
                     <IconButton
                       icon={expandList ? mdiArrowDownThin : mdiArrowUpThin}
                       onClick={() => setExpandList(!expandList)}
+                    />
+                    <IconButton
+                      icon={mdiRefresh}
+                      title="Refresh"
+                      onClick={() => {
+                        updatePlayerRankings(year);
+                      }}
+                      iconColor={"#54d846"}
+                      isLoading={isRefreshing}
                     />
                   </div>
                 </div>

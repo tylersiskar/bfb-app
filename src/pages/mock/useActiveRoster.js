@@ -7,7 +7,7 @@ import {
   selectLeagueId,
   selectLeagues,
   selectLeagueYear,
-} from "../../api/leagueSlice";
+} from "../../api/selectors/leagueSelectors";
 
 const useActiveRoster = () => {
   const year = useSelector(selectLeagueYear);

@@ -10,6 +10,7 @@ const IconButton = ({
   title = "Arrow",
   href,
   className = "",
+  isLoading,
 }) => {
   let Element = href ? Link : "button";
   return (
@@ -18,7 +19,13 @@ const IconButton = ({
       onClick={onClick}
       to={href}
     >
-      <Icon path={icon} title={title} color={iconColor} size={iconSize} />
+      <Icon
+        path={icon}
+        title={title}
+        color={iconColor}
+        size={iconSize}
+        spin={isLoading && 3}
+      />
     </Element>
   );
 };
