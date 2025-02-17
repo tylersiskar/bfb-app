@@ -13,13 +13,7 @@ const PlayerList = ({
   isRoster,
 }) => {
   const activeSlot = useSelector(selectActiveSlot);
-  // const [finalArray, setFinalArray] = useState(
-  // );
   const [page, setPage] = useState(0);
-
-  // useEffect(() => {
-  //   if (!isRoster) setFinalArray(_convertToPaginatedArray(playerList));
-  // }, [playerList]);
 
   const _convertToPaginatedArray = (arr) => {
     if (!arr || arr.length === 0) return [];
@@ -33,13 +27,7 @@ const PlayerList = ({
   };
 
   const splitFullName = (player) => {
-    return { ...player, pos: player.position };
-    // return {
-    //   first_name: player["PLAYER NAME"].split(" ")[0],
-    //   last_name: player["PLAYER NAME"].split(" ").splice(1, 1).join(" "),
-    //   pos: player.POS,
-    //   team: player.TEAM,
-    // };
+    return { ...player, pos: player.pos ?? player.position };
   };
 
   let finalArray = _convertToPaginatedArray(playerList);
@@ -113,6 +101,8 @@ const PlayerList = ({
                 </Button>
               ) : actionColumn ? (
                 actionColumn(player)
+              ) : player.status ? (
+                <p className="color-light sm">{player.status}</p>
               ) : (
                 <div />
               )}

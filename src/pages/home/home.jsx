@@ -70,7 +70,9 @@ const HomePage = ({ seasonType }) => {
 
   return (
     <Content dark home isLoading={isLoading || nflStateIsLoading}>
-      <Scoreboard matchups={Object.values(matchupData)} />
+      {Object.keys(matchupData).length > 0 && (
+        <Scoreboard matchups={Object.values(matchupData)} />
+      )}
       <div className="home-body" style={{ padding: 16 }}>
         {seasonType === "off-season" && (
           <div className="d-flex flex-column">

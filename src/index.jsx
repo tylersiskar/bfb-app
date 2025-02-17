@@ -9,6 +9,7 @@ import { HomePage, TrendsPage, TeamsPage, DraftsPage } from "./pages";
 import MockDraftCenter from "./pages/mock/mocks";
 import { MockNew } from "./pages/mock";
 import { Splash } from "./pages/splash";
+import Rosters from "./pages/rosters";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "drafts",
         element: <DraftsPage />,
+      },
+      {
+        path: "rosters",
+        element: <Rosters />,
       },
       {
         path: "mocks",
