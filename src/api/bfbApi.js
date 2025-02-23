@@ -1,9 +1,7 @@
-// api.js
 import { createSelector } from "@reduxjs/toolkit";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { customBfbBaseQuery } from "./customBaseQuery";
-
-const { VITE_BFB_API } = import.meta.env;
+import { find, sortBy, filter } from "lodash";
 
 export const bfbApi = createApi({
   reducerPath: "bfbApi",
@@ -84,6 +82,76 @@ export const selectKeepers = createSelector(
     return players.filter((player) => {
       return allKeepers.includes(player.id);
     });
+  }
+);
+
+export const selectPlayersProjectedKeepers = createSelector(
+  (state, rawData) => rawData,
+  (data) => {
+    const { playersAll, rosters, users } = data;
+    let newRosters = rosters?.map((r) => {
+      let sortedPlayers = sortBy(
+        r.players
+          .map((pId) => {
+            let currentPlayer = find(playersAll, { id: pId });
+            return {
+              ...currentPlayer,
+              name: currentPlayer?.full_name,
+              pos: currentPlayer?.position,
+              value: currentPlayer?.value,
+            };
+          })
+          .filter((o) => !!o.name),
+        "value"
+      ).reverse();
+      let projectedKeepers = [];
+      sortedPlayers.forEach((player, idx) => {
+        // if keepers arent full yet keep going
+        if (projectedKeepers.length < 8) {
+          if (player.pos === "QB") {
+            // if player is a QB, user does not have a qb yet, and that qb is truly valuable, add player
+            if (!find(projectedKeepers, { pos: "QB" }) && player.value > 5000) {
+              projectedKeepers.push(player);
+            }
+          } else projectedKeepers.push(player);
+        }
+      });
+      return {
+        ...r,
+        team_name: find(users, { user_id: r.owner_id })?.display_name,
+        players: sortedPlayers,
+        projectedKeepers,
+        lowestKeeperValue: projectedKeepers[7]?.value,
+      };
+    });
+
+    let newArray = newRosters?.map((team) => {
+      return {
+        ...team,
+        players: team.players.map((p, i) => {
+          let ownerIds = filter(newRosters, (o) => {
+            let currentTeamsQb = find(o.projectedKeepers, { pos: "QB" });
+
+            if (p.pos === "QB") {
+              if (currentTeamsQb && currentTeamsQb.name) {
+                if (currentTeamsQb.value < p.value) return true;
+                else return false;
+              } else return p.value - o.lowestKeeperValue > 1500;
+            } else return p.value > o.lowestKeeperValue;
+          }).map((t) => t.owner_id);
+          return {
+            ...p,
+            status: !!find(team.projectedKeepers, { id: p.id })
+              ? "Keeper"
+              : ownerIds.length > 0
+              ? "Trade"
+              : "N/A",
+            tradeCandidateTeams: ownerIds,
+          };
+        }),
+      };
+    });
+    return newArray;
   }
 );
 

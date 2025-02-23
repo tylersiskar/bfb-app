@@ -11,6 +11,7 @@ const PlayerList = ({
   playerList,
   playerValueIsFetching,
   isRoster,
+  onPlayerClick = () => {},
 }) => {
   const activeSlot = useSelector(selectActiveSlot);
   const [page, setPage] = useState(0);
@@ -86,6 +87,7 @@ const PlayerList = ({
                 gap: 8,
               }}
               key={`${player.first_name}_${player.last_name}`}
+              onClick={() => onPlayerClick(player)}
             >
               {onDraft ? (
                 <Button
