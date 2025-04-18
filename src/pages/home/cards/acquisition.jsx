@@ -22,7 +22,7 @@ const AcquisitionCard = ({ href, title }) => {
   const waivers = useSelector(selectWaiverPickups);
   const trades = useSelector(selectTrades);
   const leagueYear = useSelector(selectLeagueYear);
-  const { data: stats } = useGetStatsQuery(leagueYear);
+  const { data: stats } = useGetStatsQuery({ year: leagueYear });
   const { data: rosters } = useGetRostersQuery();
   const [topTrade, setTopTradeAdd] = useState();
   const [topWaiver, setTopWaiverAdd] = useState();

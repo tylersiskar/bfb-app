@@ -1,0 +1,41 @@
+.player-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #616161;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 4px #616161;
+  margin-bottom: 16px;
+  transition: all 0.35s ease;
+}
+
+.avatar-sm {
+  height: 88px !important;
+  width: 88px !important;
+}
+
+.hero {
+  box-shadow: 0 4px 4px -2px steelblue;
+  background-color: #16181d;
+  border-bottom-right-radius: 1em;
+  border-bottom-left-radius: 1em;
+  padding-bottom: 48px;
+  margin-bottom: 12px;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  align-items: center;
+  transition: all ease 0.35s;
+}
+
+.hero-collapsed {
+  flex-direction: row;
+  height: 88px;
+  top: 0;
+  position: sticky;
+  z-index: 10;
+}

@@ -11,6 +11,7 @@ const IconButton = ({
   href,
   className = "",
   isLoading,
+  buttonStyle = {},
 }) => {
   let Element = href ? Link : "button";
   return (
@@ -18,6 +19,7 @@ const IconButton = ({
       className={"icon-button" + " " + className}
       onClick={onClick}
       to={href}
+      style={{ ...buttonStyle }}
     >
       <Icon
         path={icon}

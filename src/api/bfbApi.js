@@ -9,7 +9,10 @@ export const bfbApi = createApi({
   tagTypes: ["playersAll"],
   endpoints: (builder) => ({
     getStats: builder.query({
-      query: (year) => `stats/${year}`,
+      query: (params) => ({
+        url: `stats/${params.year}`,
+        params: params && params.pos ? { pos: params.pos } : null,
+      }),
     }),
     getPlayersAll: builder.query({
       query: (year) => `playersAll/${year}`,
@@ -18,7 +21,19 @@ export const bfbApi = createApi({
     getPlayers: builder.query({
       query: (params) => ({
         url: `/players`,
-        params: params, // Pass the entire params object as query parameters
+        params: params,
+      }),
+    }),
+    getPlayerById: builder.query({
+      query: (params) => ({
+        url: `/players/${params.id}`,
+        params: { year: params.year },
+      }),
+    }),
+    getSearch: builder.query({
+      query: (params) => ({
+        url: `/search`,
+        params: params,
       }),
     }),
     getMocks: builder.query({
@@ -157,10 +172,12 @@ export const selectPlayersProjectedKeepers = createSelector(
 
 export const {
   useGetPlayersQuery,
+  useGetPlayerByIdQuery,
   useGetMocksQuery,
   usePostMockMutation,
   useGetMockQuery,
   useGetPlayersAllQuery,
   useGetStatsQuery,
   useGetPlayerValueMutation,
+  useGetSearchQuery,
 } = bfbApi;

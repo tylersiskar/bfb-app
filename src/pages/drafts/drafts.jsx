@@ -45,7 +45,7 @@ const DraftsPage = (props) => {
   const leagueYear = useSelector(selectLeagueYear);
   const leagueId = useSelector(selectLeagueId);
   const [year, setYear] = useState(leagueYear);
-  const { data: stats } = useGetStatsQuery(year);
+  const { data: stats } = useGetStatsQuery({ year });
   const { data: playersObj, isLoading } = useGetPlayersAllQuery(year);
   const leagues = useSelector(selectLeagues);
   let draftIds;

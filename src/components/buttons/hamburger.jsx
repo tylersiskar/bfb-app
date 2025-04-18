@@ -7,7 +7,16 @@ const HamburgerMenu = ({ open, onClick }) => {
     onClick && onClick(!open);
   };
   return (
-    <button className="menu" style={{ cursor: "pointer" }} onClick={_onClick}>
+    <button
+      className="menu"
+      style={{
+        cursor: "pointer",
+        height: 32,
+        display: "flex",
+        alignItems: "center",
+      }}
+      onClick={_onClick}
+    >
       <Icon
         path={open ? mdiClose : mdiMenu}
         title="Menu"

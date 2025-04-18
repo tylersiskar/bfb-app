@@ -16,7 +16,7 @@ const SummaryCard = ({
   onActionClick,
   actionIsLoading,
 }) => {
-  const { data: stats } = useGetStatsQuery(year, { skip: !year });
+  const { data: stats } = useGetStatsQuery({ year }, { skip: !year });
   const { data: usersObj } = useGetUsersQuery();
   const { data: players, isLoading } = useGetPlayersAllQuery(year, {
     skip: !year,

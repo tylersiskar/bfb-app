@@ -7,7 +7,7 @@ import {
 } from "../../api/bfbApi";
 import { useSelector } from "react-redux";
 import { selectLeagueYear } from "../../api/selectors/leagueSelectors";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Icon from "@mdi/react";
 import { mdiChevronDown, mdiChevronUp } from "@mdi/js";
 import PlayerList from "../../components/list-items/player-list";

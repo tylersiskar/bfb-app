@@ -45,7 +45,7 @@ const TeamsPage = () => {
   const leagueId = useSelector(selectLeagueId);
   const leagueStatus = useSelector(selectLeagueStage);
   let statsYear = leagueStatus === "pre_draft" ? leagueYear - 1 : leagueYear;
-  const { data: stats, isLoading } = useGetStatsQuery(statsYear);
+  const { data: stats, isLoading } = useGetStatsQuery({ year: statsYear });
   const { data: leagueObject, isLoading: isRosterLoading } =
     useGetRostersQuery();
   const { data: usersObj } = useGetUsersQuery();

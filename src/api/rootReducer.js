@@ -7,6 +7,7 @@ import standingsSlice from "./standingsSlice";
 import draftSlice from "./draftSlice";
 import { bfbApi } from "./bfbApi";
 import navReducer from "./navSlice";
+import playerDetailsReducer from "./playerDetailsSlice";
 import leagueSlice from "./leagueSlice";
 
 const rootReducer = combineReducers({
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   draft: draftSlice,
   league: leagueSlice,
   nav: navReducer,
+  playerDetails: playerDetailsReducer,
   [api.reducerPath]: api.reducer,
   [bfbApi.reducerPath]: bfbApi.reducer,
 });
