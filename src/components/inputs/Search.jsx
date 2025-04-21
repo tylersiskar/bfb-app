@@ -17,7 +17,8 @@ const DropdownMenu = ({ items = [] }) => {
         overflow: "scroll",
         borderBottomLeftRadius: 12,
         borderBottomRightRadius: 12,
-        boxShadow: "0 0 4px gray",
+        boxShadow: "0 4px 4px -2px white",
+        zIndex: 20,
       }}
     >
       {items.map((player) => {

@@ -161,7 +161,6 @@ const PlayerDetails = () => {
     { year, pos: player?.position },
     { skip: !player || !player.position }
   );
-  console.log(stats, playersAll);
   const teamOwners = useSelector((state) =>
     selectPlayersProjectedKeepers(state, {
       playersAll,
@@ -189,7 +188,7 @@ const PlayerDetails = () => {
   return (
     <Content dark isLoading={isFetching} home>
       <div style={{ height: "calc(100vh - 100px)" }}>
-        <div className={` hero ${!!expandedWindow ? "hero-collapsed" : ""}`}>
+        <div className={`hero ${!!expandedWindow ? "hero-collapsed" : ""}`}>
           <div
             className={`player-avatar mr-2 ${
               !!expandedWindow ? "avatar-sm" : ""
@@ -240,7 +239,7 @@ const PlayerDetails = () => {
             },
             {
               icon: mdiSwapHorizontal,
-              title: "Potential Acquirers",
+              title: "Trade Candidacy",
               color: "#B5EAD7",
               bodyFn: () => {
                 return (
