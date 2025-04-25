@@ -13,7 +13,8 @@ const Window = ({
   subtitle = "",
   bodyFn = () => {},
   color = "",
-  onClick,
+  onToggle,
+  isChecked,
   isLast,
 }) => {
   const expandedWindow = useSelector(selectExpandedWindow);
@@ -32,14 +33,60 @@ const Window = ({
       }}
     >
       <div
-        className={`flex align-center pb-3 ${
+        className={`flex align-center justify-between pb-3 ${
           isLast ? "border-bottom-lighter" : ""
         } w-100`}
       >
-        <Icon path={icon} title={title} size={1.5} color={color} />
-        <p style={{ color, marginLeft: 12 }} className="lg bold">
-          {title}
-        </p>
+        <div className="flex align-center">
+          <Icon path={icon} title={title} size={1.5} color={color} />
+          <p style={{ color, marginLeft: 12 }} className="lg bold">
+            {title}
+          </p>
+        </div>
+
+        {onToggle && isExpanded && (
+          <label
+            className="flex align-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="light bold sm pr-2">
+              {isChecked ? "All" : "Rostered"}
+            </p>
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={(e) => {
+                e.stopPropagation();
+                onToggle();
+              }}
+              style={{ display: "none" }}
+            />
+            <span
+              style={{
+                display: "inline-block",
+                width: "40px",
+                height: "20px",
+                backgroundColor: isChecked ? "steelblue" : "#ccc",
+                borderRadius: "9999px",
+                position: "relative",
+                transition: "background-color 0.2s",
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  top: "2px",
+                  left: isChecked ? "22px" : "2px",
+                  width: "16px",
+                  height: "16px",
+                  backgroundColor: "white",
+                  borderRadius: "50%",
+                  transition: "left 0.2s",
+                }}
+              />
+            </span>
+          </label>
+        )}
       </div>
       {isExpanded && bodyFn()}
       {isLast && (

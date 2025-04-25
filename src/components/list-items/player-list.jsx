@@ -12,6 +12,8 @@ const PlayerList = ({
   playerValueIsFetching,
   isRoster,
   onPlayerClick = () => {},
+  style = {},
+  activePlayerId,
 }) => {
   const activeSlot = useSelector(selectActiveSlot);
   const [page, setPage] = useState(0);
@@ -42,6 +44,7 @@ const PlayerList = ({
           display: "grid",
           gridTemplateColumns: "0.5fr 1fr 0.5fr 0.5fr 0.5fr",
           gap: 8,
+          ...style,
         }}
       >
         <div className="flex justify-start">
@@ -70,6 +73,7 @@ const PlayerList = ({
           overflow: "auto",
           height: scrollHeight,
           transition: "height 0.350s ease",
+          ...style,
         }}
       >
         {activePlayerList?.map((playerObj) => {
@@ -85,9 +89,13 @@ const PlayerList = ({
                 display: "grid",
                 gridTemplateColumns: "0.5fr 1fr 0.5fr 0.5fr 0.5fr",
                 gap: 8,
+                ...style,
               }}
               key={`${player.first_name}_${player.last_name}`}
-              onClick={() => onPlayerClick(player)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onPlayerClick(player);
+              }}
             >
               {onDraft ? (
                 <Button
@@ -108,22 +116,53 @@ const PlayerList = ({
               ) : (
                 <div />
               )}
-              <div className="flex justify-start align-center">
+              <div
+                className="flex justify-start align-center"
+                style={{
+                  color: activePlayerId === player.id ? "steelblue" : "",
+                }}
+              >
                 <div className="flex flex-column justify-center align-start">
-                  <p className="sm light">{player.first_name}</p>
-                  <p className="sm light bold">{player.last_name}</p>
+                  <p
+                    className={`sm ${
+                      activePlayerId === player.id ? "lime" : "light"
+                    }`}
+                  >
+                    {player.first_name}
+                  </p>
+                  <p
+                    className={`sm ${
+                      activePlayerId === player.id ? "lime" : "light"
+                    } bold`}
+                  >
+                    {player.last_name}
+                  </p>
                   {/* <p className="x-sm light">
                     {player.pos} - {player.team}
                   </p> */}
                 </div>
               </div>
-              <p className="md light flex justify-start">
+              <p
+                className={`${
+                  activePlayerId === player.id ? "lime" : "light"
+                } md flex justify-start`}
+              >
                 {player.pos ?? player.position}
               </p>
-              <p className="md light flex justify-start">{player.team}</p>
+              <p
+                className={`${
+                  activePlayerId === player.id ? "lime" : "light"
+                } md flex justify-start`}
+              >
+                {player.team}
+              </p>
               {/* <p className="light">{parseFloat(player.ppg).toFixed(2)}</p> */}
               {!isRoster && (
-                <p className="md light flex justify-start">
+                <p
+                  className={`${
+                    activePlayerId === player.id ? "lime" : "light"
+                  } md flex justify-start`}
+                >
                   {playerObj["Normalized Rank"] ?? playerObj["value"]}
                 </p>
               )}

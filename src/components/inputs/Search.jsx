@@ -15,10 +15,12 @@ const DropdownMenu = ({ items = [] }) => {
         color: "gray",
         height: items.length ? 150 : 0,
         overflow: "scroll",
-        borderBottomLeftRadius: 12,
-        borderBottomRightRadius: 12,
-        boxShadow: "0 4px 4px -2px white",
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8,
+        boxShadow: "0 0 4px rgba(255,255,255,.2)",
         zIndex: 20,
+        padding: "0 4px",
+        boxSizing: "border-box",
       }}
     >
       {items.map((player) => {
@@ -31,7 +33,7 @@ const DropdownMenu = ({ items = [] }) => {
             <div
               style={{
                 height: "48px",
-                borderBottom: "1px solid #A7A7A7",
+                borderBottom: "1px solid rgba(255,255,255,.5)",
                 display: "flex",
                 alignItems: "center",
                 padding: "0 8px",
