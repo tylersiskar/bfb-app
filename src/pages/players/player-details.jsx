@@ -193,7 +193,7 @@ const PlayerDetails = () => {
     sourceRoster,
     sourceStats,
   } = useMemo(() => {
-    if (!teamWithProjectedKeepers || !playersAll) {
+    if (!teamWithProjectedKeepers || !playersAll || !player) {
       return {
         tradeCandidateTeams: [],
         bfbTeam: {},
@@ -226,7 +226,7 @@ const PlayerDetails = () => {
       sourceRoster,
       sourceStats,
     };
-  }, [teamWithProjectedKeepers, params.playerId, stats, playersAll, rosters]);
+  }, [teamWithProjectedKeepers, player, stats]);
 
   if (!player) return <Content dark isLoading />;
   let windows = [
@@ -336,6 +336,7 @@ const PlayerDetails = () => {
       ),
     });
   }
+  console.log(activePlayer, player);
   return (
     <Content dark isLoading={isFetching} home>
       <div style={{ height: "calc(100vh - 100px)" }}>
@@ -382,7 +383,9 @@ const PlayerDetails = () => {
                     : activePlayer.status.toUpperCase() === "TRADE"
                     ? "TRADE CANDIDATE"
                     : activePlayer.status.toUpperCase()
-                  : "ROOKIE"}
+                  : player.years_exp === 0
+                  ? "ROOKIE"
+                  : "FREE AGENT"}
               </p>
             </div>
           </div>
