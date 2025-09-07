@@ -88,7 +88,7 @@ const MockDraftCenter = () => {
                   <p className="light bold pb-1">{mock.name}</p>
                   <p className="light pb-1">{mock.create_date.split("T")[0]}</p>
                 </div>
-                <div className="d-flex pt-1">
+                <div className="flex pt-1">
                   {Object.keys(positionalGrouping).map((pos, i) => (
                     <div
                       className={`${pos} p-1`}

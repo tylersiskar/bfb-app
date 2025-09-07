@@ -10,7 +10,7 @@ import MockDraftCenter from "./pages/mock/mocks";
 import { MockNew } from "./pages/mock";
 import { Splash } from "./pages/splash";
 import Rosters from "./pages/rosters";
-import PlayerDetails from "./pages/players/player-details";
+import PlayerDetailsPage from "./pages/players";
 
 const router = createBrowserRouter([
   {
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
       },
       {
         path: "players/:playerId",
-        element: <PlayerDetails />,
+        element: <PlayerDetailsPage />,
       },
       {
         path: "drafts",

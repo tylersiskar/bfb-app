@@ -39,8 +39,7 @@ import {
   useGetPlayerValueMutation,
 } from "../../api/bfbApi";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { find } from "lodash";
-import RosterPanel from "./roster-panel";
+import { find, sortBy } from "lodash";
 
 import { fetchLeagues } from "../../api/leagueSlice";
 import {
@@ -52,6 +51,8 @@ import {
 import useActiveRoster from "./useActiveRoster";
 import html2canvas from "html2canvas";
 import { Helmet, HelmetProvider } from "react-helmet-async";
+import PlayerDetails from "../players/player-details";
+import TopDrawer from "./roster-panel";
 
 let URL = `https://s3.amazonaws.com/badfranchisebuilders.com/thumbnails/{IMAGE}`;
 
@@ -74,6 +75,7 @@ const MockNew = () => {
   const [pickIdx, setPickIdx] = useState(0);
   const [position, setPosition] = useState();
   const [rookies, setRookies] = useState("");
+  const [activePlayerId, setActivePlayerId] = useState("");
   const year = useSelector(selectLeagueYear);
   const { data: tradedPicks } = useGetTradedPicksQuery(year, { skip: !year });
   const { data, isLoading } = useGetRostersQuery();
@@ -286,16 +288,48 @@ const MockNew = () => {
               >
                 <h5>Trades Made (Coming soon...)</h5>
               </div>
-              <RosterPanel
-                isExpanded={openPanel}
+              <TopDrawer
+                isExpanded={openPanel || !!activePlayerId}
                 playerListExpanded={expandList}
-                isVisible={!!Object.keys(activeSlot).length}
-                activeRoster={activeRoster}
-              />
+                isVisible={!!Object.keys(activeSlot).length || !!activePlayerId}
+              >
+                {activePlayerId ? (
+                  <PlayerDetails activePlayerId={activePlayerId} />
+                ) : (
+                  <>
+                    <h6>Current Roster</h6>
+                    <PlayerList
+                      isRoster
+                      playerList={sortBy(activeRoster, "position")}
+                      scrollHeight={`calc(${!expandList ? 55 : 25}svh - 60px)`}
+                      hidePagination
+                      actionColumn={(player) => (
+                        <Button
+                          style={{
+                            height: 32,
+                            background: player.isKeeper && "transparent",
+                            borderColor:
+                              player.isKeeper && "rgb(206, 206, 206)",
+                          }}
+                          className={player.isKeeper ? "p-1" : "bg-lime p-1"}
+                        >
+                          <p
+                            className={
+                              player.isKeeper ? "sm light bold" : "sm dark bold"
+                            }
+                          >
+                            {player.isKeeper ? "Kept" : "NEW"}
+                          </p>
+                        </Button>
+                      )}
+                    />
+                  </>
+                )}
+              </TopDrawer>
               <div
                 className={`bottom-drawer ${id ? "d-none" : ""} ${
                   expandList
-                    ? openPanel
+                    ? openPanel || !!activePlayerId
                       ? "half-expanded"
                       : "expanded"
                     : "collapsed"
@@ -366,7 +400,10 @@ const MockNew = () => {
                         icon={
                           openPanel ? mdiCloseBoxOutline : mdiListBoxOutline
                         }
-                        onClick={() => setOpenPanel(!openPanel)}
+                        onClick={() => {
+                          setActivePlayerId("");
+                          setOpenPanel(!openPanel);
+                        }}
                       />
                     )}
                     <IconButton
@@ -428,9 +465,14 @@ const MockNew = () => {
                 <PlayerList
                   onDraft={_onDraft}
                   scrollHeight={`calc(${
-                    expandList ? (openPanel ? "40svh" : "55svh") : "170px"
+                    expandList
+                      ? openPanel || !!activePlayerId
+                        ? "40svh"
+                        : "55svh"
+                      : "170px"
                   } - 136px)`}
                   playerList={_getPlayerList()}
+                  onPlayerClick={(player) => setActivePlayerId(player.id)}
                   // playerValueIsFetching={playerValueIsLoading}
                 />
               </div>

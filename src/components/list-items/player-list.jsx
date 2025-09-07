@@ -104,7 +104,12 @@ const PlayerList = ({
                     height: 32,
                   }}
                   className={isDisabled ? "bg-gray p-1" : "bg-lime p-1"}
-                  onClick={() => !isDisabled && onDraft(player)}
+                  onClick={(e) => {
+                    if (!isDisabled) {
+                      e.stopPropagation();
+                      onDraft(player);
+                    }
+                  }}
                   disabled={isDisabled}
                 >
                   <p className="sm dark bold">DRAFT</p>

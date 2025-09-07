@@ -32,6 +32,7 @@ function getPercentile(array, value) {
 const renderBoxplot = ({ series }) => {
   const outliers = series
     .map((dataObj) => {
+      if (!dataObj.data) return;
       let value = dataObj.data.filter((o) => o.id === dataObj.outlierId);
       let hasValue = value && value.length > 0;
       if (!hasValue) return;
@@ -48,6 +49,7 @@ const renderBoxplot = ({ series }) => {
     .filter((o) => !!o);
   let datasets = series
     .map((dataObj) => {
+      if (!dataObj.data) return;
       let data = dataObj.data.map((o) => parseFloat(o[dataObj.dataKey])).sort();
       return {
         title: dataObj.title,
@@ -130,6 +132,8 @@ const renderBoxplot = ({ series }) => {
         useResizeHandler={true}
         data={plotlyData}
         layout={{
+          margin: { l: 24, r: 24, t: 12, b: 12 },
+          autosize: true,
           paper_bgcolor: "transparent",
           plot_bgcolor: "transparent",
           font: { color: "#cecece" },
@@ -140,7 +144,6 @@ const renderBoxplot = ({ series }) => {
             showgrid: false,
             zeroline: false,
           },
-          margin: { t: 40 },
           showlegend: false,
         }}
         config={{
@@ -148,13 +151,13 @@ const renderBoxplot = ({ series }) => {
           staticPlot: true,
           responsive: true,
         }}
-        style={{ width: "100%", height: "325px" }}
+        style={{ width: "100%", height: "250px" }}
       />
     </div>
   );
 };
 
-const PlayerDetails = () => {
+const PlayerDetails = ({ activePlayerId = "" }) => {
   const navigate = useNavigate();
   const [playerSource, togglePlayerSource] = useState("all");
   const expandedWindow = useSelector(selectExpandedWindow);
@@ -165,8 +168,12 @@ const PlayerDetails = () => {
   const { data: nflState } = useGetNflStateQuery();
   let year =
     nflState?.season_type === "off" ? nflState.previous_season : leagueYear;
+
+  // playerId can be taken from params on player details page or just passed from another page
+
+  let playerId = params.playerId ?? activePlayerId;
   const { data: player, isFetching } = useGetPlayerByIdQuery({
-    id: params.playerId,
+    id: playerId,
     year: leagueYear,
   });
   const { data: playersAll } = useGetPlayersQuery({
@@ -203,17 +210,17 @@ const PlayerDetails = () => {
       };
     }
     const matchedTeam = teamWithProjectedKeepers.find(
-      (team) => !!find(team.players, { id: params.playerId })
+      (team) => !!find(team.players, { id: playerId })
     );
 
     const players = matchedTeam?.players || [];
-    const activePlayerOnRoster = find(players, { id: params.playerId });
+    const activePlayerOnRoster = find(players, { id: playerId });
     let rosteredPlayers = rosters?.map((r) => r.players).flat(1);
     let allPlayersOnRoster = playersAll?.filter((p) =>
-      p.id === params.playerId ? true : rosteredPlayers.includes(p.id)
+      p.id === playerId ? true : rosteredPlayers.includes(p.id)
     );
     let allStatsOnRoster = stats?.filter((p) =>
-      p.id === params.playerId ? true : rosteredPlayers.includes(p.id)
+      p.id === playerId ? true : rosteredPlayers.includes(p.id)
     );
     let sourceRoster = playerSource === "all" ? playersAll : allPlayersOnRoster;
     let sourceStats = playerSource === "all" ? stats : allStatsOnRoster;
@@ -273,7 +280,7 @@ const PlayerDetails = () => {
                 owner_id: ownerId,
               });
               let playerIds = owner.players.map((p) => p.id);
-              if (playerIds.includes(params.playerId)) return;
+              if (playerIds.includes(playerId)) return;
               let ownersKeepers = owner.projectedKeepers;
               let positionalGrouping = groupBy(ownersKeepers, "pos");
               let displayName = owner.team_name;
@@ -284,7 +291,7 @@ const PlayerDetails = () => {
                     key={ownerId}
                   >
                     <p className="pr-2 light md bold">{displayName}</p>
-                    <div className="d-flex pt-1 ">
+                    <div className="flex pt-1 ">
                       {Object.keys(positionalGrouping)
                         .sort()
                         .map((pos, i) => (
@@ -331,68 +338,68 @@ const PlayerDetails = () => {
           }}
           style={{ width: "100%" }}
           scrollHeight="auto"
-          activePlayerId={params.playerId}
+          activePlayerId={playerId}
         />
       ),
     });
   }
-  console.log(activePlayer, player);
+
   return (
-    <Content dark isLoading={isFetching} home>
-      <div style={{ height: "calc(100vh - 100px)" }}>
-        <div className="hero">
-          <div className="flex justify-between align-center w-100">
-            <div className="flex-column align-start flex pl-2">
-              <h1 className={`light pb-1 ${expandedWindow ? "md" : "lg"}`}>
-                {player.full_name}
-              </h1>
-              <div className="flex">
-                <p className={`light ${expandedWindow ? "md" : "lg"}  pb-2`}>
-                  {player.position} • {player.team}
-                </p>
-              </div>
-              <p className="yellow sm pb-2">{bfbTeam.team_name ?? "BFB FA"}</p>
-              <p className="blue bold sm pb-2">KTC: {player.value}</p>
-            </div>
-            <div
-              className={`player-avatar ${!!expandedWindow ? "avatar-sm" : ""}`}
-              style={{ margin: 0 }}
-            >
-              <img
-                src={`https://sleepercdn.com/content/nfl/players/${player.id}.jpg`}
-                style={{
-                  height: "110%",
-                  objectFit: "cover",
-                  objectPosition: "top center",
-                }}
-              />
-            </div>
-          </div>
-          <div className="flex w-100 align-center">
-            <div
-              className={`QB p-1 flex align-center justify-center`}
-              style={{
-                borderRadius: 4,
-                marginRight: 4,
-              }}
-            >
-              <p className={`bold dark sm pr-1`}>
-                {activePlayer && activePlayer.status
-                  ? activePlayer.status.toUpperCase() === "N/A"
-                    ? "NON-KEEPER"
-                    : activePlayer.status.toUpperCase() === "TRADE"
-                    ? "TRADE CANDIDATE"
-                    : activePlayer.status.toUpperCase()
-                  : player.years_exp === 0
-                  ? "ROOKIE"
-                  : "FREE AGENT"}
+    <div style={{ height: "calc(100vh - 100px)" }}>
+      <div className="hero">
+        <div className="flex justify-between align-center w-100">
+          <div className="flex-column align-start flex pl-2">
+            <h1 className={`light pb-1 ${expandedWindow ? "md" : "lg"}`}>
+              {player.full_name}
+            </h1>
+            <div className="flex">
+              <p className={`light ${expandedWindow ? "md" : "lg"}  pb-2`}>
+                {player.position} • {player.team}
               </p>
             </div>
+            <p className="yellow sm pb-2">{bfbTeam.team_name ?? "BFB FA"}</p>
+            <p className="blue bold sm pb-2">KTC: {player.value}</p>
+          </div>
+          <div
+            className={`player-avatar ${
+              !!expandedWindow ? "player-avatar-sm" : ""
+            }`}
+            style={{ margin: 0 }}
+          >
+            <img
+              src={`https://sleepercdn.com/content/nfl/players/${player.id}.jpg`}
+              style={{
+                height: "110%",
+                objectFit: "cover",
+                objectPosition: "top center",
+              }}
+            />
           </div>
         </div>
-        <WindowList windows={windows} />
+        <div className="flex w-100 align-center">
+          <div
+            className={`QB p-1 flex align-center justify-center`}
+            style={{
+              borderRadius: 4,
+              marginRight: 4,
+            }}
+          >
+            <p className={`bold dark sm pr-1`}>
+              {activePlayer && activePlayer.status
+                ? activePlayer.status.toUpperCase() === "N/A"
+                  ? "NON-KEEPER"
+                  : activePlayer.status.toUpperCase() === "TRADE"
+                  ? "TRADE CANDIDATE"
+                  : activePlayer.status.toUpperCase()
+                : player.years_exp === 0
+                ? "ROOKIE"
+                : "FREE AGENT"}
+            </p>
+          </div>
+        </div>
       </div>
-    </Content>
+      <WindowList windows={windows} />
+    </div>
   );
 };
 export default PlayerDetails;

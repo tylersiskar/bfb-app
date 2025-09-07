@@ -7,6 +7,7 @@ $red: #ff3f5d;
 $light: rgb(206, 206, 206);
 
 .card {
+  overflow: hidden;
   border-radius: 6px;
   background-color: #16181d;
   box-shadow: 0 0 2px rgba(204, 204, 204, 0.6);
@@ -73,10 +74,11 @@ $light: rgb(206, 206, 206);
   gap: 4px;
   padding-bottom: 4px;
   margin-bottom: 4px;
+  width: calc(100vw - 32px);
 }
 @media screen and (min-width: 767px) {
-    .round:not(.round-home) {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    }
+  .round:not(.round-home) {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
 }

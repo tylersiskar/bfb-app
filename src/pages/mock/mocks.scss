@@ -1,4 +1,5 @@
 $darker: #16181d;
+$dark: #1f2126;
 
 .mock-item {
   display: flex;
@@ -23,11 +24,12 @@ $darker: #16181d;
   height: 0;
   padding: 0;
   width: 100%;
-  background-color: $darker;
+  background-color: $dark;
   position: absolute;
   bottom: 64px;
   transition: all 0.35s ease;
   box-sizing: border-box;
+  overflow: auto;
 }
 .panel-full-expanded {
   border-top: 1px solid rgba(204, 204, 204, 0.6);
