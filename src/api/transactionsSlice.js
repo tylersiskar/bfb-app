@@ -9,10 +9,12 @@ export const fetchTransactionsForWeek = createAsyncThunk(
   "matchups/fetchTransactionsForWeek",
   async (week, thunkAPI) => {
     try {
+      const leagueId =
+        localStorage.getItem("league_id") ?? import.meta.env.VITE_LEAGUE_ID;
       const response = await fetch(
-        `${import.meta.env.VITE_SLEEPER_API}/league/${
-          import.meta.env.VITE_LEAGUE_ID
-        }/transactions/${week}`
+        `${
+          import.meta.env.VITE_SLEEPER_API
+        }/league/${leagueId}/transactions/${week}`
       );
       const data = await response.json();
       return { data, week };

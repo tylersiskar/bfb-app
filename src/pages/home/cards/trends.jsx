@@ -36,9 +36,9 @@ const TrendsCard = ({ title, subtitle, href }) => {
   let team = Object.keys(rostersById).map((roster) => {
     let currentRoster = rostersById[roster];
     let user = find(usersObj, (obj) => obj.user_id === currentRoster.owner_id);
-
     let seasonAverage =
-      currentRoster.settings.fpts /
+      (currentRoster.settings.fpts +
+        currentRoster.settings.fpts_decimal / 100) /
       (currentRoster.settings.wins + currentRoster.settings.losses);
     let trendingAverage =
       trendingPointsByRoster &&

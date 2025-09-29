@@ -42,7 +42,9 @@ export const fetchStandings = createAsyncThunk(
           (standingsSlot[a.roster_id] || Infinity) -
             (standingsSlot[b.roster_id] || Infinity) ||
           b.settings.wins - a.settings.wins ||
-          b.settings.fpts - a.settings.fpts
+          b.settings.fpts +
+            b.settings.fpts_decimal / 100 -
+            (a.settings.fpts + a.settings.fpts_decimal / 100)
         );
       });
 
@@ -53,7 +55,7 @@ export const fetchStandings = createAsyncThunk(
           roster_id: roster.roster_id,
           playoff_position: standingsSlot[roster.roster_id] || "N/A",
           wins: roster.settings.wins,
-          points_for: roster.settings.fpts,
+          points_for: roster.settings.fpts + roster.settings.fpts_decimal / 100,
           ...find(users, { user_id: roster.owner_id }),
         });
       });
