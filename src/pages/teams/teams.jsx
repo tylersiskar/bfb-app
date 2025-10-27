@@ -58,6 +58,7 @@ const TeamsPage = () => {
     usersObj.forEach((user) => {
       users[user.user_id] = user.display_name;
     });
+
     leagueObject &&
       leagueObject.forEach((team) => {
         let teamName = users[team.owner_id];
@@ -71,7 +72,7 @@ const TeamsPage = () => {
               pts: currentStat ? currentStat.pts_half_ppr : 0,
               gp: currentStat ? currentStat.gms_active : 0,
               ppg: currentStat
-                ? currentStat.pts_half_ppr / currentStat.gms_active
+                ? currentStat.ppg_half / currentStat.gms_active
                 : 0,
               x: currentStat
                 ? currentStat.pts_half_ppr / currentStat.gms_active
@@ -94,19 +95,12 @@ const TeamsPage = () => {
             return item && ["K", "DEF"].indexOf(item.position) === -1;
           });
         }
+
         league[teamName] = teamPlayers;
       });
 
     setDatasets(
       Object.keys(league).map((teamName, i) => {
-        let image = new Image();
-        let user = find(usersObj, { display_name: teamName });
-        image.src = user.avatar
-          ? `https://sleepercdn.com/avatars/thumbs/${user.avatar}`
-          : "";
-        image.height = 20;
-        image.width = 20;
-        image.borderRadius = 4;
         return {
           label: teamName,
           data: league[teamName].map((player) => {
@@ -116,9 +110,8 @@ const TeamsPage = () => {
               label: player.name,
             };
           }),
-          pointStyle: image ?? null,
           backgroundColor: colors[i],
-          pointRadius: 8,
+          pointRadius: 4,
           pointHoverRadius: 12,
         };
       })
@@ -144,7 +137,7 @@ const TeamsPage = () => {
       >
         <div className="flex flex-column align-center">
           <h2 style={{ margin: 0 }}>Rank vs PPG by Team</h2>
-          <h4 className="subtitle" style={{ margin: "12px 0" }}>
+          <h4 className="subtitle" style={{ margin: "8px 0" }}>
             Filter by Position and Team below
           </h4>
         </div>
@@ -205,6 +198,9 @@ const TeamsPage = () => {
             options={{
               maintainAspectRatio: window.innerWidth > 767,
               plugins: {
+                legend: {
+                  display: false,
+                },
                 tooltip: {
                   callbacks: {
                     label: (context) =>
@@ -231,12 +227,6 @@ const TeamsPage = () => {
                     width: 2,
                     color: "black",
                   },
-                  max:
-                    position === "TE" || position === "QB"
-                      ? 50
-                      : position === "RB"
-                      ? 100
-                      : 125,
                 },
                 x: {
                   title: {
