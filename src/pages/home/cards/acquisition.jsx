@@ -27,7 +27,7 @@ const AcquisitionCard = ({ href, title }) => {
   const [topTrade, setTopTradeAdd] = useState();
   const [topWaiver, setTopWaiverAdd] = useState();
   const { data: users } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery(leagueYear);
+  const { data: players } = useGetPlayersAllQuery({ year: leagueYear });
 
   useEffect(() => {
     if (!nflState) return; //if no active week yet, or trades and waivers already exist

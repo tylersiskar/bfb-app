@@ -46,7 +46,7 @@ const DraftsPage = (props) => {
   const leagueId = useSelector(selectLeagueId);
   const [year, setYear] = useState(leagueYear);
   const { data: stats } = useGetStatsQuery({ year });
-  const { data: playersObj, isLoading } = useGetPlayersAllQuery(year);
+  const { data: playersObj, isLoading } = useGetPlayersAllQuery({ year });
   const leagues = useSelector(selectLeagues);
   let draftIds;
 
@@ -67,7 +67,7 @@ const DraftsPage = (props) => {
           return {
             label: `Round ${round}`,
             backgroundColor: colors[i],
-            pointRadius: 8,
+            pointRadius: 6,
             pointHoverRadius: 12,
             data: arr[round].reduce((newArray, obj) => {
               let player = find(playersObj, { id: obj.player_id });
@@ -253,6 +253,7 @@ const DraftsPage = (props) => {
             options={{
               maintainAspectRatio: window.innerWidth > 767,
               plugins: {
+                datalabels: { display: false },
                 tooltip: {
                   callbacks: {
                     label: (context) => {

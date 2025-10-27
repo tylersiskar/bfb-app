@@ -15,7 +15,11 @@ export const bfbApi = createApi({
       }),
     }),
     getPlayersAll: builder.query({
-      query: (year) => `playersAll/${year}`,
+      query: (params) => ({
+        url: `playersAll/${params.year}`,
+        params:
+          params && params.position ? { position: params.position } : null,
+      }),
       providesTags: ["playersAll"],
     }),
     getPlayers: builder.query({

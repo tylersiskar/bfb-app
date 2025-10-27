@@ -96,7 +96,7 @@ const MockNew = () => {
       year,
     })
   );
-  const { data: playersAll } = useGetPlayersAllQuery(year);
+  const { data: playersAll } = useGetPlayersAllQuery({ year });
   const leagueId = useSelector(selectLeagueId);
   let current = find(seasons, { league_id: leagueId });
   const keepers = useSelector((state) =>

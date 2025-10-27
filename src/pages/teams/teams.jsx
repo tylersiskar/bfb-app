@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -7,6 +7,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import { Content } from "../../components/layout";
@@ -21,7 +22,7 @@ import {
 } from "../../api/selectors/leagueSelectors";
 import { fetchLeagues } from "../../api/leagueSlice";
 
-let colors = [
+const colors = [
   "#bb17bd",
   "#5bce7a",
   "#923871",
@@ -35,180 +36,182 @@ let colors = [
   "#a3c592",
   "cyan",
 ];
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
+const chartAreaBorder = {
+  id: "chartAreaBorder",
+  beforeDraw(chart) {
+    const {
+      ctx,
+      chartArea: { left, top, width, height },
+    } = chart;
+    ctx.save();
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(left, top, width, height);
+    ctx.restore();
+  },
+};
+
+ChartJS.register(
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+  ChartDataLabels
+);
 
 const TeamsPage = () => {
   const dispatch = useDispatch();
   const [datasets, setDatasets] = useState([]);
-  const [position, setPosition] = useState();
+  const [position, setPosition] = useState("QB");
+
   const leagueYear = useSelector(selectLeagueYear);
   const leagueId = useSelector(selectLeagueId);
   const leagueStatus = useSelector(selectLeagueStage);
-  let statsYear = leagueStatus === "pre_draft" ? leagueYear - 1 : leagueYear;
-  const { data: stats, isLoading } = useGetStatsQuery({ year: statsYear });
+  const statsYear = leagueStatus === "pre_draft" ? leagueYear - 1 : leagueYear;
+
   const { data: leagueObject, isLoading: isRosterLoading } =
     useGetRostersQuery();
   const { data: usersObj } = useGetUsersQuery();
-  const { data: players } = useGetPlayersAllQuery(statsYear);
+  const { data: players } = useGetPlayersAllQuery({
+    year: statsYear,
+    position,
+  });
 
-  const fetchPlayers = (pos) => {
-    if (!usersObj) return;
-    let league = [];
-    let users = {};
-    usersObj.forEach((user) => {
-      users[user.user_id] = user.display_name;
-    });
+  // Fetch league data when leagueId changes
+  useEffect(() => {
+    if (leagueId) dispatch(fetchLeagues(leagueId));
+  }, [dispatch, leagueId]);
 
-    leagueObject &&
-      leagueObject.forEach((team) => {
-        let teamName = users[team.owner_id];
-        let teamPlayers = team.players.map((player) => {
-          let currentPlayer = find(players, { id: player });
-          if (currentPlayer) {
-            let currentStat = find(stats, { player_id: player });
+  // Build datasets
+  const fetchPlayers = useCallback(
+    (pos) => {
+      if (!usersObj || !leagueObject || !players) return;
+
+      const users = Object.fromEntries(
+        usersObj.map((u) => [u.user_id, u.display_name])
+      );
+
+      const league = leagueObject.reduce((acc, team) => {
+        const teamName = users[team.owner_id];
+        const teamPlayers = team.players
+          .map((id) => {
+            const player = find(players, { id });
+            if (!player) return null;
             return {
-              name: currentPlayer.full_name,
-              position: currentPlayer.position,
-              pts: currentStat ? currentStat.pts_half_ppr : 0,
-              gp: currentStat ? currentStat.gms_active : 0,
-              ppg: currentStat
-                ? currentStat.ppg_half / currentStat.gms_active
-                : 0,
-              x: currentStat
-                ? currentStat.pts_half_ppr / currentStat.gms_active
-                : 0,
-              rank: currentStat ? currentStat.pos_rank_half_ppr : 0,
-              y: currentStat ? currentStat.pos_rank_half_ppr : 0,
+              name: player.full_name,
+              position: player.position,
+              x: player.ppg,
+              y: player.pos_rank_half_ppr,
             };
-          }
-        });
-        if (pos) {
-          teamPlayers = teamPlayers.filter((item) => {
-            return (
-              item &&
-              item.position === pos &&
-              ["K", "DEF"].indexOf(item.position) === -1
-            );
-          });
-        } else {
-          teamPlayers = teamPlayers.filter((item) => {
-            return item && ["K", "DEF"].indexOf(item.position) === -1;
-          });
-        }
+          })
+          .filter(
+            (p) =>
+              p &&
+              ["K", "DEF"].indexOf(p.position) === -1 &&
+              (!pos || p.position === pos)
+          );
 
-        league[teamName] = teamPlayers;
-      });
+        acc[teamName] = teamPlayers;
+        return acc;
+      }, {});
 
-    setDatasets(
-      Object.keys(league).map((teamName, i) => {
-        return {
+      setDatasets(
+        Object.entries(league).map(([teamName, players], i) => ({
           label: teamName,
-          data: league[teamName].map((player) => {
-            return {
-              x: player.x,
-              y: player.y,
-              label: player.name,
-            };
-          }),
-          backgroundColor: colors[i],
+          data: players,
+          backgroundColor: colors[i % colors.length],
           pointRadius: 4,
           pointHoverRadius: 12,
-        };
-      })
-    );
-  };
-  useEffect(() => {
-    dispatch(fetchLeagues(leagueId));
-  }, []);
+        }))
+      );
+    },
+    [usersObj, leagueObject, players]
+  );
 
   useEffect(() => {
-    if (stats && leagueObject) fetchPlayers(position);
-  }, [position, stats, leagueObject, players]);
+    fetchPlayers();
+  }, [fetchPlayers]);
 
   return (
-    <Content isLoading={isLoading || isRosterLoading}>
+    <Content isLoading={isRosterLoading}>
       <div
         className="flex flex-column align-center justify-center"
-        style={{
-          padding: 12,
-          maxWidth: 500,
-          margin: "auto",
-        }}
+        style={{ maxWidth: 325, margin: "auto" }}
       >
-        <div className="flex flex-column align-center">
-          <h2 style={{ margin: 0 }}>Rank vs PPG by Team</h2>
-          <h4 className="subtitle" style={{ margin: "8px 0" }}>
-            Filter by Position and Team below
-          </h4>
-        </div>
+        <h2 style={{ paddingBottom: 12 }}>Rank vs PPG by Team</h2>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr 1fr",
-            gap: 4,
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 8,
             width: "100%",
-            marginBottom: 8,
           }}
         >
-          <Button
-            onClick={(e) =>
-              setPosition(position === e.target.id ? null : e.target.id)
-            }
-            id="QB"
-            active={position === "QB"}
-          >
-            QB
-          </Button>
-          <Button
-            onClick={(e) =>
-              setPosition(position === e.target.id ? null : e.target.id)
-            }
-            id="RB"
-            active={position === "RB"}
-          >
-            RB
-          </Button>
-          <Button
-            onClick={(e) =>
-              setPosition(position === e.target.id ? null : e.target.id)
-            }
-            id="WR"
-            active={position === "WR"}
-          >
-            WR
-          </Button>
-          <Button
-            onClick={(e) =>
-              setPosition(position === e.target.id ? null : e.target.id)
-            }
-            id="TE"
-            active={position === "TE"}
-          >
-            TE
-          </Button>
+          {["QB", "RB", "WR", "TE"].map((pos) => (
+            <Button
+              key={pos}
+              id={pos}
+              onClick={() => {
+                if (position === pos) return;
+                setPosition(pos);
+              }}
+              active={position === pos}
+            >
+              {pos}
+            </Button>
+          ))}
         </div>
       </div>
+
+      {/* Chart */}
       <div
         className="h-100"
-        style={{ paddingBottom: 64, maxHeight: "calc(100vh - 275px)" }}
+        style={{ padding: "0 8px 32px", maxHeight: "calc(100vh - 200px)" }}
       >
-        {datasets && (
+        {datasets.length > 0 && (
           <Scatter
             data={{ datasets }}
+            plugins={[chartAreaBorder]}
             options={{
               maintainAspectRatio: window.innerWidth > 767,
               plugins: {
-                legend: {
-                  display: false,
-                },
+                legend: { display: false },
                 tooltip: {
                   callbacks: {
-                    label: (context) =>
-                      `${context.dataset.label} ${
-                        context.raw.label
-                      }\n PPG: ${context.raw.x.toFixed(2)}\n Rank: ${
-                        context.raw.y
-                      }`,
+                    label: (ctx) => {
+                      const xVal = ctx.raw?.x;
+                      const ppg =
+                        typeof xVal === "number"
+                          ? xVal.toFixed(2)
+                          : parseFloat(xVal).toFixed(2);
+                      const name = ctx.raw?.name ?? "";
+                      const team = ctx.dataset?.label ?? "";
+
+                      return `${team} ${name}\nPPG: ${ppg}\nRank: ${ctx.raw.y}`;
+                    },
+                  },
+                },
+                datalabels: {
+                  display: true,
+                  align: "bottom",
+                  anchor: "end",
+                  offset: 2,
+                  color: "#333",
+                  font: {
+                    size: 9,
+                    weight: "500",
+                  },
+                  clip: false,
+                  formatter: (val) => {
+                    const parts = val.name?.split(" ");
+                    const lastName =
+                      parts.length === 3
+                        ? parts?.[parts.length - 2] +
+                          " " +
+                          parts?.[parts.length - 1]
+                        : parts?.[parts.length - 1];
+                    return parts?.[0][0] + " " + lastName || ""; // show last name
                   },
                 },
               },
@@ -216,30 +219,15 @@ const TeamsPage = () => {
                 y: {
                   reverse: true,
                   beginAtZero: true,
-                  title: {
-                    display: true,
-                    text: "Rank",
-                  },
+                  title: { display: false, text: "Rank" },
                   ticks: {
-                    stepSize: position !== "TE" && position !== "QB" ? 25 : 10,
-                  },
-                  border: {
-                    width: 2,
-                    color: "black",
+                    stepSize: 10,
                   },
                 },
                 x: {
-                  title: {
-                    display: true,
-                    text: "PPG",
-                  },
-                  border: {
-                    width: 2,
-                    color: "black",
-                  },
-                  gridLines: {
-                    display: false,
-                  },
+                  title: { display: true, text: "PPG" },
+                  max: position === "TE" || position === "WR" ? 20 : 30,
+                  min: position === "TE" ? 5 : 10,
                 },
               },
             }}

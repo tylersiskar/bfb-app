@@ -113,6 +113,7 @@ const TrendsPage = () => {
   const options = {
     maintainAspectRatio: window.innerWidth > 767,
     plugins: {
+      datalabels: { display: false },
       legend: {
         display: false, // Set to false to hide the legend
       },

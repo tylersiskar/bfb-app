@@ -18,7 +18,7 @@ const RosterCard = ({ team }) => {
   const { data: rosters } = useGetRostersQuery();
   const { data: users } = useGetUsersQuery();
   const leagueYear = useSelector(selectLeagueYear);
-  const { data: playersAll } = useGetPlayersAllQuery(leagueYear);
+  const { data: playersAll } = useGetPlayersAllQuery({ year: leagueYear });
   const teamOwners = useSelector((state) =>
     selectPlayersProjectedKeepers(state, {
       playersAll,
@@ -190,7 +190,7 @@ const Rosters = (props) => {
   const { data: rosters, isLoading } = useGetRostersQuery();
   const { data: users } = useGetUsersQuery();
   const leagueYear = useSelector(selectLeagueYear);
-  const { data: playersAll } = useGetPlayersAllQuery(leagueYear);
+  const { data: playersAll } = useGetPlayersAllQuery({ year: leagueYear });
   const teamOwners = useSelector((state) =>
     selectPlayersProjectedKeepers(state, {
       playersAll,
