@@ -1,6 +1,6 @@
 // standingsSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { find } from "lodash";
+import find from "lodash/find";
 
 const { VITE_SLEEPER_API } = import.meta.env;
 export const fetchStandings = createAsyncThunk(

@@ -4,7 +4,7 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { api } from "./api";
-import { find } from "lodash";
+import find from "lodash/find";
 
 export const fetchLeagues = createAsyncThunk(
   "league/fetchLeagues",

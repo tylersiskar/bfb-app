@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useGetUsersQuery } from "../../../api/api";
 import { Avatar } from "../../../components/images";
-import { find } from "lodash";
+import find from "lodash/find";
 import "./cards.scss";
 import { useGetStatsQuery, useGetPlayersAllQuery } from "../../../api/bfbApi";
 import { IconButton } from "../../../components/buttons";

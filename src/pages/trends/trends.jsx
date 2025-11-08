@@ -9,7 +9,7 @@ import {
   CategoryScale,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { find } from "lodash";
+import find from "lodash/find";
 import { useDispatch, useSelector } from "react-redux";
 import { RangeSlider } from "../../components/inputs";
 import { Content } from "../../components/layout";

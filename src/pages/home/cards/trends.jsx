@@ -1,6 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { keyBy, find, minBy, maxBy } from "lodash";
+import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
+import keyBy from "lodash/keyBy";
+import find from "lodash/find";
 import { Link } from "react-router-dom";
 import { VerticalListItem } from "../../../components/list-items";
 import "./cards.scss";

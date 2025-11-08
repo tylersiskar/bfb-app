@@ -12,7 +12,8 @@ import {
 } from "../../../api/transactionsSlice";
 import { fetchTransactionsForYear } from "../../../api/transactionsThunks";
 import { Avatar } from "../../../components/images";
-import { keyBy, find } from "lodash";
+import find from "lodash/find";
+import keyBy from "lodash/keyBy";
 import { useGetPlayersAllQuery, useGetStatsQuery } from "../../../api/bfbApi";
 import { selectLeagueYear } from "../../../api/selectors/leagueSelectors";
 

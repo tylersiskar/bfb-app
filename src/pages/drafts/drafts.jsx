@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import Content from "../../components/layout/content";
-import { groupBy, find } from "lodash";
+import find from "lodash/find";
+import groupBy from "lodash/groupBy";
 import {
   useGetDraftDetailsQuery,
   useGetRostersQuery,

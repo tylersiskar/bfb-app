@@ -1,7 +1,8 @@
 // api.js
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createSelector } from "reselect";
-import { find, reverse } from "lodash";
+import find from "lodash/find";
+import reverse from "lodash/reverse";
 import { customBaseQuery } from "./customBaseQuery";
 
 export const api = createApi({

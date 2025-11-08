@@ -1,14 +1,4 @@
-import { sortBy } from "lodash";
-import { PlayerList } from "../../components/list-items";
-import { Button } from "../../components/buttons";
-
-const TopDrawer = ({
-  isVisible,
-  isExpanded,
-  playerListExpanded,
-  activeRoster,
-  children,
-}) => {
+const TopDrawer = ({ isVisible, isExpanded, playerListExpanded, children }) => {
   return (
     <div
       className={`roster-panel ${isVisible ? "visible" : ""}  ${

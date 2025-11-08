@@ -12,8 +12,8 @@ import { Scatter } from "react-chartjs-2";
 import Button from "../../components/buttons/button";
 import { Content } from "../../components/layout";
 import { useGetRostersQuery, useGetUsersQuery } from "../../api/api";
-import { find } from "lodash";
-import { useGetStatsQuery, useGetPlayersAllQuery } from "../../api/bfbApi";
+import find from "lodash/find";
+import { useGetPlayersAllQuery } from "../../api/bfbApi";
 import { useDispatch, useSelector } from "react-redux";
 import {
   selectLeagueId,
@@ -23,19 +23,20 @@ import {
 import { fetchLeagues } from "../../api/leagueSlice";
 
 const colors = [
-  "#bb17bd",
-  "#5bce7a",
-  "#923871",
-  "#7683ae",
-  "#f35caa",
-  "#cb413d",
-  "#bfabd0",
-  "#6960aa",
-  "#cf9a4f",
-  "#2c708c",
-  "#a3c592",
-  "cyan",
+  "#E41A1C", // vivid red
+  "#377EB8", // strong blue
+  "#4DAF4A", // balanced green
+  "#984EA3", // purple
+  "#FF7F00", // orange
+  "#A65628", // brown
+  "#F781BF", // pink
+  "#999999", // gray
+  "#66C2A5", // teal (distinct from green)
+  "#E7298A", // magenta
+  "#1B9E77", // turquoise
+  "#7570B3", // indigo
 ];
+
 const chartAreaBorder = {
   id: "chartAreaBorder",
   beforeDraw(chart) {
@@ -103,6 +104,7 @@ const TeamsPage = () => {
               position: player.position,
               x: player.ppg,
               y: player.pos_rank_half_ppr,
+              value: player.value,
             };
           })
           .filter(
@@ -139,7 +141,9 @@ const TeamsPage = () => {
         className="flex flex-column align-center justify-center"
         style={{ maxWidth: 325, margin: "auto" }}
       >
-        <h2 style={{ paddingBottom: 12 }}>Rank vs PPG by Team</h2>
+        <h2 style={{ color: "#000", paddingBottom: 12 }}>
+          Rank vs PPG by Team
+        </h2>
         <div
           style={{
             display: "grid",
@@ -163,8 +167,6 @@ const TeamsPage = () => {
           ))}
         </div>
       </div>
-
-      {/* Chart */}
       <div
         className="h-100"
         style={{ padding: "0 8px 32px", maxHeight: "calc(100vh - 200px)" }}
@@ -196,8 +198,11 @@ const TeamsPage = () => {
                   display: true,
                   align: "bottom",
                   anchor: "end",
-                  offset: 2,
-                  color: "#333",
+                  offset: 4,
+                  color: (ctx) => {
+                    return "black";
+                    return colors[ctx.datasetIndex % colors.length];
+                  },
                   font: {
                     size: 9,
                     weight: "500",
@@ -226,8 +231,8 @@ const TeamsPage = () => {
                 },
                 x: {
                   title: { display: true, text: "PPG" },
-                  max: position === "TE" || position === "WR" ? 20 : 30,
-                  min: position === "TE" ? 5 : 10,
+                  max: position === "TE" ? 20 : position === "WR" ? 25 : 30,
+                  min: position === "TE" ? 5 : 8,
                 },
               },
             }}

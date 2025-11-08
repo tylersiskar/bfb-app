@@ -4,7 +4,7 @@ import "../home/home.scss";
 import "./mocks.scss";
 import { useGetMocksQuery } from "../../api/bfbApi";
 import { Link } from "react-router-dom";
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy";
 import { createPortal } from "react-dom";
 import { useState } from "react";
 import Select from "react-select";

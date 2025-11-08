@@ -39,7 +39,8 @@ import {
   useGetPlayerValueMutation,
 } from "../../api/bfbApi";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { find, sortBy } from "lodash";
+import find from "lodash/find";
+import sortBy from "lodash/sortBy";
 
 import { fetchLeagues } from "../../api/leagueSlice";
 import {

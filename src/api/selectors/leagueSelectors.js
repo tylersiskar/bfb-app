@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { find } from "lodash";
+import find from "lodash/find";
 
 export const selectLeague = (state) => state.league;
 

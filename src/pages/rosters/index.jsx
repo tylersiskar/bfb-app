@@ -1,6 +1,7 @@
 import { useGetRostersQuery, useGetUsersQuery } from "../../api/api";
 import { Content } from "../../components/layout";
-import { find, groupBy, sortBy } from "lodash";
+import find from "lodash/find";
+import groupBy from "lodash/groupBy";
 import {
   selectPlayersProjectedKeepers,
   useGetPlayersAllQuery,

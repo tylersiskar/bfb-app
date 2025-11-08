@@ -1,4 +1,4 @@
-import { find } from "lodash";
+import find from "lodash/find";
 import { useSelector } from "react-redux";
 import { useGetRostersQuery } from "../../api/api";
 import { useGetPlayersQuery } from "../../api/bfbApi";

@@ -1,7 +1,9 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { customBfbBaseQuery } from "./customBaseQuery";
-import { find, sortBy, filter } from "lodash";
+import find from "lodash/find";
+import filter from "lodash/filter";
+import sortBy from "lodash/sortBy";
 
 export const bfbApi = createApi({
   reducerPath: "bfbApi",
