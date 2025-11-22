@@ -259,7 +259,7 @@ const TeamsPage = () => {
                     color: "rgba(255, 255, 255, 0.15)",
                     drawBorder: false,
                   },
-                  max: position === "TE" ? 20 : position === "WR" ? 25 : 30,
+                  max: position === "TE" ? 20 : position === "WR" ? 20 : 30,
                   min: position === "TE" ? 5 : 8,
                 },
               },
