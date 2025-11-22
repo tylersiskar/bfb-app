@@ -45,8 +45,9 @@ const chartAreaBorder = {
       chartArea: { left, top, width, height },
     } = chart;
     ctx.save();
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 3;
+    // Softer light border for dark background
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.lineWidth = 2;
     ctx.strokeRect(left, top, width, height);
     ctx.restore();
   },
@@ -141,7 +142,7 @@ const TeamsPage = () => {
         className="flex flex-column align-center justify-center"
         style={{ maxWidth: 325, margin: "auto" }}
       >
-        <h2 style={{ color: "#000", paddingBottom: 12 }}>
+        <h2 style={{ color: "#fff", paddingBottom: 12 }}>
           Rank vs PPG by Team
         </h2>
         <div
@@ -161,6 +162,7 @@ const TeamsPage = () => {
                 setPosition(pos);
               }}
               active={position === pos}
+              inverted
             >
               {pos}
             </Button>
@@ -178,8 +180,16 @@ const TeamsPage = () => {
             options={{
               maintainAspectRatio: window.innerWidth > 767,
               plugins: {
-                legend: { display: false },
+                legend: {
+                  display: false,
+                  labels: {
+                    color: "#fff",
+                  },
+                },
                 tooltip: {
+                  bodyColor: "#fff",
+                  titleColor: "#fff",
+                  backgroundColor: "rgba(0, 0, 0, 0.8)",
                   callbacks: {
                     label: (ctx) => {
                       const xVal = ctx.raw?.x;
@@ -199,10 +209,8 @@ const TeamsPage = () => {
                   align: "bottom",
                   anchor: "end",
                   offset: 4,
-                  color: (ctx) => {
-                    return "black";
-                    return colors[ctx.datasetIndex % colors.length];
-                  },
+                  // White labels for dark background
+                  color: "#ffffff",
                   font: {
                     size: 9,
                     weight: "500",
@@ -211,12 +219,12 @@ const TeamsPage = () => {
                   formatter: (val) => {
                     const parts = val.name?.split(" ");
                     const lastName =
-                      parts.length === 3
-                        ? parts?.[parts.length - 2] +
+                      parts && parts.length === 3
+                        ? parts[parts.length - 2] +
                           " " +
-                          parts?.[parts.length - 1]
+                          parts[parts.length - 1]
                         : parts?.[parts.length - 1];
-                    return parts?.[0][0] + " " + lastName || ""; // show last name
+                    return (parts?.[0]?.[0] || "") + " " + (lastName || "");
                   },
                 },
               },
@@ -224,13 +232,33 @@ const TeamsPage = () => {
                 y: {
                   reverse: true,
                   beginAtZero: true,
-                  title: { display: false, text: "Rank" },
+                  title: {
+                    display: false,
+                    text: "Rank",
+                    color: "#fff",
+                  },
                   ticks: {
                     stepSize: 10,
+                    color: "#ffffff",
+                  },
+                  grid: {
+                    color: "rgba(255, 255, 255, 0.15)", // lighter grid lines
+                    drawBorder: false,
                   },
                 },
                 x: {
-                  title: { display: true, text: "PPG" },
+                  title: {
+                    display: true,
+                    text: "PPG",
+                    color: "#ffffff",
+                  },
+                  ticks: {
+                    color: "#ffffff",
+                  },
+                  grid: {
+                    color: "rgba(255, 255, 255, 0.15)",
+                    drawBorder: false,
+                  },
                   max: position === "TE" ? 20 : position === "WR" ? 25 : 30,
                   min: position === "TE" ? 5 : 8,
                 },

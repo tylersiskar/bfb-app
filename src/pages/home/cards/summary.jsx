@@ -29,7 +29,6 @@ const SummaryCard = ({
   useEffect(() => {
     if (!rosters || !stats || isLoading || !usersObj) return;
     let testData = {};
-    let ranks = [];
     rosters.forEach((roster) => {
       roster.players?.forEach((player) => {
         let currentPlayer = find(players, { id: player });

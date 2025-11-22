@@ -12,6 +12,8 @@ const Button = (props) => {
             : "secondary"
           : props.active
           ? "primary-active"
+          : props.inverted
+          ? "primary-inverted"
           : "primary") +
         (props.disabled ? " button-disabled" : "") +
         " " +

@@ -94,7 +94,7 @@ const DraftsPage = (props) => {
 
   useEffect(() => {
     dispatch(fetchLeagues(leagueId));
-  }, []);
+  }, [dispatch, leagueId]);
 
   useEffect(() => {
     if (playersObj) _setDataset();
@@ -137,8 +137,83 @@ const DraftsPage = (props) => {
     }
   };
 
+  const options = {
+    maintainAspectRatio: window.innerWidth > 767,
+    plugins: {
+      datalabels: { display: false },
+      legend: {
+        labels: {
+          color: "#ffffff",
+        },
+      },
+      tooltip: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        bodyColor: "#ffffff",
+        titleColor: "#ffffff",
+        callbacks: {
+          label: (context) => {
+            return `${context.dataset.label} ${
+              context.raw.label
+            }\n PPG: ${parseFloat(context.raw.y).toFixed(2)}\n ${
+              variable === "draft_slot" ? "Slot" : "Team"
+            }: ${_getTeamName(context.raw.x)}`;
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        border: {
+          width: 2,
+          color: "rgba(255, 255, 255, 0.6)",
+        },
+        title: {
+          display: true,
+          text: "PPG",
+          color: "#ffffff",
+        },
+        ticks: {
+          color: "#ffffff",
+        },
+        grid: {
+          display: true,
+          color: "rgba(255, 255, 255, 0.15)",
+          drawBorder: false,
+        },
+        max: 25,
+      },
+      x: {
+        min: 0,
+        max: 13,
+        border: {
+          width: 2,
+          color: "rgba(255, 255, 255, 0.6)",
+        },
+        ticks: {
+          color: "#ffffff",
+          callback: (value) => {
+            if (value === 13 || value === 0) return "";
+            return _getTeamName(value);
+          },
+          stepSize: 1,
+        },
+        title: {
+          display: true,
+          text: variable === "draft_slot" ? "Draft Slot" : "Team",
+          color: "#ffffff",
+        },
+        grid: {
+          display: true,
+          color: "rgba(255, 255, 255, 0.15)",
+          drawBorder: false,
+        },
+      },
+    },
+  };
+
   return (
-    <Content isLoading={isLoading || isUserLoading}>
+    <Content isLoading={isLoading || isUserLoading} dark>
       <div
         className="flex flex-column align-center justify-center"
         style={{
@@ -148,7 +223,14 @@ const DraftsPage = (props) => {
         }}
       >
         <div className="flex flex-column align-center">
-          <h2 style={{ margin: 0, marginBottom: 12, textAlign: "center" }}>
+          <h2
+            style={{
+              margin: 0,
+              marginBottom: 12,
+              textAlign: "center",
+              color: "#ffffff",
+            }}
+          >
             {year} PPG vs {variable === "draft_slot" ? "Draft Slot" : "Team"} By
             Round
           </h2>
@@ -168,7 +250,7 @@ const DraftsPage = (props) => {
             }
             id="draft_slot"
             active={variable === "draft_slot"}
-            secondary
+            inverted
           >
             Draft Slot
           </Button>
@@ -178,7 +260,7 @@ const DraftsPage = (props) => {
             }
             id="roster_id"
             active={variable === "roster_id"}
-            secondary
+            inverted
           >
             Team
           </Button>
@@ -202,6 +284,7 @@ const DraftsPage = (props) => {
                   id={season.season}
                   key={season.season}
                   active={year === season.season}
+                  inverted
                 >
                   {season.season}
                 </Button>
@@ -233,7 +316,7 @@ const DraftsPage = (props) => {
                 id={pos}
                 key={pos}
                 active={positions.includes(pos)}
-                secondary
+                inverted
               >
                 {pos}
               </Button>
@@ -247,67 +330,11 @@ const DraftsPage = (props) => {
         style={{ paddingBottom: 64, maxHeight: "calc(100vh - 275px)" }}
       >
         {!data || data.length === 0 ? (
-          "No Draft Data Yet!"
+          <p style={{ color: "#ffffff", paddingLeft: 12 }}>
+            No Draft Data Yet!
+          </p>
         ) : (
-          <Scatter
-            data={{ datasets: dataset }}
-            options={{
-              maintainAspectRatio: window.innerWidth > 767,
-              plugins: {
-                datalabels: { display: false },
-                tooltip: {
-                  callbacks: {
-                    label: (context) => {
-                      return `${context.dataset.label} ${
-                        context.raw.label
-                      }\n PPG: ${parseFloat(context.raw.y).toFixed(2)}\n ${
-                        variable === "draft_slot" ? "Slot" : "Team"
-                      }: ${_getTeamName(context.raw.x)}`;
-                    },
-                  },
-                },
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  border: {
-                    width: 2,
-                    color: "black",
-                  },
-                  title: {
-                    display: true,
-                    text: "PPG",
-                  },
-                  grid: {
-                    display: false,
-                  },
-                  max: 25,
-                },
-                x: {
-                  min: 0,
-                  max: 13,
-                  border: {
-                    width: 2,
-                    color: "black",
-                  },
-                  ticks: {
-                    callback: (value) => {
-                      if (value === 13 || value === 0) return "";
-                      return _getTeamName(value);
-                    },
-                    stepSize: 1,
-                  },
-                  title: {
-                    display: true,
-                    text: variable === "draft_slot" ? "Draft Slot" : "Team",
-                  },
-                  grid: {
-                    display: true,
-                  },
-                },
-              },
-            }}
-          />
+          <Scatter data={{ datasets: dataset }} options={options} />
         )}
       </div>
     </Content>

@@ -9,6 +9,11 @@ $purple: #7209b7;
 $yellow: #ffe74c;
 $orange: #ffc335;
 
+html,
+body {
+  background-color: $darker;
+}
+
 .d-flex {
   display: flex;
 }

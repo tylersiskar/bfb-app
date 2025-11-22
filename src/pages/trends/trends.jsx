@@ -59,7 +59,7 @@ const TrendsPage = () => {
               roster.settings[`${active}_decimal`] / 100) /
             (roster.settings.wins + roster.settings.losses);
           return {
-            backgroundColor: "white",
+            backgroundColor: "#ffffff",
             pointRadius: 6,
             label: name,
             data: [
@@ -115,9 +115,15 @@ const TrendsPage = () => {
     plugins: {
       datalabels: { display: false },
       legend: {
-        display: false, // Set to false to hide the legend
+        display: false,
+        labels: {
+          color: "#ffffff",
+        },
       },
       tooltip: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        bodyColor: "#ffffff",
+        titleColor: "#ffffff",
         callbacks: {
           label: (context) =>
             `${context.raw.label}\n PPG ${
@@ -128,17 +134,21 @@ const TrendsPage = () => {
     },
     scales: {
       x: {
-        type: "category", // Specify that the x-axis is a category axis
+        type: "category",
         title: {
           display: true,
           text: "Team",
+          color: "#ffffff",
+        },
+        ticks: {
+          color: "#ffffff",
         },
         border: {
           width: 2,
-          color: "black",
+          color: "rgba(255, 255, 255, 0.6)",
         },
-        gridLines: {
-          display: false,
+        grid: {
+          display: false, // keep x-grid off
         },
       },
       y: {
@@ -149,8 +159,16 @@ const TrendsPage = () => {
         title: {
           display: true,
           text: "PPG " + (active === "fpts" ? "For" : "Against"),
+          color: "#ffffff",
+        },
+        ticks: {
+          color: "#ffffff",
         },
         min: 60,
+        grid: {
+          color: "rgba(255, 255, 255, 0.15)", // lighter grid lines
+          drawBorder: false,
+        },
       },
     },
   };
@@ -158,13 +176,14 @@ const TrendsPage = () => {
   if (nflState && nflState.week < 4)
     return (
       <Content dark>
-        <h3 style={{ margin: 16 }}>
+        <h3 style={{ margin: 16, color: "#ffffff" }}>
           Trending Data is not available until Week 4, please check back then!
         </h3>
       </Content>
     );
+
   return (
-    <Content>
+    <Content dark>
       <div
         className="flex flex-column align-center justify-center"
         style={{
@@ -176,20 +195,23 @@ const TrendsPage = () => {
           margin: "auto",
         }}
       >
-        <h2 style={{ margin: 0 }}>Team PPG Trending Data</h2>
+        <h2 style={{ margin: 0, color: "#ffffff" }}>Team PPG Trending Data</h2>
         <h4
           className="subtitle"
-          style={{ margin: "12px 0", textAlign: "center" }}
+          style={{ margin: "12px 0", textAlign: "center", color: "#ffffff" }}
         >
           Select Range to compare to Season Average
         </h4>
-        <p className="subtitle" style={{ margin: 0 }}>
+        <p
+          className="subtitle"
+          style={{ margin: 0, color: "rgba(255, 255, 255, 0.8)" }}
+        >
           <small>Triangle represents Trending Average</small>
         </p>
         <div className="flex p-2">
           <div className="flex w-100 mr-1">
             <Button
-              secondary
+              inverted
               active={active === "fpts"}
               onClick={() => setActive("fpts")}
             >
@@ -198,7 +220,7 @@ const TrendsPage = () => {
           </div>
           <div className="flex w-100 ml-1">
             <Button
-              secondary
+              inverted
               active={active === "fpts_against"}
               onClick={() => setActive("fpts_against")}
             >
