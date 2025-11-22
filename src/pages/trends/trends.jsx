@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -38,7 +38,6 @@ ChartJS.register(
 
 const TrendsPage = () => {
   const dispatch = useDispatch();
-  const [dataset, setDataset] = useState([]);
   const [active, setActive] = useState("fpts");
   const { data: nflState } = useGetNflStateQuery();
   const trendingWeeks = useSelector(selectTrendingWeeks);
@@ -47,8 +46,9 @@ const TrendsPage = () => {
   const { data: rostersObj } = useGetRostersQuery();
   const { data: usersObj } = useGetUsersQuery();
 
-  const _setChartData = async () => {
-    let data = rostersObj
+  const dataset = useMemo(() => {
+    if (matchupIsLoading) return [];
+    return rostersObj
       ? rostersObj.map((roster) => {
           let name = find(usersObj, { user_id: roster.owner_id }).display_name;
           let trendingAverage =
@@ -82,8 +82,7 @@ const TrendsPage = () => {
           };
         })
       : [];
-    setDataset(data);
-  };
+  }, [trendingData, trendingWeeks, matchupIsLoading, active]);
 
   const getNflState = async () => {
     let activeWeek = nflState && nflState.week;
@@ -93,10 +92,6 @@ const TrendsPage = () => {
       );
     }
   };
-
-  useEffect(() => {
-    if (!matchupIsLoading) _setChartData();
-  }, [trendingData, trendingWeeks, matchupIsLoading, active]);
 
   useEffect(() => {
     dispatch(fetchMatchupsForMultipleWeeks(trendingWeeks));

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -64,7 +64,6 @@ ChartJS.register(
 
 const TeamsPage = () => {
   const dispatch = useDispatch();
-  const [datasets, setDatasets] = useState([]);
   const [position, setPosition] = useState("QB");
 
   const leagueYear = useSelector(selectLeagueYear);
@@ -85,56 +84,41 @@ const TeamsPage = () => {
     if (leagueId) dispatch(fetchLeagues(leagueId));
   }, [dispatch, leagueId]);
 
-  // Build datasets
-  const fetchPlayers = useCallback(
-    (pos) => {
-      if (!usersObj || !leagueObject || !players) return;
+  const datasets = useMemo(() => {
+    if (!usersObj || !leagueObject || !players) return [];
 
-      const users = Object.fromEntries(
-        usersObj.map((u) => [u.user_id, u.display_name])
-      );
+    const users = Object.fromEntries(
+      usersObj.map((u) => [u.user_id, u.display_name])
+    );
 
-      const league = leagueObject.reduce((acc, team) => {
-        const teamName = users[team.owner_id];
-        const teamPlayers = team.players
-          .map((id) => {
-            const player = find(players, { id });
-            if (!player) return null;
-            return {
-              name: player.full_name,
-              position: player.position,
-              x: player.ppg,
-              y: player.pos_rank_half_ppr,
-              value: player.value,
-            };
-          })
-          .filter(
-            (p) =>
-              p &&
-              ["K", "DEF"].indexOf(p.position) === -1 &&
-              (!pos || p.position === pos)
-          );
+    const league = leagueObject.reduce((acc, team) => {
+      const teamName = users[team.owner_id];
+      const teamPlayers = team.players
+        .map((id) => {
+          const player = find(players, { id });
+          if (!player) return null;
+          return {
+            name: player.full_name,
+            position: player.position,
+            x: player.ppg,
+            y: player.pos_rank_half_ppr,
+            value: player.value,
+          };
+        })
+        .filter((p) => p && !["K", "DEF"].includes(p.position));
 
-        acc[teamName] = teamPlayers;
-        return acc;
-      }, {});
+      acc[teamName] = teamPlayers;
+      return acc;
+    }, {});
 
-      setDatasets(
-        Object.entries(league).map(([teamName, players], i) => ({
-          label: teamName,
-          data: players,
-          backgroundColor: colors[i % colors.length],
-          pointRadius: 4,
-          pointHoverRadius: 12,
-        }))
-      );
-    },
-    [usersObj, leagueObject, players]
-  );
-
-  useEffect(() => {
-    fetchPlayers();
-  }, [fetchPlayers]);
+    return Object.entries(league).map(([teamName, players], i) => ({
+      label: teamName,
+      data: players,
+      backgroundColor: colors[i % colors.length],
+      pointRadius: 4,
+      pointHoverRadius: 12,
+    }));
+  }, [usersObj, leagueObject, players]);
 
   return (
     <Content isLoading={isRosterLoading}>
@@ -259,8 +243,8 @@ const TeamsPage = () => {
                     color: "rgba(255, 255, 255, 0.15)",
                     drawBorder: false,
                   },
-                  max: position === "TE" ? 20 : position === "WR" ? 20 : 30,
-                  min: position === "TE" ? 5 : 8,
+                  max: position === "TE" ? 16 : position === "WR" ? 20 : 26,
+                  min: position === "TE" ? 4 : position === "QB" ? 12 : 8,
                 },
               },
             }}
