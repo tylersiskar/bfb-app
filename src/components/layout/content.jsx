@@ -9,9 +9,7 @@ const Content = ({ children, dark, home, isLoading }) => {
     >
       <div
         className={
-          isLoading || home
-            ? "w-100 subcontent subcontent-home"
-            : "w-100 subcontent"
+          isLoading || home ? "w-100 subcontent subcontent-home" : "subcontent"
         }
       >
         {isLoading ? (

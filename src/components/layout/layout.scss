@@ -86,6 +86,7 @@ $yellow: #ffe74c;
 @media screen and (max-width: 768px) {
   .subcontent {
     max-height: 100svh;
+    width: 100vw !important;
     &.h-100 {
       max-height: 100%;
     }

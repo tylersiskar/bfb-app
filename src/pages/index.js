@@ -1,4 +1,4 @@
 export { TrendsPage } from "./trends";
 export { HomePage } from "./home";
-export { TeamsPage } from "./teams";
+export { TeamsPage, TeamsV2Page } from "./teams";
 export { DraftsPage } from "./drafts";

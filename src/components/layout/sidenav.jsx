@@ -6,8 +6,11 @@ import { selectNavContent } from "../../api/navSlice";
 const DefaultNavContent = () => {
   return (
     <div className="sidenav">
-      <Link className="list-item" to="/teams">
-        <h5>Team / Players</h5>
+      <Link className="list-item" to="/players">
+        <h5>Player Scoring</h5>
+      </Link>
+      <Link className="list-item" to="/player-value">
+        <h5>Player Value</h5>
       </Link>
       <Link className="list-item" to="/drafts">
         <h5>Drafts</h5>

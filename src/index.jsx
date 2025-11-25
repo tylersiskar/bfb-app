@@ -5,7 +5,13 @@ import "./index.css";
 import App from "./App";
 import { store } from "./store";
 import { Provider } from "react-redux";
-import { HomePage, TrendsPage, TeamsPage, DraftsPage } from "./pages";
+import {
+  HomePage,
+  TrendsPage,
+  TeamsPage,
+  DraftsPage,
+  TeamsV2Page,
+} from "./pages";
 import MockDraftCenter from "./pages/mock/mocks";
 import { MockNew } from "./pages/mock";
 import { Splash } from "./pages/splash";
@@ -20,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Splash alt={(props) => <HomePage {...props} />} />,
+      },
+      {
+        path: "player-value",
+        element: <TeamsV2Page />,
       },
       {
         path: "teams",
