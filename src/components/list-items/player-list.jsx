@@ -1,7 +1,7 @@
 import { Button } from "../buttons";
 import { useSelector } from "react-redux";
 import { selectActiveSlot } from "../../api/draftSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const PlayerList = ({
   scrollHeight = `calc(40svh - 136px)`,
@@ -17,6 +17,15 @@ const PlayerList = ({
 }) => {
   const activeSlot = useSelector(selectActiveSlot);
   const [page, setPage] = useState(0);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    setPage(0);
+  }, [playerList?.length]);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [page]);
 
   const _convertToPaginatedArray = (arr) => {
     if (!arr || arr.length === 0) return [];
@@ -69,6 +78,7 @@ const PlayerList = ({
         )}
       </div>
       <div
+        ref={scrollRef}
         style={{
           overflow: "auto",
           height: scrollHeight,

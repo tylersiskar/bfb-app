@@ -117,9 +117,9 @@ const MockNew = () => {
       players: playersAll,
     }),
   );
-  let availablePlayers = nonKeepers.filter(
-    (p) => !find(draftedPlayers, { id: p.id }),
-  );
+  let availablePlayers = nonKeepers
+    .filter((p) => !find(draftedPlayers, { id: p.id }))
+    .filter((p, i, arr) => arr.findIndex((o) => o.id === p.id) === i);
 
   // const [trigger, { data: playerValue, isFetching: playerValueIsLoading }] =
   //   useLazyGetPlayerValueQuery();
