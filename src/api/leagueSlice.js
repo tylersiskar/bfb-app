@@ -27,15 +27,11 @@ export const fetchLeagues = createAsyncThunk(
     };
   }
 );
+const HARDCODED_LEAGUE_ID = "1312089696964202496";
+
 // Function to load the league_id from localStorage
 const loadLeagueId = () => {
-  try {
-    const serializedState = localStorage.getItem("league_id");
-    return serializedState;
-  } catch (err) {
-    console.error("Could not load league_id from localStorage", err);
-    return null;
-  }
+  return HARDCODED_LEAGUE_ID;
 };
 const loadLeagueYear = () => {
   try {

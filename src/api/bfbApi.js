@@ -19,8 +19,12 @@ export const bfbApi = createApi({
     getPlayersAll: builder.query({
       query: (params) => ({
         url: `playersAll/${params.year}`,
-        params:
-          params && params.position ? { position: params.position } : null,
+        params: params.position || params.mock
+          ? {
+              ...(params.position && { position: params.position }),
+              ...(params.mock && { mock: params.mock }),
+            }
+          : null,
       }),
       providesTags: ["playersAll"],
     }),
@@ -85,7 +89,7 @@ export const selectNonKeepers = createSelector(
         return !flatList.includes(player.id);
       })
     );
-  }
+  },
 );
 
 export const selectKeepers = createSelector(
@@ -103,7 +107,7 @@ export const selectKeepers = createSelector(
     return players.filter((player) => {
       return allKeepers.includes(player.id);
     });
-  }
+  },
 );
 
 export const selectPlayersProjectedKeepers = createSelector(
@@ -123,7 +127,7 @@ export const selectPlayersProjectedKeepers = createSelector(
             };
           })
           .filter((o) => !!o.name),
-        "bfbValue"
+        "bfbValue",
       ).reverse();
       let projectedKeepers = [];
       sortedPlayers.forEach((player, idx) => {
@@ -171,7 +175,7 @@ export const selectPlayersProjectedKeepers = createSelector(
       };
     });
     return newArray;
-  }
+  },
 );
 
 export const {

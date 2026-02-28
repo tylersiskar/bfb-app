@@ -38,7 +38,7 @@ $light: rgb(206, 206, 206);
   margin: 4px 0px;
   padding: 4px 16px;
   box-sizing: border-box;
-  width: 100vw;
+  width: 100%;
   overflow-x: auto;
   max-width: 1272px;
 }
@@ -69,12 +69,10 @@ $light: rgb(206, 206, 206);
 .round {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  flex-direction: row;
-  flex-wrap: nowrap;
   gap: 4px;
   padding-bottom: 4px;
   margin-bottom: 4px;
-  width: calc(100vw - 32px);
+  width: 100%;
 }
 @media screen and (min-width: 767px) {
   .round:not(.round-home) {

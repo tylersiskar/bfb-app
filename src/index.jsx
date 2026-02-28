@@ -14,7 +14,6 @@ import {
 } from "./pages";
 import MockDraftCenter from "./pages/mock/mocks";
 import { MockNew } from "./pages/mock";
-import { Splash } from "./pages/splash";
 import Rosters from "./pages/rosters";
 import PlayerDetailsPage from "./pages/players";
 
@@ -25,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Splash alt={(props) => <HomePage {...props} />} />,
+        element: <HomePage />,
       },
       {
         path: "player-value",
@@ -61,7 +60,7 @@ const router = createBrowserRouter([
       },
       {
         path: "mocks/:id",
-        element: <Splash alt={() => <MockNew />} />,
+        element: <MockNew />,
       },
       {
         path: "trends",

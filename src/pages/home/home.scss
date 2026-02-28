@@ -2,12 +2,16 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 24px;
+  min-width: 0;
+}
+
+.home-body > * {
+  min-width: 0;
 }
 
 @media screen and (max-width: 767px) {
   .home-body {
-    display: grid;
-    grid-template-columns: auto;
+    grid-template-columns: 1fr;
   }
 }
 

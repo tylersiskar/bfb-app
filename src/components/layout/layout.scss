@@ -84,9 +84,14 @@ $yellow: #ffe74c;
 }
 
 @media screen and (max-width: 768px) {
+  .content {
+    width: 100vw;
+    overflow-x: hidden;
+  }
   .subcontent {
     max-height: 100svh;
-    width: 100vw !important;
+    width: 100% !important;
+    overflow-x: hidden;
     &.h-100 {
       max-height: 100%;
     }

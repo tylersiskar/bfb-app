@@ -17,9 +17,7 @@ const useActiveRoster = () => {
   const activeSlot = useSelector(selectActiveSlot);
   const draftedPlayers = useSelector(selectDraftedPlayers);
   const { data: playerIdsData, isFetching: isRosterFetching } =
-    useGetRostersQuery({
-      roster_id: activeSlot.roster_id,
-    });
+    useGetRostersQuery();
   let keeperKey = current?.settings?.type === 2 ? "players" : "keepers";
   let playerIds = find(playerIdsData, {
     roster_id: activeSlot.roster_id,

@@ -21,12 +21,13 @@ import { fetchStandings, selectStandings } from "../../api/standingsSlice";
 import { fetchLeagues } from "../../api/leagueSlice";
 import {
   selectLeagueId,
+  selectLeagueStage,
   selectLeagues,
   selectLeagueYear,
 } from "../../api/selectors/leagueSelectors";
 import { useGetPlayerValueMutation } from "../../api/bfbApi";
 
-const HomePage = ({ seasonType }) => {
+const HomePage = () => {
   const dispatch = useDispatch();
   const { data, isLoading } = useGetRostersQuery();
   const { data: nflState, isLoading: nflStateIsLoading } =
@@ -42,6 +43,8 @@ const HomePage = ({ seasonType }) => {
   const waivers = useSelector(selectWaiverPickups);
   const leagueId = useSelector(selectLeagueId);
   const leagueYear = useSelector(selectLeagueYear);
+  const leagueStatus = useSelector(selectLeagueStage);
+  const seasonType = leagueStatus === "pre_draft" ? "off-season" : "in-season";
   const seasons = useSelector(selectLeagues);
   const { data: users } = useGetUsersQuery();
   const matchupData = useSelector((state) =>

@@ -95,9 +95,12 @@ const MockNew = () => {
       standings,
       tradedPicks,
       year,
-    })
+    }),
   );
-  const { data: playersAll } = useGetPlayersAllQuery({ year });
+  const { data: playersAll } = useGetPlayersAllQuery({
+    year: year - 1,
+    mock: true,
+  });
   const leagueId = useSelector(selectLeagueId);
   let current = find(seasons, { league_id: leagueId });
   const keepers = useSelector((state) =>
@@ -105,17 +108,17 @@ const MockNew = () => {
       rosters: data,
       players: playersAll,
       leagueType: current?.settings?.type,
-    })
+    }),
   );
 
   const nonKeepers = useSelector((state) =>
     selectNonKeepers(state, {
       rosters: data,
       players: playersAll,
-    })
+    }),
   );
   let availablePlayers = nonKeepers.filter(
-    (p) => !find(draftedPlayers, { id: p.id })
+    (p) => !find(draftedPlayers, { id: p.id }),
   );
 
   // const [trigger, { data: playerValue, isFetching: playerValueIsLoading }] =
@@ -198,12 +201,10 @@ const MockNew = () => {
   };
 
   const _getPlayerList = () => {
-    if (position) {
-      return availablePlayers.filter((p) => p.position === position);
-    } else return availablePlayers ?? [];
-    // if (position) {
-    //   return playerValue.filter((p) => p.POS === position);
-    // } else return playerValue ?? [];
+    const list = position
+      ? availablePlayers.filter((p) => p.position === position)
+      : availablePlayers ?? [];
+    return sortBy(list, "bfbValue").reverse();
   };
   const handleSubmit = async (mockData) => {
     let image = await captureScreenshot();
@@ -380,9 +381,9 @@ const MockNew = () => {
                                   !(
                                     player.round === activeSlot.round &&
                                     player.pick === activeSlot.pick
-                                  )
-                              )
-                            )
+                                  ),
+                              ),
+                            ),
                           );
                           // updatePlayerValueList(
                           //   draftedPlayers.filter(
