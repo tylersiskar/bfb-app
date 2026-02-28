@@ -168,7 +168,7 @@ const PlayerList = ({
                     activePlayerId === player.id ? "lime" : "light"
                   } md flex justify-start`}
                 >
-                  {playerObj["Normalized Rank"] ?? playerObj["value"]}
+                  {playerObj["bfbValue"]}
                 </p>
               )}
             </div>

@@ -119,22 +119,23 @@ export const selectPlayersProjectedKeepers = createSelector(
               ...currentPlayer,
               name: currentPlayer?.full_name,
               pos: currentPlayer?.position,
-              value: currentPlayer?.value,
+              bfbValue: currentPlayer?.bfbValue,
             };
           })
           .filter((o) => !!o.name),
-        "value"
+        "bfbValue"
       ).reverse();
       let projectedKeepers = [];
       sortedPlayers.forEach((player, idx) => {
         // if keepers arent full yet keep going
         if (projectedKeepers.length < 8) {
-          if (player.pos === "QB") {
-            // if player is a QB, user does not have a qb yet, and that qb is truly valuable, add player
-            if (!find(projectedKeepers, { pos: "QB" }) && player.value > 5000) {
-              projectedKeepers.push(player);
-            }
-          } else projectedKeepers.push(player);
+          // if (player.pos === "QB") {
+          //   // if player is a QB, user does not have a qb yet, and that qb is truly valuable, add player
+          //   if (!find(projectedKeepers, { pos: "QB" }) && player.value > 5000) {
+          //     projectedKeepers.push(player);
+          //   }
+          // } else projectedKeepers.push(player);
+          projectedKeepers.push(player);
         }
       });
       return {
@@ -142,7 +143,7 @@ export const selectPlayersProjectedKeepers = createSelector(
         team_name: find(users, { user_id: r.owner_id })?.display_name,
         players: sortedPlayers,
         projectedKeepers,
-        lowestKeeperValue: projectedKeepers[7]?.value,
+        lowestKeeperValue: projectedKeepers[7]?.bfbValue,
       };
     });
 
@@ -153,20 +154,17 @@ export const selectPlayersProjectedKeepers = createSelector(
           let ownerIds = filter(newRosters, (o) => {
             let currentTeamsQb = find(o.projectedKeepers, { pos: "QB" });
 
-            if (p.pos === "QB") {
-              if (currentTeamsQb && currentTeamsQb.name) {
-                if (currentTeamsQb.value < p.value) return true;
-                else return false;
-              } else return p.value - o.lowestKeeperValue > 1500;
-            } else return p.value > o.lowestKeeperValue;
+            // if (p.pos === "QB") {
+            //   if (currentTeamsQb && currentTeamsQb.name) {
+            //     if (currentTeamsQb.value < p.value) return true;
+            //     else return false;
+            //   } else return p.value - o.lowestKeeperValue > 1500;
+            // } else return p.value > o.lowestKeeperValue;
+            return p.bfbValue > o.lowestKeeperValue;
           }).map((t) => t.owner_id);
           return {
             ...p,
-            status: !!find(team.projectedKeepers, { id: p.id })
-              ? "Keeper"
-              : ownerIds.length > 0
-              ? "Trade"
-              : "N/A",
+            status: p.bfbValue > 0 ? "KW" : "N/A",
             tradeCandidateTeams: ownerIds,
           };
         }),

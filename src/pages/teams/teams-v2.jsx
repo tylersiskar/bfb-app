@@ -45,13 +45,13 @@ const POSITION_CONFIG = {
     cutoff: 90, // stricter: fewer QBs above line
   },
   RB: {
-    weightPpg: 0.6, // a bit flatter trade-off than WR
-    weightValue: 0.45,
-    cutoff: 85,
+    weightPpg: 0.45, // a bit flatter trade-off than WR
+    weightValue: 0.55,
+    cutoff: 80,
   },
   WR: {
-    weightPpg: 0.6,
-    weightValue: 0.4,
+    weightPpg: 0.5,
+    weightValue: 0.5,
     cutoff: 85,
   },
   TE: {

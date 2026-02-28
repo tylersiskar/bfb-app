@@ -32,7 +32,7 @@ const RosterCard = ({ team }) => {
   let keepers = team.projectedKeepers;
   let avgKeeperVal = team.projectedKeepers
     .reduce((acc, item, index, array) => {
-      acc += item.value;
+      acc += item.bfbValue;
       if (index === array.length - 1) {
         return acc / array.length; // Calculate average on the last iteration
       }
@@ -84,7 +84,7 @@ const RosterCard = ({ team }) => {
                           {activePlayer.name}
                         </h3>
                         <h6 className="pb-1">
-                          KTC Value: {activePlayer.value}
+                          BFB Value: {activePlayer.bfbValue}
                         </h6>
                       </div>
                       <h5 className="pb-1 pt-1">Trade Candidate Teams</h5>
