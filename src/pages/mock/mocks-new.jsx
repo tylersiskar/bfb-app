@@ -98,7 +98,7 @@ const MockNew = () => {
     }),
   );
   const { data: playersAll } = useGetPlayersAllQuery({
-    year: year - 1,
+    year: year,
     mock: true,
   });
   const leagueId = useSelector(selectLeagueId);
@@ -203,7 +203,7 @@ const MockNew = () => {
   const _getPlayerList = () => {
     const list = position
       ? availablePlayers.filter((p) => p.position === position)
-      : availablePlayers ?? [];
+      : (availablePlayers ?? []);
     return sortBy(list, "bfbValue").reverse();
   };
   const handleSubmit = async (mockData) => {
