@@ -62,7 +62,7 @@ ChartJS.register(
   ChartDataLabels
 );
 
-export const TeamsPage = () => {
+const TeamsPage = () => {
   const dispatch = useDispatch();
   const [position, setPosition] = useState("QB");
 
@@ -254,3 +254,5 @@ export const TeamsPage = () => {
     </Content>
   );
 };
+
+export default TeamsPage;

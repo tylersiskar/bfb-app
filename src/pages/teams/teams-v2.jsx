@@ -89,7 +89,7 @@ ChartJS.register(
   ChartDataLabels
 );
 
-export const TeamsV2Page = () => {
+const TeamsV2Page = () => {
   const dispatch = useDispatch();
   const [position, setPosition] = useState("QB");
 
@@ -342,3 +342,5 @@ export const TeamsV2Page = () => {
     </Content>
   );
 };
+
+export default TeamsV2Page;
