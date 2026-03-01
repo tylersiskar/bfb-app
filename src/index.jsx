@@ -1,21 +1,22 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import { store } from "./store";
 import { Provider } from "react-redux";
-import {
-  HomePage,
-  TrendsPage,
-  TeamsPage,
-  DraftsPage,
-  TeamsV2Page,
-} from "./pages";
-import MockDraftCenter from "./pages/mock/mocks";
-import { MockNew } from "./pages/mock";
-import Rosters from "./pages/rosters";
-import PlayerDetailsPage from "./pages/players";
+import HomePage from "./pages/home/home";
+
+const TeamsV2Page = lazy(() => import("./pages/teams/teams-v2"));
+const TeamsPage = lazy(() => import("./pages/teams/teams"));
+const DraftsPage = lazy(() => import("./pages/drafts/drafts"));
+const TrendsPage = lazy(() => import("./pages/trends/trends"));
+const MockDraftCenter = lazy(() => import("./pages/mock/mocks"));
+const MockNew = lazy(() => import("./pages/mock/mocks-new"));
+const Rosters = lazy(() => import("./pages/rosters"));
+const PlayerDetailsPage = lazy(() => import("./pages/players"));
+
+const Fallback = <div style={{ height: "100dvh", background: "#1f2126" }} />;
 
 const router = createBrowserRouter([
   {
@@ -28,43 +29,43 @@ const router = createBrowserRouter([
       },
       {
         path: "player-value",
-        element: <TeamsV2Page />,
+        element: <Suspense fallback={Fallback}><TeamsV2Page /></Suspense>,
       },
       {
         path: "teams",
-        element: <TeamsPage />,
+        element: <Suspense fallback={Fallback}><TeamsPage /></Suspense>,
       },
       {
         path: "players",
-        element: <TeamsPage />,
+        element: <Suspense fallback={Fallback}><TeamsPage /></Suspense>,
       },
       {
         path: "players/:playerId",
-        element: <PlayerDetailsPage />,
+        element: <Suspense fallback={Fallback}><PlayerDetailsPage /></Suspense>,
       },
       {
         path: "drafts",
-        element: <DraftsPage />,
+        element: <Suspense fallback={Fallback}><DraftsPage /></Suspense>,
       },
       {
         path: "rosters",
-        element: <Rosters />,
+        element: <Suspense fallback={Fallback}><Rosters /></Suspense>,
       },
       {
         path: "mocks",
-        element: <MockDraftCenter />,
+        element: <Suspense fallback={Fallback}><MockDraftCenter /></Suspense>,
       },
       {
         path: "mocks/new",
-        element: <MockNew />,
+        element: <Suspense fallback={Fallback}><MockNew /></Suspense>,
       },
       {
         path: "mocks/:id",
-        element: <MockNew />,
+        element: <Suspense fallback={Fallback}><MockNew /></Suspense>,
       },
       {
         path: "trends",
-        element: <TrendsPage />,
+        element: <Suspense fallback={Fallback}><TrendsPage /></Suspense>,
       },
     ],
   },

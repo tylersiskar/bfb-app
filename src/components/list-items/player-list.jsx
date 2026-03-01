@@ -4,7 +4,7 @@ import { selectActiveSlot } from "../../api/draftSlice";
 import { useEffect, useRef, useState } from "react";
 
 const PlayerList = ({
-  scrollHeight = `calc(40svh - 136px)`,
+  scrollHeight = `calc(40dvh - 136px)`,
   onDraft,
   hidePagination,
   actionColumn,

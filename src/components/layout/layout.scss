@@ -13,7 +13,7 @@ $yellow: #ffe74c;
   height: 100%;
   flex-direction: column;
   background-color: $dark;
-  min-height: 100svh;
+  min-height: 100dvh;
 }
 
 .header {
@@ -48,7 +48,7 @@ $yellow: #ffe74c;
   max-width: 1272px;
   max-height: 100%;
   margin: 0 auto;
-  height: calc(100svh - 88px);
+  height: calc(100dvh - 88px);
   overflow-y: auto;
 }
 
@@ -89,7 +89,7 @@ $yellow: #ffe74c;
     overflow-x: hidden;
   }
   .subcontent {
-    max-height: 100svh;
+    max-height: 100dvh;
     width: 100% !important;
     overflow-x: hidden;
     &.h-100 {

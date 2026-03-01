@@ -18,7 +18,7 @@ import "./player-details.scss";
 import { mdiChartBar, mdiListBoxOutline, mdiSwapHorizontal } from "@mdi/js";
 import WindowList from "../../components/window/window-list";
 import { selectExpandedWindow } from "../../api/playerDetailsSlice";
-import Plot from "react-plotly.js";
+import Plot from "../../components/plot";
 import groupBy from "lodash/groupBy";
 import find from "lodash/find";
 import { useMemo, useState } from "react";

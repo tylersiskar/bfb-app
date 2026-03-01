@@ -33,14 +33,14 @@ $dark: #1f2126;
 }
 .panel-full-expanded {
   border-top: 1px solid rgba(204, 204, 204, 0.6);
-  height: 55svh;
+  height: 55dvh;
   padding: 16px;
   bottom: 64px !important;
 }
 .panel-expanded {
   border-top: 1px solid rgba(204, 204, 204, 0.6);
-  height: 25svh;
-  bottom: 40svh;
+  height: 25dvh;
+  bottom: 40dvh;
   padding: 16px;
 }
 
@@ -69,7 +69,7 @@ $dark: #1f2126;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Add a subtle shadow to give it a popover effect */
   border-radius: 8px; /* Rounded corners */
   width: 80vw;
-  height: 30svh;
+  height: 30dvh;
   padding: 16px;
 }
 

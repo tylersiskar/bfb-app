@@ -283,7 +283,7 @@ const MockNew = () => {
                   padding: "8px 16px",
                   marginTop: 8,
                   width: "100%",
-                  height: "40svh",
+                  height: "40dvh",
                   overflowY: "auto",
                   boxSizing: "border-box",
                 }}
@@ -303,7 +303,7 @@ const MockNew = () => {
                     <PlayerList
                       isRoster
                       playerList={sortBy(activeRoster, "position")}
-                      scrollHeight={`calc(${!expandList ? 55 : 25}svh - 60px)`}
+                      scrollHeight={`calc(${!expandList ? 55 : 25}dvh - 60px)`}
                       hidePagination
                       actionColumn={(player) => (
                         <Button
@@ -469,8 +469,8 @@ const MockNew = () => {
                   scrollHeight={`calc(${
                     expandList
                       ? openPanel || !!activePlayerId
-                        ? "40svh"
-                        : "55svh"
+                        ? "40dvh"
+                        : "55dvh"
                       : "170px"
                   } - 136px)`}
                   playerList={_getPlayerList()}
