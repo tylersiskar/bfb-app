@@ -72,6 +72,32 @@ export const bfbApi = createApi({
       }),
       invalidatesTags: ["playersAll"],
     }),
+    getLeagueRosters: builder.query({
+      query: () => ({
+        url: `/league/{LEAGUE_ID}/rosters`,
+      }),
+    }),
+    getLeagueDraftPicks: builder.query({
+      query: () => ({
+        url: `/league/{LEAGUE_ID}/draft-picks`,
+      }),
+    }),
+    calculateTrade: builder.mutation({
+      query: ({ year, ...body }) => ({
+        url: `/trade/calculate${year ? `?year=${year}` : ""}`,
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      }),
+    }),
+    findDeals: builder.mutation({
+      query: ({ year, ...body }) => ({
+        url: `/trade/find-deals${year ? `?year=${year}` : ""}`,
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      }),
+    }),
   }),
 });
 
@@ -188,4 +214,8 @@ export const {
   useGetStatsQuery,
   useGetPlayerValueMutation,
   useGetSearchQuery,
+  useGetLeagueRostersQuery,
+  useGetLeagueDraftPicksQuery,
+  useCalculateTradeMutation,
+  useFindDealsMutation,
 } = bfbApi;

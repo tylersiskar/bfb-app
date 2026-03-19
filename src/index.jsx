@@ -15,6 +15,7 @@ const MockDraftCenter = lazy(() => import("./pages/mock/mocks"));
 const MockNew = lazy(() => import("./pages/mock/mocks-new"));
 const Rosters = lazy(() => import("./pages/rosters"));
 const PlayerDetailsPage = lazy(() => import("./pages/players"));
+const TradePage = lazy(() => import("./pages/trade/trade"));
 
 const Fallback = <div style={{ height: "100dvh", background: "#1f2126" }} />;
 
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "trends",
         element: <Suspense fallback={Fallback}><TrendsPage /></Suspense>,
+      },
+      {
+        path: "trade",
+        element: <Suspense fallback={Fallback}><TradePage /></Suspense>,
       },
     ],
   },
