@@ -7,6 +7,7 @@ import {
   useGetLeagueDraftPicksQuery,
   useCalculateTradeMutation,
   useFindDealsMutation,
+  useGetRecommendedTradesMutation,
   useGetPlayersAllQuery,
 } from "../../api/bfbApi";
 import { useGetUsersQuery } from "../../api/api";
@@ -78,16 +79,18 @@ const TeamSelector = ({ rosters, onSelect }) => (
 );
 
 // ─── Player Search ───────────────────────────────────────────────────────────
-const PlayerSearch = ({ rosters, myRosterId, onSelectPlayer }) => {
+const ROUND_LABELS = { 1: "1st", 2: "2nd", 3: "3rd" };
+
+const PlayerSearch = ({ rosters, myRosterId, draftPicks, leagueYear, onSelectPlayer }) => {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const inputRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Build searchable list of all rostered players (own team + others)
-  const searchablePlayers = useMemo(() => {
+  // Build searchable list of all rostered players + draft picks
+  const searchableItems = useMemo(() => {
     if (!rosters) return [];
-    return rosters
+    const players = rosters
       .flatMap((r) =>
         (r.players ?? []).map((p) => ({
           ...p,
@@ -99,20 +102,56 @@ const PlayerSearch = ({ rosters, myRosterId, onSelectPlayer }) => {
       )
       .filter((p) => p.full_name && p.full_name !== "—")
       .sort((a, b) => (b.bfbValue ?? 0) - (a.bfbValue ?? 0));
-  }, [rosters, myRosterId]);
+
+    // Append draft picks as searchable items
+    const rosterMap = Object.fromEntries((rosters ?? []).map((r) => [r.roster_id, r]));
+    const picks = (draftPicks ?? [])
+      .filter((pk) => pk.season >= (leagueYear ?? new Date().getFullYear()))
+      .map((pk) => {
+        const owner = rosterMap[pk.current_roster_id];
+        const origOwner = rosterMap[pk.original_roster_id];
+        const slot = pk.estimated_slot ?? "?";
+        const slotPad = String(slot).padStart(2, "0");
+        const label = `${pk.season} Round ${pk.round} Pick ${slot}`;
+        const origLabel = pk.original_roster_id !== pk.current_roster_id
+          ? ` (${origOwner?.display_name ?? "Unknown"}'s pick)`
+          : "";
+        return {
+          _type: "pick",
+          id: `pick-${pk.season}-${pk.round}-${pk.original_roster_id}`,
+          full_name: `${label}${origLabel}`,
+          searchLabel: `pick ${pk.round}.${slotPad} ${pk.season} round ${pk.round} ${ROUND_LABELS[pk.round] ?? pk.round} pick draft`,
+          position: "PICK",
+          team: null,
+          bfbValue: pk.pick_value ?? 0,
+          roster_id: pk.current_roster_id,
+          team_name: owner?.display_name ?? "Unknown",
+          avatar: owner?.avatar,
+          isOwn: pk.current_roster_id === myRosterId,
+          pick_season: pk.season,
+          pick_round: pk.round,
+          pick_original_roster_id: pk.original_roster_id,
+          estimated_slot: pk.estimated_slot,
+        };
+      })
+      .sort((a, b) => (b.bfbValue ?? 0) - (a.bfbValue ?? 0));
+
+    return [...players, ...picks];
+  }, [rosters, myRosterId, draftPicks, leagueYear]);
 
   const results = useMemo(() => {
     if (!query || query.length < 2) return [];
     const q = query.toLowerCase();
-    return searchablePlayers
+    return searchableItems
       .filter(
         (p) =>
           p.full_name?.toLowerCase().includes(q) ||
+          p.searchLabel?.toLowerCase().includes(q) ||
           p.position?.toLowerCase() === q ||
           p.team?.toLowerCase().includes(q),
       )
       .slice(0, 8);
-  }, [query, searchablePlayers]);
+  }, [query, searchableItems]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -125,7 +164,7 @@ const PlayerSearch = ({ rosters, myRosterId, onSelectPlayer }) => {
         <input
           ref={inputRef}
           className="trade-search-input"
-          placeholder="Search for any player..."
+          placeholder="Search players or picks..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
@@ -157,16 +196,22 @@ const PlayerSearch = ({ rosters, myRosterId, onSelectPlayer }) => {
                 setQuery("");
               }}
             >
-              <img
-                className="trade-search-headshot"
-                src={`https://sleepercdn.com/content/nfl/players/${p.id}.jpg`}
-                alt=""
-                onError={(e) => (e.target.style.display = "none")}
-              />
+              {p._type === "pick" ? (
+                <div className="trade-search-pick-badge">
+                  Rd {p.pick_round}
+                </div>
+              ) : (
+                <img
+                  className="trade-search-headshot"
+                  src={`https://sleepercdn.com/content/nfl/players/${p.id}.jpg`}
+                  alt=""
+                  onError={(e) => (e.target.style.display = "none")}
+                />
+              )}
               <div className="trade-search-result-info">
                 <p className="sm light bold">{p.full_name}</p>
                 <p className="x-sm color-light">
-                  {p.position} · {p.team}
+                  {p._type === "pick" ? "Draft Pick" : `${p.position} · ${p.team}`}
                 </p>
               </div>
               <div className="trade-search-result-meta">
@@ -184,7 +229,7 @@ const PlayerSearch = ({ rosters, myRosterId, onSelectPlayer }) => {
 
       {focused && query.length >= 2 && results.length === 0 && (
         <div className="trade-search-results">
-          <p className="sm color-light p-2">No players found</p>
+          <p className="sm color-light p-2">No players or picks found</p>
         </div>
       )}
     </div>
@@ -546,20 +591,24 @@ const DEAL_PREFS = [
 const PlayerActionCard = ({ player, isOwn, dealPref, onDealPrefChange, onCreateTrade, onFindDeals, finding }) => (
   <div className="trade-action-card">
     <div className="trade-action-player">
-      <img
-        className="trade-action-headshot"
-        src={`https://sleepercdn.com/content/nfl/players/${player.id}.jpg`}
-        alt=""
-        onError={(e) => (e.target.style.display = "none")}
-      />
+      {player._type === "pick" ? (
+        <div className="trade-action-pick-badge">Rd {player.pick_round}</div>
+      ) : (
+        <img
+          className="trade-action-headshot"
+          src={`https://sleepercdn.com/content/nfl/players/${player.id}.jpg`}
+          alt=""
+          onError={(e) => (e.target.style.display = "none")}
+        />
+      )}
       <div className="trade-action-player-info">
         <p className="light bold">{player.full_name}</p>
         <p className="sm color-light">
-          {player.position} · {player.team}
+          {player._type === "pick" ? "Draft Pick" : `${player.position} · ${player.team}`}
         </p>
         <p className="sm" style={{ color: isOwn ? "#54d846" : "#35a7ff" }}>
-          {player.bfbValue?.toLocaleString() ?? "—"} bfbValue
-          {isOwn ? " · Your player" : ` · ${player.team_name}`}
+          {player.bfbValue?.toLocaleString() ?? "—"} value
+          {isOwn ? (player._type === "pick" ? " · Your pick" : " · Your player") : ` · ${player.team_name}`}
         </p>
       </div>
     </div>
@@ -602,6 +651,9 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
     player_for_player: "1-for-1",
     player_plus_picks: "Player + Picks",
     multi_player: "Package Deal",
+    pick_for_player: "Pick for Player",
+    player_for_pick: "Player for Pick",
+    picks_only: "Picks Only",
   };
 
   const fairness = deal.fairness;
@@ -634,7 +686,7 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
           ))}
           {deal.give.picks.map((p, i) => (
             <div key={i} className="trade-deal-player">
-              <p className="sm light">{p.season} Rd {p.round}</p>
+              <p className="sm light">{p.season} Rd {p.round}{p.estimated_slot ? ` (Pick ${p.estimated_slot})` : ""}</p>
               <p className="x-sm color-light">{p.pick_value?.toLocaleString()}</p>
             </div>
           ))}
@@ -652,7 +704,7 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
           ))}
           {deal.receive.picks.map((p, i) => (
             <div key={i} className="trade-deal-player">
-              <p className="sm light">{p.season} Rd {p.round}</p>
+              <p className="sm light">{p.season} Rd {p.round}{p.estimated_slot ? ` (Pick ${p.estimated_slot})` : ""}</p>
               <p className="x-sm color-light">{p.pick_value?.toLocaleString()}</p>
             </div>
           ))}
@@ -718,6 +770,88 @@ const DealsResult = ({ result, onOpenInCalculator, onBack }) => (
   </div>
 );
 
+// ─── Recommended Trades Result ────────────────────────────────────────────────
+const CATEGORY_TABS = [
+  { key: "upgrade", label: "Upgrades" },
+  { key: "fill_need", label: "Fill Needs" },
+  { key: "sell_surplus", label: "Sell Surplus" },
+];
+
+const RecommendedTradesResult = ({ result, onOpenInCalculator, onBack }) => {
+  const [activeTab, setActiveTab] = useState("upgrade");
+  const { team_analysis, categories } = result;
+  const totalDeals = Object.values(categories).reduce((s, arr) => s + arr.length, 0);
+
+  const activDeals = categories[activeTab] ?? [];
+
+  return (
+    <div className="trade-deals-result">
+      <div className="trade-team-summary">
+        <div className="trade-team-summary-item">
+          <p className="sm bold light">{team_analysis.keeper_count}</p>
+          <p className="x-sm color-light">Keepers</p>
+        </div>
+        <div className="trade-team-summary-item">
+          <p className="sm bold light">{team_analysis.top_8_value?.toLocaleString()}</p>
+          <p className="x-sm color-light">Top 8 Value</p>
+        </div>
+        {team_analysis.needs.length > 0 && (
+          <div className="trade-team-summary-item">
+            <p className="sm bold light">{team_analysis.needs.join(", ")}</p>
+            <p className="x-sm color-light">Needs</p>
+          </div>
+        )}
+        {team_analysis.surplus.length > 0 && (
+          <div className="trade-team-summary-item">
+            <p className="sm bold light">{team_analysis.surplus.length}</p>
+            <p className="x-sm color-light">Surplus</p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-between align-center pb-2 pt-2">
+        <p className="sm color-light">{totalDeals} recommendation{totalDeals !== 1 ? "s" : ""} found</p>
+        <button className="trade-reset-btn" onClick={onBack}>
+          <Icon path={mdiRefresh} size={0.8} color="#A7A7A7" />
+          <p className="sm color-light">Back</p>
+        </button>
+      </div>
+
+      <div className="trade-category-tabs">
+        {CATEGORY_TABS.map((tab) => {
+          const count = (categories[tab.key] ?? []).length;
+          return (
+            <button
+              key={tab.key}
+              className={`trade-category-tab ${activeTab === tab.key ? "trade-category-tab--active" : ""}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+              {count > 0 && <span className="trade-category-badge">{count}</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      {activDeals.length === 0 ? (
+        <div className="trade-deals-empty">
+          <p className="sm color-light">
+            {activeTab === "upgrade" && "No upgrade opportunities found. Your starters are already strong at each position."}
+            {activeTab === "fill_need" && "No positional needs identified — your keeper roster is well-rounded."}
+            {activeTab === "sell_surplus" && "No surplus sell opportunities found. You don't have extra keeper-worthy players to move."}
+          </p>
+        </div>
+      ) : (
+        <div className="trade-deals-list">
+          {activDeals.map((deal, i) => (
+            <DealCard key={i} deal={deal} onOpenInCalculator={onOpenInCalculator} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 const TradePage = () => {
   const leagueId = useSelector(selectLeagueId);
@@ -736,12 +870,15 @@ const TradePage = () => {
     useCalculateTradeMutation();
   const [findDeals, { isLoading: findingDeals }] =
     useFindDealsMutation();
+  const [getRecommendedTrades, { isLoading: loadingRecommended }] =
+    useGetRecommendedTradesMutation();
 
-  const [step, setStep] = useState("select"); // select | search | action | build | result | deals
+  const [step, setStep] = useState("select"); // select | search | action | build | result | deals | recommended
   const [myRoster, setMyRoster] = useState(null);
   const [theirRoster, setTheirRoster] = useState(null);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [dealsResult, setDealsResult] = useState(null);
+  const [recommendedResult, setRecommendedResult] = useState(null);
   const [dealPref, setDealPref] = useState("any");
   const [sideAPlayerIds, setSideAPlayerIds] = useState([]);
   const [sideBPlayerIds, setSideBPlayerIds] = useState([]);
@@ -823,8 +960,33 @@ const TradePage = () => {
   };
 
   const handleCreateTrade = () => {
-    const isOwnPlayer = selectedPlayer.roster_id === myRoster?.roster_id;
-    if (isOwnPlayer) {
+    const isOwn = selectedPlayer.roster_id === myRoster?.roster_id;
+
+    if (selectedPlayer._type === "pick") {
+      // Pre-select the pick on the appropriate side
+      const pickKey = `${selectedPlayer.pick_round}-${selectedPlayer.pick_season}-${selectedPlayer.pick_original_roster_id}`;
+      const pickData = {
+        round: selectedPlayer.pick_round,
+        season: selectedPlayer.pick_season,
+        original_roster_id: selectedPlayer.pick_original_roster_id,
+        current_roster_id: selectedPlayer.roster_id,
+        estimated_slot: selectedPlayer.estimated_slot,
+        pick_value: selectedPlayer.bfbValue,
+      };
+      if (isOwn) {
+        setSideAPickKeys([pickKey]);
+        setSideAPickMap({ [pickKey]: pickData });
+        setStep("build");
+      } else {
+        const theirTeam = rosters.find((r) => r.roster_id === selectedPlayer.roster_id);
+        if (theirTeam) {
+          setTheirRoster(theirTeam);
+          setSideBPickKeys([pickKey]);
+          setSideBPickMap({ [pickKey]: pickData });
+          setStep("build");
+        }
+      }
+    } else if (isOwn) {
       // Trading our player away — pre-select on our side, let user pick opponent
       setSideAPlayerIds([selectedPlayer.id]);
       setStep("build");
@@ -843,18 +1005,43 @@ const TradePage = () => {
 
   const handleFindDeals = async () => {
     try {
-      const result = await findDeals({
+      const body = {
         year: leagueYear,
-        player_id: selectedPlayer.id,
         roster_id: myRoster.roster_id,
         league_id: leagueId,
         deal_pref: dealPref,
-      }).unwrap();
+      };
+      if (selectedPlayer._type === "pick") {
+        body.pick_id = {
+          season: selectedPlayer.pick_season,
+          round: selectedPlayer.pick_round,
+          original_roster_id: selectedPlayer.pick_original_roster_id,
+        };
+      } else {
+        body.player_id = selectedPlayer.id;
+      }
+      const result = await findDeals(body).unwrap();
       setDealsResult(result);
       setStep("deals");
     } catch (e) {
       console.error("Find deals failed:", e);
       setError("Failed to find deals. Please try again.");
+    }
+  };
+
+  const handleGetRecommended = async () => {
+    try {
+      setError(null);
+      const result = await getRecommendedTrades({
+        year: leagueYear,
+        roster_id: myRoster.roster_id,
+        league_id: leagueId,
+      }).unwrap();
+      setRecommendedResult(result);
+      setStep("recommended");
+    } catch (e) {
+      console.error("Recommended trades failed:", e);
+      setError("Failed to get recommendations. Please try again.");
     }
   };
 
@@ -867,7 +1054,23 @@ const TradePage = () => {
       setTheirRoster(theirTeam);
       setSideAPlayerIds(deal.give.players.map((p) => p.id));
       setSideBPlayerIds(deal.receive.players.map((p) => p.id));
-      // TODO: pre-fill picks if deal includes them
+
+      // Pre-fill picks from the deal
+      const toPickEntries = (picks) =>
+        (picks ?? []).reduce((acc, p) => {
+          const key = `${p.round}-${p.season}-${p.original_roster_id}`;
+          acc.keys.push(key);
+          acc.map[key] = p;
+          return acc;
+        }, { keys: [], map: {} });
+
+      const givePicks = toPickEntries(deal.give.picks);
+      const recvPicks = toPickEntries(deal.receive.picks);
+      setSideAPickKeys(givePicks.keys);
+      setSideAPickMap(givePicks.map);
+      setSideBPickKeys(recvPicks.keys);
+      setSideBPickMap(recvPicks.map);
+
       setStep("build");
     }
   };
@@ -922,6 +1125,7 @@ const TradePage = () => {
     setTheirRoster(null);
     setSelectedPlayer(null);
     setDealsResult(null);
+    setRecommendedResult(null);
     setDealPref("any");
     setError(null);
   };
@@ -983,9 +1187,33 @@ const TradePage = () => {
               <p className="sm light bold">{myRoster?.display_name}</p>
             </div>
 
+            <button
+              className="trade-recommended-btn"
+              onClick={handleGetRecommended}
+              disabled={loadingRecommended}
+            >
+              <Icon path={mdiAutoFix} size={0.8} color={loadingRecommended ? "#959595" : "#54d846"} />
+              <div>
+                <p className="sm bold light">
+                  {loadingRecommended ? "Analyzing your roster..." : "Recommended Trades"}
+                </p>
+                <p className="x-sm color-light">Find upgrades, fill needs, or sell surplus</p>
+              </div>
+            </button>
+
+            {error && step === "search" && (
+              <p className="sm" style={{ color: "#ff3f5d", padding: "8px 0" }}>{error}</p>
+            )}
+
+            <div className="trade-recommended-divider">
+              <span className="x-sm color-light">or search for a player or pick</span>
+            </div>
+
             <PlayerSearch
               rosters={rosters}
               myRosterId={myRoster?.roster_id}
+              draftPicks={draftPicks}
+              leagueYear={leagueYear}
               onSelectPlayer={handleSelectPlayer}
             />
           </div>
@@ -1045,6 +1273,30 @@ const TradePage = () => {
               result={dealsResult}
               onOpenInCalculator={handleOpenDealInCalculator}
               onBack={() => setStep("action")}
+            />
+          </div>
+        )}
+
+        {/* ── STEP: RECOMMENDED TRADES ── */}
+        {step === "recommended" && recommendedResult && (
+          <div>
+            <div className="trade-page-header flex justify-between align-center">
+              <div>
+                <h2>Trade Center</h2>
+                <p className="sm color-light pt-1">
+                  Recommended trades for {myRoster?.display_name}
+                </p>
+              </div>
+              <button className="trade-reset-btn" onClick={handleFullReset}>
+                <Icon path={mdiClose} size={0.7} color="#A7A7A7" />
+                <p className="x-sm color-light">Start over</p>
+              </button>
+            </div>
+
+            <RecommendedTradesResult
+              result={recommendedResult}
+              onOpenInCalculator={handleOpenDealInCalculator}
+              onBack={() => { setRecommendedResult(null); setStep("search"); }}
             />
           </div>
         )}

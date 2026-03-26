@@ -98,6 +98,14 @@ export const bfbApi = createApi({
         headers: { "Content-Type": "application/json" },
       }),
     }),
+    getRecommendedTrades: builder.mutation({
+      query: ({ year, ...body }) => ({
+        url: `/trade/recommended${year ? `?year=${year}` : ""}`,
+        method: "POST",
+        body,
+        headers: { "Content-Type": "application/json" },
+      }),
+    }),
   }),
 });
 
@@ -218,4 +226,5 @@ export const {
   useGetLeagueDraftPicksQuery,
   useCalculateTradeMutation,
   useFindDealsMutation,
+  useGetRecommendedTradesMutation,
 } = bfbApi;

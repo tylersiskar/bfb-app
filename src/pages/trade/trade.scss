@@ -150,6 +150,21 @@ $red: #ff3f5d;
   flex-shrink: 0;
 }
 
+.trade-search-pick-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba($blue, 0.15);
+  border: 1px solid rgba($blue, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: $blue;
+}
+
 .trade-search-result-info {
   flex: 1;
   min-width: 0;
@@ -536,6 +551,21 @@ $red: #ff3f5d;
   flex-shrink: 0;
 }
 
+.trade-action-pick-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba($blue, 0.15);
+  border: 1px solid rgba($blue, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $blue;
+}
+
 .trade-action-player-info {
   display: flex;
   flex-direction: column;
@@ -774,6 +804,112 @@ $red: #ff3f5d;
 
   &:hover {
     background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+// ─── Recommended Trades ──────────────────────────────────────────────────────
+
+.trade-recommended-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(84, 216, 70, 0.08);
+  border: 1px solid rgba(84, 216, 70, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+
+  &:hover:not(:disabled) {
+    background: rgba(84, 216, 70, 0.14);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+}
+
+.trade-recommended-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.trade-team-summary {
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+}
+
+.trade-team-summary-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+}
+
+.trade-category-tabs {
+  display: flex;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 12px;
+}
+
+.trade-category-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: $lighter;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &--active {
+    background: rgba(53, 167, 255, 0.12);
+    border-color: rgba(53, 167, 255, 0.3);
+    color: $blue;
+  }
+
+  &:hover:not(&--active) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.trade-category-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 10px;
+  font-weight: 700;
+
+  .trade-category-tab--active & {
+    background: rgba(53, 167, 255, 0.25);
   }
 }
 
