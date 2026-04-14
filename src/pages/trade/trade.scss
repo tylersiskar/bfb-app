@@ -377,19 +377,18 @@ $red: #ff3f5d;
 .trade-fairness-track {
   position: relative;
   height: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(90deg, $blue, rgba(255, 255, 255, 0.15) 50%, $red);
   border-radius: 4px;
   overflow: visible;
 }
 
-.trade-fairness-fill {
+.trade-fairness-center {
   position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  background: linear-gradient(90deg, $red, #ffc335 45%, $lime);
-  border-radius: 4px;
-  transition: width 0.4s ease;
+  left: 50%;
+  top: -1px;
+  width: 1px;
+  height: calc(100% + 2px);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .trade-fairness-marker {

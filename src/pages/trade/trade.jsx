@@ -142,14 +142,26 @@ const PlayerSearch = ({ rosters, myRosterId, draftPicks, leagueYear, onSelectPla
   const results = useMemo(() => {
     if (!query || query.length < 2) return [];
     const q = query.toLowerCase();
+    const queryTokens = q.split(/\s+/).filter(Boolean);
+
     return searchableItems
-      .filter(
-        (p) =>
-          p.full_name?.toLowerCase().includes(q) ||
-          p.searchLabel?.toLowerCase().includes(q) ||
+      .filter((p) => {
+        // Picks: searchLabel contains round/season keywords, use substring match
+        if (p._type === "pick") {
+          return p.searchLabel?.toLowerCase().includes(q) || false;
+        }
+        // Players: every query token must match the START of some name word.
+        // Prevents "jo" in "johnson" from matching "josh allen" after a few chars.
+        const nameTokens = (p.full_name?.toLowerCase() ?? "").split(/\s+/);
+        const nameMatch =
+          queryTokens.length > 0 &&
+          queryTokens.every((qt) => nameTokens.some((nt) => nt.startsWith(qt)));
+        return (
+          nameMatch ||
           p.position?.toLowerCase() === q ||
-          p.team?.toLowerCase().includes(q),
-      )
+          p.team?.toLowerCase() === q
+        );
+      })
       .slice(0, 8);
   }, [query, searchableItems]);
 
@@ -433,18 +445,15 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
       <div className="trade-fairness-bar-wrap">
         <p className="x-sm color-light mb-1">Fairness</p>
         <div className="trade-fairness-track">
-          <div
-            className="trade-fairness-fill"
-            style={{ width: `${barPercent}%` }}
-          />
+          <div className="trade-fairness-center" />
           <div
             className="trade-fairness-marker"
             style={{ left: `${barPercent}%` }}
           />
         </div>
         <div className="flex justify-between pt-1">
-          <p className="x-sm color-light">{sideBName} wins</p>
-          <p className="x-sm color-light">{sideAName} wins</p>
+          <p className="x-sm" style={{ color: "#35a7ff" }}>{sideAName} wins</p>
+          <p className="x-sm" style={{ color: "#ff3f5d" }}>{sideBName} wins</p>
         </div>
       </div>
 
@@ -459,6 +468,26 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
           </p>
         )}
       </div>
+
+      {/* Per-player breakdown */}
+      {result.players?.length > 0 && (
+        <div className="trade-result-players">
+          <p className="sm color-light pb-2">Players in trade</p>
+          {result.players.map((p) => (
+            <div key={p.id} className="trade-result-player-row">
+              <div>
+                <p className="sm light bold">{p.full_name}</p>
+                <p className="x-sm color-light">{p.position}</p>
+              </div>
+              <div className="trade-player-values">
+                <p className="sm lime">
+                  {p.bfbValue?.toLocaleString() ?? "—"}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Value breakdown */}
       <div className="trade-result-breakdown">
@@ -494,6 +523,9 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
           )}
         </div>
       </div>
+      <p className="x-sm color-light" style={{ opacity: 0.6, paddingTop: 4 }}>
+        Trade values reflect elite curve adjustment — star players are worth more than the sum of lesser assets.
+      </p>
 
       {/* Package tax explanation */}
       {hasTax && (
@@ -502,31 +534,6 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
             {taxSide} is sending more assets — {taxPct}% package tax applied.
             Stars are hard to replace with multiple lesser players.
           </p>
-        </div>
-      )}
-
-      {/* Per-player breakdown */}
-      {result.players?.length > 0 && (
-        <div className="trade-result-players">
-          <p className="sm color-light pb-2">Players in trade</p>
-          {result.players.map((p) => (
-            <div key={p.id} className="trade-result-player-row">
-              <div>
-                <p className="sm light bold">{p.full_name}</p>
-                <p className="x-sm color-light">{p.position}</p>
-              </div>
-              <div className="trade-player-values">
-                <p className="sm lime">
-                  {p.tradeValue?.toLocaleString() ?? p.bfbValue?.toLocaleString()}
-                </p>
-                {p.tradeValue && p.bfbValue && p.tradeValue !== p.bfbValue && (
-                  <p className="x-sm color-light">
-                    raw: {p.bfbValue?.toLocaleString()}
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
         </div>
       )}
 
