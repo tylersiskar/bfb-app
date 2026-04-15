@@ -425,6 +425,12 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
   const winnerName =
     winner === "side_a" ? sideAName : winner === "side_b" ? sideBName : null;
 
+  const hasTax = (breakdown.side_a_tax ?? 0) > 0 || (breakdown.side_b_tax ?? 0) > 0;
+  const taxSide = (breakdown.side_a_tax ?? 0) > 0 ? sideAName : sideBName;
+  const taxPct = Math.round(
+    ((breakdown.side_a_tax ?? 0) || (breakdown.side_b_tax ?? 0)) * 100,
+  );
+
   return (
     <div className="trade-result">
       <div className="flex justify-between align-center pb-2">
@@ -511,6 +517,17 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
           )}
         </div>
       </div>
+
+      {/* Package tax explanation */}
+      {hasTax && (
+        <div className="trade-tax-info">
+          <p className="x-sm color-light">
+            {taxSide} is sending more assets — {taxPct}% package tax applied to fairness.
+            Stars are hard to replace with multiple lesser players.
+          </p>
+        </div>
+      )}
+
       {/* Advanced analysis from Python (keeper impact) */}
       {advanced && (
         <div className="trade-advanced">
