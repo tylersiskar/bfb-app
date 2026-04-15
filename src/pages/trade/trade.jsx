@@ -664,12 +664,6 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
   };
 
   const fairness = deal.fairness;
-  const margin =
-    Math.abs(fairness - 50) < 5
-      ? "even"
-      : Math.abs(fairness - 50) < 12
-        ? "slight"
-        : "moderate";
 
   return (
     <div className="trade-deal-card">
@@ -721,18 +715,18 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
       <div className="trade-deal-footer">
         <div className="trade-deal-fairness">
           <div className="trade-deal-fairness-track">
-            <div
-              className="trade-deal-fairness-fill"
-              style={{ width: `${fairness}%` }}
-            />
+            <div className="trade-deal-fairness-center" />
             <div
               className="trade-deal-fairness-marker"
               style={{ left: `${fairness}%` }}
             />
           </div>
-          <p className="x-sm color-light">
-            {margin === "even" ? "Fair trade" : `Slight edge ${fairness > 50 ? "them" : "you"}`}
-          </p>
+          <div className="flex justify-between">
+            <p className="x-sm" style={{ color: "#35a7ff" }}>You win</p>
+            <p className="x-sm" style={{ color: "#ff3f5d" }}>
+              {deal.target_team.display_name} wins
+            </p>
+          </div>
         </div>
         <p className="x-sm color-light trade-deal-rationale">{deal.rationale}</p>
         <button className="trade-deal-open-btn" onClick={() => onOpenInCalculator(deal)}>
