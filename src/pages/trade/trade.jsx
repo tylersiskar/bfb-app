@@ -425,12 +425,6 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
   const winnerName =
     winner === "side_a" ? sideAName : winner === "side_b" ? sideBName : null;
 
-  const hasTax = breakdown.side_a_tax > 0 || breakdown.side_b_tax > 0;
-  const taxSide = breakdown.side_a_tax > 0 ? sideAName : sideBName;
-  const taxPct = Math.round(
-    (breakdown.side_a_tax || breakdown.side_b_tax) * 100,
-  );
-
   return (
     <div className="trade-result">
       <div className="flex justify-between align-center pb-2">
@@ -501,9 +495,6 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
               +{breakdown.side_a_picks_value.toLocaleString()} in picks
             </p>
           )}
-          {breakdown.side_a_tax > 0 && (
-            <p className="x-sm trade-tax-label">-{taxPct}% package tax</p>
-          )}
         </div>
         <div className="trade-result-divider">
           <p className="sm color-light">vs</p>
@@ -518,25 +509,8 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
               +{breakdown.side_b_picks_value.toLocaleString()} in picks
             </p>
           )}
-          {breakdown.side_b_tax > 0 && (
-            <p className="x-sm trade-tax-label">-{taxPct}% package tax</p>
-          )}
         </div>
       </div>
-      <p className="x-sm color-light" style={{ opacity: 0.6, paddingTop: 4 }}>
-        Trade values reflect elite curve adjustment — star players are worth more than the sum of lesser assets.
-      </p>
-
-      {/* Package tax explanation */}
-      {hasTax && (
-        <div className="trade-tax-info">
-          <p className="x-sm color-light">
-            {taxSide} is sending more assets — {taxPct}% package tax applied.
-            Stars are hard to replace with multiple lesser players.
-          </p>
-        </div>
-      )}
-
       {/* Advanced analysis from Python (keeper impact) */}
       {advanced && (
         <div className="trade-advanced">
@@ -558,30 +532,6 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
               </div>
             )}
           </div>
-
-          {/* Lineup impact */}
-          {advanced.side_a?.lineup_delta != null && (
-            <div className="trade-lineup-impact">
-              <div className="trade-lineup-row">
-                <p className="x-sm color-light">{sideAName} weekly</p>
-                <p
-                  className={`x-sm ${advanced.side_a.lineup_delta >= 0 ? "lime" : "red"}`}
-                >
-                  {advanced.side_a.lineup_delta >= 0 ? "+" : ""}
-                  {advanced.side_a.lineup_delta} pts/wk
-                </p>
-              </div>
-              <div className="trade-lineup-row">
-                <p className="x-sm color-light">{sideBName} weekly</p>
-                <p
-                  className={`x-sm ${advanced.side_b.lineup_delta >= 0 ? "lime" : "red"}`}
-                >
-                  {advanced.side_b.lineup_delta >= 0 ? "+" : ""}
-                  {advanced.side_b.lineup_delta} pts/wk
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>
