@@ -142,6 +142,12 @@ const MockNew = () => {
   }, [currentMock]);
 
   useEffect(() => {
+    if (!playersAll) return;
+    const pierce = playersAll.find((p) => p.full_name === "Alec Pierce");
+    if (pierce) console.log("Alec Pierce:", pierce);
+  }, [playersAll]);
+
+  useEffect(() => {
     if (isSuccess) {
       dispatch(clearDraftedPlayers());
       fetchMocks();
@@ -294,7 +300,15 @@ const MockNew = () => {
                     <h6>Current Roster</h6>
                     <PlayerList
                       isRoster
-                      playerList={sortBy(activeRoster, "position")}
+                      playerList={sortBy(
+                        activeRoster.map((p) => ({
+                          ...p,
+                          bfbValue:
+                            p.bfbValue ??
+                            find(playersAll ?? [], { id: p.id })?.bfbValue,
+                        })),
+                        "position",
+                      )}
                       scrollHeight={`calc(${!expandList ? 55 : 25}dvh - 60px)`}
                       hidePagination
                       actionColumn={(player) => (
@@ -404,7 +418,7 @@ const MockNew = () => {
                       icon={expandList ? mdiArrowDownThin : mdiArrowUpThin}
                       onClick={() => setExpandList(!expandList)}
                     />
-                    <IconButton
+                    {/* <IconButton
                       icon={mdiRefresh}
                       title="Refresh"
                       onClick={() => {
@@ -412,7 +426,7 @@ const MockNew = () => {
                       }}
                       iconColor={"#54d846"}
                       isLoading={isRefreshing}
-                    />
+                    /> */}
                   </div>
                 </div>
                 <div className="flex my-2">

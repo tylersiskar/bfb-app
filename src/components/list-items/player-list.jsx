@@ -70,12 +70,10 @@ const PlayerList = ({
           {" "}
           <p className="light bold sm">Team</p>
         </div>
-        {!isRoster && (
-          <div className="flex flex-column justify-start align-start">
-            {" "}
-            <p className="light bold sm">Value</p>
-          </div>
-        )}
+        <div className="flex flex-column justify-start align-start">
+          {" "}
+          <p className="light bold sm">Value</p>
+        </div>
       </div>
       <div
         ref={scrollRef}
@@ -171,16 +169,13 @@ const PlayerList = ({
               >
                 {player.team}
               </p>
-              {/* <p className="light">{parseFloat(player.ppg).toFixed(2)}</p> */}
-              {!isRoster && (
-                <p
-                  className={`${
-                    activePlayerId === player.id ? "lime" : "light"
-                  } md flex justify-start`}
-                >
-                  {playerObj["bfbValue"]}
-                </p>
-              )}
+              <p
+                className={`${
+                  activePlayerId === player.id ? "lime" : "light"
+                } md flex justify-start`}
+              >
+                {playerObj["bfbValue"]}
+              </p>
             </div>
           );
         })}
