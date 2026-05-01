@@ -81,7 +81,13 @@ const TeamSelector = ({ rosters, onSelect }) => (
 // ─── Player Search ───────────────────────────────────────────────────────────
 const ROUND_LABELS = { 1: "1st", 2: "2nd", 3: "3rd" };
 
-const PlayerSearch = ({ rosters, myRosterId, draftPicks, leagueYear, onSelectPlayer }) => {
+const PlayerSearch = ({
+  rosters,
+  myRosterId,
+  draftPicks,
+  leagueYear,
+  onSelectPlayer,
+}) => {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const inputRef = useRef(null);
@@ -104,7 +110,9 @@ const PlayerSearch = ({ rosters, myRosterId, draftPicks, leagueYear, onSelectPla
       .sort((a, b) => (b.bfbValue ?? 0) - (a.bfbValue ?? 0));
 
     // Append draft picks as searchable items
-    const rosterMap = Object.fromEntries((rosters ?? []).map((r) => [r.roster_id, r]));
+    const rosterMap = Object.fromEntries(
+      (rosters ?? []).map((r) => [r.roster_id, r]),
+    );
     const picks = (draftPicks ?? [])
       .filter((pk) => pk.season >= (leagueYear ?? new Date().getFullYear()))
       .map((pk) => {
@@ -113,9 +121,10 @@ const PlayerSearch = ({ rosters, myRosterId, draftPicks, leagueYear, onSelectPla
         const slot = pk.estimated_slot ?? "?";
         const slotPad = String(slot).padStart(2, "0");
         const label = `${pk.season} Round ${pk.round} Pick ${slot}`;
-        const origLabel = pk.original_roster_id !== pk.current_roster_id
-          ? ` (${origOwner?.display_name ?? "Unknown"}'s pick)`
-          : "";
+        const origLabel =
+          pk.original_roster_id !== pk.current_roster_id
+            ? ` (${origOwner?.display_name ?? "Unknown"}'s pick)`
+            : "";
         return {
           _type: "pick",
           id: `pick-${pk.season}-${pk.round}-${pk.original_roster_id}`,
@@ -209,9 +218,7 @@ const PlayerSearch = ({ rosters, myRosterId, draftPicks, leagueYear, onSelectPla
               }}
             >
               {p._type === "pick" ? (
-                <div className="trade-search-pick-badge">
-                  Rd {p.pick_round}
-                </div>
+                <div className="trade-search-pick-badge">Rd {p.pick_round}</div>
               ) : (
                 <img
                   className="trade-search-headshot"
@@ -223,14 +230,19 @@ const PlayerSearch = ({ rosters, myRosterId, draftPicks, leagueYear, onSelectPla
               <div className="trade-search-result-info">
                 <p className="sm light bold">{p.full_name}</p>
                 <p className="x-sm color-light">
-                  {p._type === "pick" ? "Draft Pick" : `${p.position} · ${p.team}`}
+                  {p._type === "pick"
+                    ? "Draft Pick"
+                    : `${p.position} · ${p.team}`}
                 </p>
               </div>
               <div className="trade-search-result-meta">
                 <p className="x-sm color-light">
                   {p.bfbValue?.toLocaleString() ?? "—"}
                 </p>
-                <p className="x-sm" style={{ color: p.isOwn ? "#54d846" : "#35a7ff" }}>
+                <p
+                  className="x-sm"
+                  style={{ color: p.isOwn ? "#54d846" : "#35a7ff" }}
+                >
                   {p.isOwn ? "Your team" : p.team_name}
                 </p>
               </div>
@@ -425,7 +437,8 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
   const winnerName =
     winner === "side_a" ? sideAName : winner === "side_b" ? sideBName : null;
 
-  const hasTax = (breakdown.side_a_tax ?? 0) > 0 || (breakdown.side_b_tax ?? 0) > 0;
+  const hasTax =
+    (breakdown.side_a_tax ?? 0) > 0 || (breakdown.side_b_tax ?? 0) > 0;
   const taxSide = (breakdown.side_a_tax ?? 0) > 0 ? sideAName : sideBName;
   const taxPct = Math.round(
     ((breakdown.side_a_tax ?? 0) || (breakdown.side_b_tax ?? 0)) * 100,
@@ -452,8 +465,12 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
           />
         </div>
         <div className="flex justify-between pt-1">
-          <p className="x-sm" style={{ color: "#35a7ff" }}>{sideAName} wins</p>
-          <p className="x-sm" style={{ color: "#ff3f5d" }}>{sideBName} wins</p>
+          <p className="x-sm" style={{ color: "#35a7ff" }}>
+            {sideAName} wins
+          </p>
+          <p className="x-sm" style={{ color: "#ff3f5d" }}>
+            {sideBName} wins
+          </p>
         </div>
       </div>
 
@@ -480,9 +497,7 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
                 <p className="x-sm color-light">{p.position}</p>
               </div>
               <div className="trade-player-values">
-                <p className="sm lime">
-                  {p.bfbValue?.toLocaleString() ?? "—"}
-                </p>
+                <p className="sm lime">{p.bfbValue?.toLocaleString() ?? "—"}</p>
               </div>
             </div>
           ))}
@@ -522,8 +537,8 @@ const FairnessResult = ({ result, sideAName, sideBName, onReset }) => {
       {hasTax && (
         <div className="trade-tax-info">
           <p className="x-sm color-light">
-            {taxSide} is sending more assets — {taxPct}% package tax applied to fairness.
-            Stars are hard to replace with multiple lesser players.
+            {taxSide} is sending more assets — {taxPct}% package tax applied to
+            fairness. Stars are hard to replace with multiple lesser players.
           </p>
         </div>
       )}
@@ -562,7 +577,15 @@ const DEAL_PREFS = [
   { key: "player_plus_picks", label: "Player + Picks" },
 ];
 
-const PlayerActionCard = ({ player, isOwn, dealPref, onDealPrefChange, onCreateTrade, onFindDeals, finding }) => (
+const PlayerActionCard = ({
+  player,
+  isOwn,
+  dealPref,
+  onDealPrefChange,
+  onCreateTrade,
+  onFindDeals,
+  finding,
+}) => (
   <div className="trade-action-card">
     <div className="trade-action-player">
       {player._type === "pick" ? (
@@ -578,11 +601,17 @@ const PlayerActionCard = ({ player, isOwn, dealPref, onDealPrefChange, onCreateT
       <div className="trade-action-player-info">
         <p className="light bold">{player.full_name}</p>
         <p className="sm color-light">
-          {player._type === "pick" ? "Draft Pick" : `${player.position} · ${player.team}`}
+          {player._type === "pick"
+            ? "Draft Pick"
+            : `${player.position} · ${player.team}`}
         </p>
         <p className="sm" style={{ color: isOwn ? "#54d846" : "#35a7ff" }}>
           {player.bfbValue?.toLocaleString() ?? "—"} value
-          {isOwn ? (player._type === "pick" ? " · Your pick" : " · Your player") : ` · ${player.team_name}`}
+          {isOwn
+            ? player._type === "pick"
+              ? " · Your pick"
+              : " · Your player"
+            : ` · ${player.team_name}`}
         </p>
       </div>
     </div>
@@ -603,7 +632,10 @@ const PlayerActionCard = ({ player, isOwn, dealPref, onDealPrefChange, onCreateT
     </div>
 
     <div className="trade-action-buttons">
-      <button className="trade-action-btn trade-action-btn--create" onClick={onCreateTrade}>
+      <button
+        className="trade-action-btn trade-action-btn--create"
+        onClick={onCreateTrade}
+      >
         <Icon path={mdiSwapHorizontal} size={0.8} color="#1f2126" />
         <span>Create Trade</span>
       </button>
@@ -649,13 +681,20 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
           {deal.give.players.map((p) => (
             <div key={p.id} className="trade-deal-player">
               <p className="sm light">{p.full_name}</p>
-              <p className="x-sm color-light">{p.position} · {p.bfbValue?.toLocaleString()}</p>
+              <p className="x-sm color-light">
+                {p.position} · {p.bfbValue?.toLocaleString()}
+              </p>
             </div>
           ))}
           {deal.give.picks.map((p, i) => (
             <div key={i} className="trade-deal-player">
-              <p className="sm light">{p.season} Rd {p.round}{p.estimated_slot ? ` (Pick ${p.estimated_slot})` : ""}</p>
-              <p className="x-sm color-light">{p.pick_value?.toLocaleString()}</p>
+              <p className="sm light">
+                {p.season} Rd {p.round}
+                {p.estimated_slot ? ` (Pick ${p.estimated_slot})` : ""}
+              </p>
+              <p className="x-sm color-light">
+                {p.pick_value?.toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
@@ -667,13 +706,20 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
           {deal.receive.players.map((p) => (
             <div key={p.id} className="trade-deal-player">
               <p className="sm light">{p.full_name}</p>
-              <p className="x-sm color-light">{p.position} · {p.bfbValue?.toLocaleString()}</p>
+              <p className="x-sm color-light">
+                {p.position} · {p.bfbValue?.toLocaleString()}
+              </p>
             </div>
           ))}
           {deal.receive.picks.map((p, i) => (
             <div key={i} className="trade-deal-player">
-              <p className="sm light">{p.season} Rd {p.round}{p.estimated_slot ? ` (Pick ${p.estimated_slot})` : ""}</p>
-              <p className="x-sm color-light">{p.pick_value?.toLocaleString()}</p>
+              <p className="sm light">
+                {p.season} Rd {p.round}
+                {p.estimated_slot ? ` (Pick ${p.estimated_slot})` : ""}
+              </p>
+              <p className="x-sm color-light">
+                {p.pick_value?.toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
@@ -689,14 +735,21 @@ const DealCard = ({ deal, onOpenInCalculator }) => {
             />
           </div>
           <div className="flex justify-between">
-            <p className="x-sm" style={{ color: "#35a7ff" }}>You win</p>
+            <p className="x-sm" style={{ color: "#35a7ff" }}>
+              You win
+            </p>
             <p className="x-sm" style={{ color: "#ff3f5d" }}>
               {deal.target_team.display_name} wins
             </p>
           </div>
         </div>
-        <p className="x-sm color-light trade-deal-rationale">{deal.rationale}</p>
-        <button className="trade-deal-open-btn" onClick={() => onOpenInCalculator(deal)}>
+        <p className="x-sm color-light trade-deal-rationale">
+          {deal.rationale}
+        </p>
+        <button
+          className="trade-deal-open-btn"
+          onClick={() => onOpenInCalculator(deal)}
+        >
           Open in Calculator
         </button>
       </div>
@@ -725,13 +778,18 @@ const DealsResult = ({ result, onOpenInCalculator, onBack }) => (
     {result.deals.length === 0 ? (
       <div className="trade-deals-empty">
         <p className="sm color-light">
-          {result.message || "No trade matches found for this player. They may already be in every team's top 8, or no teams have matching surplus players."}
+          {result.message ||
+            "No trade matches found for this player. They may already be in every team's top 8, or no teams have matching surplus players."}
         </p>
       </div>
     ) : (
       <div className="trade-deals-list">
         {result.deals.map((deal, i) => (
-          <DealCard key={i} deal={deal} onOpenInCalculator={onOpenInCalculator} />
+          <DealCard
+            key={i}
+            deal={deal}
+            onOpenInCalculator={onOpenInCalculator}
+          />
         ))}
       </div>
     )}
@@ -748,7 +806,10 @@ const CATEGORY_TABS = [
 const RecommendedTradesResult = ({ result, onOpenInCalculator, onBack }) => {
   const [activeTab, setActiveTab] = useState("upgrade");
   const { team_analysis, categories } = result;
-  const totalDeals = Object.values(categories).reduce((s, arr) => s + arr.length, 0);
+  const totalDeals = Object.values(categories).reduce(
+    (s, arr) => s + arr.length,
+    0,
+  );
 
   const activDeals = categories[activeTab] ?? [];
 
@@ -760,7 +821,9 @@ const RecommendedTradesResult = ({ result, onOpenInCalculator, onBack }) => {
           <p className="x-sm color-light">Keepers</p>
         </div>
         <div className="trade-team-summary-item">
-          <p className="sm bold light">{team_analysis.top_8_value?.toLocaleString()}</p>
+          <p className="sm bold light">
+            {team_analysis.top_8_value?.toLocaleString()}
+          </p>
           <p className="x-sm color-light">Top 8 Value</p>
         </div>
         {team_analysis.needs.length > 0 && (
@@ -778,7 +841,9 @@ const RecommendedTradesResult = ({ result, onOpenInCalculator, onBack }) => {
       </div>
 
       <div className="flex justify-between align-center pb-2 pt-2">
-        <p className="sm color-light">{totalDeals} recommendation{totalDeals !== 1 ? "s" : ""} found</p>
+        <p className="sm color-light">
+          {totalDeals} recommendation{totalDeals !== 1 ? "s" : ""} found
+        </p>
         <button className="trade-reset-btn" onClick={onBack}>
           <Icon path={mdiRefresh} size={0.8} color="#A7A7A7" />
           <p className="sm color-light">Back</p>
@@ -795,7 +860,9 @@ const RecommendedTradesResult = ({ result, onOpenInCalculator, onBack }) => {
               onClick={() => setActiveTab(tab.key)}
             >
               {tab.label}
-              {count > 0 && <span className="trade-category-badge">{count}</span>}
+              {count > 0 && (
+                <span className="trade-category-badge">{count}</span>
+              )}
             </button>
           );
         })}
@@ -804,15 +871,22 @@ const RecommendedTradesResult = ({ result, onOpenInCalculator, onBack }) => {
       {activDeals.length === 0 ? (
         <div className="trade-deals-empty">
           <p className="sm color-light">
-            {activeTab === "upgrade" && "No upgrade opportunities found. Your starters are already strong at each position."}
-            {activeTab === "fill_need" && "No positional needs identified — your keeper roster is well-rounded."}
-            {activeTab === "sell_surplus" && "No surplus sell opportunities found. You don't have extra keeper-worthy players to move."}
+            {activeTab === "upgrade" &&
+              "No upgrade opportunities found. Your starters are already strong at each position."}
+            {activeTab === "fill_need" &&
+              "No positional needs identified — your keeper roster is well-rounded."}
+            {activeTab === "sell_surplus" &&
+              "No surplus sell opportunities found. You don't have extra keeper-worthy players to move."}
           </p>
         </div>
       ) : (
         <div className="trade-deals-list">
           {activDeals.map((deal, i) => (
-            <DealCard key={i} deal={deal} onOpenInCalculator={onOpenInCalculator} />
+            <DealCard
+              key={i}
+              deal={deal}
+              onOpenInCalculator={onOpenInCalculator}
+            />
           ))}
         </div>
       )}
@@ -836,8 +910,7 @@ const TradePage = () => {
 
   const [calculateTrade, { isLoading: calculating }] =
     useCalculateTradeMutation();
-  const [findDeals, { isLoading: findingDeals }] =
-    useFindDealsMutation();
+  const [findDeals, { isLoading: findingDeals }] = useFindDealsMutation();
   const [getRecommendedTrades, { isLoading: loadingRecommended }] =
     useGetRecommendedTradesMutation();
 
@@ -884,7 +957,10 @@ const TradePage = () => {
           };
         }
         if (typeof p === "object" && p !== null) {
-          return { ...p, bfbValue: playerValueMap[p.id] ?? p.bfbValue ?? p.value };
+          return {
+            ...p,
+            bfbValue: playerValueMap[p.id] ?? p.bfbValue ?? p.value,
+          };
         }
         return {
           id: p,
@@ -946,7 +1022,9 @@ const TradePage = () => {
         setSideAPickMap({ [pickKey]: pickData });
         setStep("build");
       } else {
-        const theirTeam = rosters.find((r) => r.roster_id === selectedPlayer.roster_id);
+        const theirTeam = rosters.find(
+          (r) => r.roster_id === selectedPlayer.roster_id,
+        );
         if (theirTeam) {
           setTheirRoster(theirTeam);
           setSideBPickKeys([pickKey]);
@@ -1025,12 +1103,15 @@ const TradePage = () => {
 
       // Pre-fill picks from the deal
       const toPickEntries = (picks) =>
-        (picks ?? []).reduce((acc, p) => {
-          const key = `${p.round}-${p.season}-${p.original_roster_id}`;
-          acc.keys.push(key);
-          acc.map[key] = p;
-          return acc;
-        }, { keys: [], map: {} });
+        (picks ?? []).reduce(
+          (acc, p) => {
+            const key = `${p.round}-${p.season}-${p.original_roster_id}`;
+            acc.keys.push(key);
+            acc.map[key] = p;
+            return acc;
+          },
+          { keys: [], map: {} },
+        );
 
       const givePicks = toPickEntries(deal.give.picks);
       const recvPicks = toPickEntries(deal.receive.picks);
@@ -1160,21 +1241,33 @@ const TradePage = () => {
               onClick={handleGetRecommended}
               disabled={loadingRecommended}
             >
-              <Icon path={mdiAutoFix} size={0.8} color={loadingRecommended ? "#959595" : "#54d846"} />
+              <Icon
+                path={mdiAutoFix}
+                size={0.8}
+                color={loadingRecommended ? "#959595" : "#54d846"}
+              />
               <div>
                 <p className="sm bold light">
-                  {loadingRecommended ? "Analyzing your roster..." : "Recommended Trades"}
+                  {loadingRecommended
+                    ? "Analyzing your roster..."
+                    : "Recommended Trades"}
                 </p>
-                <p className="x-sm color-light">Find upgrades, fill needs, or sell surplus</p>
+                <p className="x-sm color-light">
+                  Find upgrades, fill needs, or sell surplus
+                </p>
               </div>
             </button>
 
             {error && step === "search" && (
-              <p className="sm" style={{ color: "#ff3f5d", padding: "8px 0" }}>{error}</p>
+              <p className="sm" style={{ color: "#ff3f5d", padding: "8px 0" }}>
+                {error}
+              </p>
             )}
 
             <div className="trade-recommended-divider">
-              <span className="x-sm color-light">or search for a player or pick</span>
+              <span className="x-sm color-light">
+                or search for a player or pick
+              </span>
             </div>
 
             <PlayerSearch
@@ -1228,7 +1321,8 @@ const TradePage = () => {
               <div>
                 <h2>Trade Center</h2>
                 <p className="sm color-light pt-1">
-                  {dealsResult.is_selling ? "Trade away" : "Acquire"} {selectedPlayer?.full_name}
+                  {dealsResult.is_selling ? "Trade away" : "Acquire"}{" "}
+                  {selectedPlayer?.full_name}
                 </p>
               </div>
               <button className="trade-reset-btn" onClick={handleFullReset}>
@@ -1264,7 +1358,10 @@ const TradePage = () => {
             <RecommendedTradesResult
               result={recommendedResult}
               onOpenInCalculator={handleOpenDealInCalculator}
-              onBack={() => { setRecommendedResult(null); setStep("search"); }}
+              onBack={() => {
+                setRecommendedResult(null);
+                setStep("search");
+              }}
             />
           </div>
         )}

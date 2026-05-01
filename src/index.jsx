@@ -13,7 +13,6 @@ const DraftsPage = lazy(() => import("./pages/drafts/drafts"));
 const TrendsPage = lazy(() => import("./pages/trends/trends"));
 const MockDraftCenter = lazy(() => import("./pages/mock/mocks"));
 const MockNew = lazy(() => import("./pages/mock/mocks-new"));
-const Rosters = lazy(() => import("./pages/rosters"));
 const PlayerDetailsPage = lazy(() => import("./pages/players"));
 const TradePage = lazy(() => import("./pages/trade/trade"));
 
@@ -47,10 +46,6 @@ const router = createBrowserRouter([
       {
         path: "drafts",
         element: <Suspense fallback={Fallback}><DraftsPage /></Suspense>,
-      },
-      {
-        path: "rosters",
-        element: <Suspense fallback={Fallback}><Rosters /></Suspense>,
       },
       {
         path: "mocks",

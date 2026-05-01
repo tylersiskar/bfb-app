@@ -21,9 +21,6 @@ const DefaultNavContent = () => {
       <Link className="list-item" to="/mocks">
         <h5>Mock Draft Center</h5>
       </Link>
-      <Link className="list-item" to="/rosters">
-        <h5>Keepers</h5>
-      </Link>
       <Link className="list-item" to="/trade">
         <h5>Trade Calculator</h5>
       </Link>
