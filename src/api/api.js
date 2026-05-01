@@ -8,6 +8,7 @@ import { customBaseQuery } from "./customBaseQuery";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery,
+  refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getUsers: builder.query({
       query: () => `league/{LEAGUE_ID}/users`,

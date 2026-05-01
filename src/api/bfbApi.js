@@ -9,6 +9,7 @@ export const bfbApi = createApi({
   reducerPath: "bfbApi",
   baseQuery: customBfbBaseQuery,
   tagTypes: ["playersAll"],
+  refetchOnMountOrArgChange: true,
   endpoints: (builder) => ({
     getStats: builder.query({
       query: (params) => ({
