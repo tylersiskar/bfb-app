@@ -145,6 +145,46 @@ export const selectKeepers = createSelector(
   },
 );
 
+// Returns the effective keeper set for each roster:
+// - uses actual Sleeper keepers if set for that roster
+// - falls back to projecting top-8 players by bfbValue when not set
+const _getEffectiveKeeperIds = (rosters, players, leagueType) => {
+  let key = leagueType === 2 ? "players" : "keepers";
+  return rosters.flatMap((roster) => {
+    let setKeepers = roster[key] ?? [];
+    if (setKeepers.length > 0) return setKeepers;
+    // No keepers set in Sleeper — project top 8 by bfbValue
+    return (roster.players ?? [])
+      .map((pId) => find(players, { id: pId }))
+      .filter((p) => p?.full_name)
+      .sort((a, b) => (b.bfbValue ?? 0) - (a.bfbValue ?? 0))
+      .slice(0, 8)
+      .map((p) => p.id);
+  });
+};
+
+export const selectEffectiveKeepers = createSelector(
+  (state, rawData) => rawData,
+  (rawData) => {
+    let { rosters, players, leagueType } = rawData;
+    if (!rosters || !players || players.length === 0 || rosters.length === 0)
+      return [];
+    let keeperIds = _getEffectiveKeeperIds(rosters, players, leagueType);
+    return players.filter((p) => keeperIds.includes(p.id));
+  },
+);
+
+export const selectEffectiveNonKeepers = createSelector(
+  (state, rawData) => rawData,
+  (rawData) => {
+    let { rosters, players, leagueType } = rawData;
+    if (!rosters || !players || players.length === 0 || rosters.length === 0)
+      return [];
+    let keeperIds = new Set(_getEffectiveKeeperIds(rosters, players, leagueType));
+    return players.filter((p) => !keeperIds.has(p.id));
+  },
+);
+
 export const selectPlayersProjectedKeepers = createSelector(
   (state, rawData) => rawData,
   (data) => {

@@ -1,7 +1,7 @@
 import find from "lodash/find";
 import { useSelector } from "react-redux";
 import { useGetRostersQuery } from "../../api/api";
-import { useGetPlayersQuery } from "../../api/bfbApi";
+import { useGetPlayersQuery, useGetPlayersAllQuery } from "../../api/bfbApi";
 import { selectActiveSlot, selectDraftedPlayers } from "../../api/draftSlice";
 import {
   selectLeagueId,
@@ -19,12 +19,32 @@ const useActiveRoster = () => {
   const { data: playerIdsData, isFetching: isRosterFetching } =
     useGetRostersQuery();
   let keeperKey = current?.settings?.type === 2 ? "players" : "keepers";
-  let playerIds = find(playerIdsData, {
+  let activeRosterData = find(playerIdsData, {
     roster_id: activeSlot.roster_id,
-  })?.[keeperKey];
+  });
+  let playerIds = activeRosterData?.[keeperKey];
+
+  // Fetch playersAll only when needed to project keepers (no Sleeper keepers set)
+  const hasSleeperKeepers = !!(playerIds && playerIds.length);
+  const { data: playersAll } = useGetPlayersAllQuery(
+    { year, mock: true },
+    { skip: hasSleeperKeepers || isRosterFetching || !activeRosterData }
+  );
+
+  // When no keepers are set in Sleeper, project top 8 by bfbValue
+  let effectivePlayerIds = playerIds;
+  if (!hasSleeperKeepers && playersAll && activeRosterData?.players) {
+    effectivePlayerIds = activeRosterData.players
+      .map((pId) => find(playersAll, { id: pId }))
+      .filter((p) => p?.full_name)
+      .sort((a, b) => (b.bfbValue ?? 0) - (a.bfbValue ?? 0))
+      .slice(0, 8)
+      .map((p) => p.id);
+  }
+
   const { data, isFetching: isPlayerFetching } = useGetPlayersQuery(
-    { id: JSON.stringify(playerIds), year: year - 1 },
-    { skip: !playerIds || !playerIds.length || isRosterFetching }
+    { id: JSON.stringify(effectivePlayerIds), year: year - 1 },
+    { skip: !effectivePlayerIds || !effectivePlayerIds.length || isRosterFetching }
   );
 
   let players = data ? data.map((p) => ({ ...p, isKeeper: true })) : [];
