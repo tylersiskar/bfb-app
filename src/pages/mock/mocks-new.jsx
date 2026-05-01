@@ -30,7 +30,6 @@ import {
   setFullDraft,
 } from "../../api/draftSlice";
 import {
-  selectEffectiveKeepers,
   selectEffectiveNonKeepers,
   useGetMockQuery,
   useGetMocksQuery,
@@ -103,14 +102,6 @@ const MockNew = () => {
   });
   const leagueId = useSelector(selectLeagueId);
   let current = find(seasons, { league_id: leagueId });
-  const keepers = useSelector((state) =>
-    selectEffectiveKeepers(state, {
-      rosters: data,
-      players: playersAll,
-      leagueType: current?.settings?.type,
-    }),
-  );
-
   const nonKeepers = useSelector((state) =>
     selectEffectiveNonKeepers(state, {
       rosters: data,
